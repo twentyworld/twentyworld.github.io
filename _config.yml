@@ -14,6 +14,16 @@ sidebar: true                           # whether or not using Sidebar.
 sidebar-about-description: "all men must die, all men must serve"
 sidebar-avatar: /img/self.png    # use absolute URL, seeing it's used in both `/` and `/about/`
 
+# 分页
+permalink: /:year/:month/:day/:title.html
+paginate: 1
+paginate_path: "article/:num"
+
+# 转换
+markdown: kramdown
+highlighter: rouge
+excerpt_separator: <!--excerpt-->
+
 
 
 # SNS settings
@@ -21,7 +31,7 @@ RSS: false
 # weibo_username:     qiubaiying
 zhihu_username:     oven-lee
 github_username:    twentyworld
-jianshu_username:   hello
+jianshu_username:   f7cc168c1716
 #twitter_username:   qiubaiying
 
 
@@ -61,8 +71,8 @@ kramdown:
 # Gitalk
 gitalk:
   enable: true    #是否开启Gitalk评论
-  clientID: f2c84e7629bb1446c1a4                            #生成的clientID
-  clientSecret: ca6d6139d1e1b8c43f8b2e19492ddcac8b322d0d    #生成的clientSecret
+  clientID: 747865c505c9245e2dcb                            #生成的clientID
+  clientSecret: 5500167dc7bbf95672c616687639b3ab38e06751    #生成的clientSecret
   repo: qiubaiying.github.io    #仓库名称
   owner: qiubaiying    #github用户名
   admin: qiubaiying
