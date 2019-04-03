@@ -28,11 +28,11 @@ excerpt_separator: <!--excerpt-->
 
 # SNS settings
 RSS: false
-# weibo_username:     qiubaiying
+# weibo_username:     twentyworld
 zhihu_username:     oven-lee
 github_username:    twentyworld
 jianshu_username:   f7cc168c1716
-#twitter_username:   qiubaiying
+#twitter_username:   twentyworld
 
 
 
@@ -66,7 +66,7 @@ kramdown:
 
 # 评论系统
 # Disqus（https://disqus.com/）
-# disqus_username: qiubaiying
+# disqus_username: twentyworld
 
 # Gitalk
 gitalk:
@@ -87,7 +87,7 @@ ba_track_id: 0c084e0d8331443cbf0269f04c0da676
 
 # # Google Analytics
 # ga_track_id: 'UA-90855596-1'            # Format: UA-xxxxxx-xx
-# ga_domain: qiubaiying.top               # 默认的是 auto, 这里我是自定义了的域名，你如果没有自己的域名，需要改成auto
+# ga_domain: twentyworld.top               # 默认的是 auto, 这里我是自定义了的域名，你如果没有自己的域名，需要改成auto
 
 
 
