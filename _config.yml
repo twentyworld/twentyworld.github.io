@@ -46,9 +46,9 @@ anchorjs: true                          # if you want to customize anchor. check
 
 
 
-# # Gems
-# # from PR#40, to support local preview for Jekyll 3.0
-# gems: [jekyll-paginate]
+# Gems
+# from PR#40, to support local preview for Jekyll 3.0
+gems: [jekyll-paginate]
 
 
 
@@ -71,11 +71,11 @@ kramdown:
 # Gitalk
 gitalk:
   enable: true    #是否开启Gitalk评论
-  clientID: b88999296d359de92c81                            #生成的clientID
-  clientSecret: d51dfef86c3d3bd2e2485518f2f3b99a404ce020    #生成的clientSecret
-  repo: twentyworld.github.io    #仓库名称
-  owner: twentyworld    #github用户名
-  admin: twentyworld
+  clientID: 'b88999296d359de92c81'                            #生成的clientID
+  clientSecret: 'd51dfef86c3d3bd2e2485518f2f3b99a404ce020'    #生成的clientSecret
+  repo: 'twentyworld.github.io'    #仓库名称
+  owner: 'twentyworld'    #github用户名
+  admin: 'twentyworld'
   distractionFreeMode: true #是否启用类似FB的阴影遮罩
 
 
