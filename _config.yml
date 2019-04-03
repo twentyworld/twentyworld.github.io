@@ -121,3 +121,20 @@ service-worker: true
 #         href: "https://developer.apple.com/"
 #     }
 # ]
+
+
+
+
+links1:
+  - name: all
+    url: /
+    type: recent
+    external: false
+  - name: 线程
+    url: /_posts/Java/JDK/线程和进程/
+    type: thread
+    external: false
+  - name: 线程池关键字
+    url: /_posts/Java/JDK/线程和进程/关键字/
+blog1: recent
+blog2: thread
