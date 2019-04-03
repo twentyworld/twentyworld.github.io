@@ -1,3 +1,4 @@
+![](https://ws1.sinaimg.cn/large/006tKfTcgy1ftpwh3a2szj31kw11xh84.jpg)
 
 ## 前言
 
@@ -43,7 +44,7 @@
 首先是创建线程的 api：
 
 ```java
-ThreadPoolExecutor(int corePoolSize, int maximumPoolSize, long keepAliveTime, TimeUnit unit, BlockingQueue<Runnable> workQueue, RejectedExecutionHandler handler)
+ThreadPoolExecutor(int corePoolSize, int maximumPoolSize, long keepAliveTime, TimeUnit unit, BlockingQueue<Runnable> workQueue, RejectedExecutionHandler handler) 
 ```
 
 这几个核心参数的作用：
@@ -102,7 +103,7 @@ threadPool.execute(new Job());
 
 通常我们是需要根据这批任务执行的性质来确定的。
 
-- IO 密集型任务：由于线程并不是一直在运行，所以可以尽可能的多配置线程，比如 CPU 个数 * 2
+- IO 密集型任务：由于线程并不是一直在运行，所以可以尽可能的多配置线程，比如 CPU 个数 * 2 
 - CPU 密集型任务（大量复杂的运算）应当分配较少的线程，比如 CPU 个数相当的大小。
 
 
