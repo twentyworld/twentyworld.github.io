@@ -1,3 +1,10 @@
+---
+layout: post
+tags:
+  - thread
+  - keyword
+---
+
 # synchronized
 ---
 ## 1. 进程与线程
