@@ -5,7 +5,7 @@ header-img: img/post-bg-unix-linux.jpg
 email: tyriontwenty@gmail.com
 description: "all men must die, all men must serve"
 keyword: "夕豪, twentyworld, Java, interview"
-url: "http://twentyworld.github.io"          # your host, for absolute URL
+url: "https://twentyworld.github.io"          # your host, for absolute URL
 baseurl: ""      # for example, '/blog' if your blog hosted on 'host/blog'
 github_repo: "https://github.com/twentyworld//twentyworld.github.io.git" # you code repository
 
@@ -71,11 +71,11 @@ kramdown:
 # Gitalk
 gitalk:
   enable: true    #是否开启Gitalk评论
-  clientID: 'b88999296d359de92c81'                            #生成的clientID
-  clientSecret: 'd51dfef86c3d3bd2e2485518f2f3b99a404ce020'    #生成的clientSecret
-  repo: 'twentyworld.github.io'    #仓库名称
-  owner: 'twentyworld'    #github用户名
-  admin: 'twentyworld'
+  clientID: b88999296d359de92c81                            #生成的clientID
+  clientSecret: d51dfef86c3d3bd2e2485518f2f3b99a404ce020    #生成的clientSecret
+  repo: twentyworld.github.io    #仓库名称
+  owner: twentyworld    #github用户名
+  admin: twentyworld
   distractionFreeMode: true #是否启用类似FB的阴影遮罩
 
 
