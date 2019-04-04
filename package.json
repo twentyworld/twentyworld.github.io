@@ -1,9 +1,9 @@
 {
     "name": "temmper-blog",
     "title": "temmper Blog",
-    "author": "BY <teemper@163.com>",
+    "author": "temmper <teemper@163.com>",
     "version": "1.7.0",
-    "homepage": "http://twentyworld.github.io",
+    "homepage": "https://twentyworld.github.io",
     "repository": {
         "type": "git",
         "url": "https://github.com/twentyworld/twentyworld.github.io"
