@@ -14,18 +14,10 @@
 <body>
     <div id="app"></div>
 
-    <!-- <script>
-        window.$docsify = {
-            loadSidebar: true,
-            alias: {
-                '/.*/_sidebar.md': '/_sidebar.md'
-            }
-        }
-    </script> -->
 
     <script>
         window.$docsify = {
-            loadNavbar: 'nav.md',
+            loadNavbar: true,
             mergeNavbar: true,
             repo: 'https://github.com/twentyworld',
             subMaxLevel: 4,
@@ -33,7 +25,20 @@
             formatUpdated: '{MM}/{DD} {HH}:{mm}',
             coverpage: true,
             homepage: 'README.md',
-            basePath: '/docs'
+            basePath: '/docs',
+            search: {
+              noData: {
+                '/': 'No results!'
+              },
+              paths: 'auto',
+              placeholder: {
+                '/': '搜索'
+              }
+            },
+            alias: {
+              '/.*/_sidebar.md': '/_sidebar.md',
+              '/.*/_navbar.md': '/_navbar.md',
+            },
         }
     </script>
 
@@ -44,7 +49,8 @@
     <script src="//unpkg.com/docsify/lib/plugins/emoji.js"></script>
     <script src="//unpkg.com/docsify/lib/plugins/zoom-image.js"></script>
     <script src="//unpkg.com/prismjs/components/prism-java.js"></script>
-
+    <script src="//unpkg.com/docsify/lib/plugins/search.min.js"></script>
+    <script src="https://sidecar.gitter.im/dist/sidecar.v1.js" async defer></script>
     <script src="//unpkg.com/docsify/lib/plugins/gitalk.min.js"></script>
     <script src="//unpkg.com/gitalk/dist/gitalk.min.js"></script>
 
