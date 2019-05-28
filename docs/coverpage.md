@@ -14,5 +14,5 @@
 
 
 [GitHub](https://github.com/twentyworld)
-[知乎](https://www.zhihu.com/people/oven-lee/)
+[ZhiHu](https://www.zhihu.com/people/oven-lee/)
 [Get Started](README.md)
