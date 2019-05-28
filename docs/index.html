@@ -2,105 +2,79 @@
 <html lang="en">
 
 <head>
-  <meta charset="UTF-8">
-  <title>Document</title>
+    <meta charset="UTF-8">
+    <title>Document</title>
 
-  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
-  <meta name="description" content="Description">
-  <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+    <meta name="description" content="Description">
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
 
-
-  <!-- <link rel="stylesheet" href="//unpkg.com/docsify/lib/themes/vue.css"> -->
-<link rel="stylesheet" href="//unpkg.com/gitalk/dist/gitalk.css">
-  <link rel="stylesheet" href="//unpkg.com/docsify/themes/vue.css">
-  <!-- <link rel="stylesheet" href="//unpkg.com/docsify/themes/buble.css"> -->
-  <!-- <link rel="stylesheet" href="//unpkg.com/docsify/themes/dark.css"> -->
-  <!-- <link rel="stylesheet" href="//unpkg.com/docsify/themes/pure.css"> -->
-  <!-- <link rel="stylesheet" href="//unpkg.com/docsify/themes/dolphin.css"> -->
+    <link rel="stylesheet" href="//unpkg.com/gitalk/dist/gitalk.css">
+    <link rel="stylesheet" href="//unpkg.com/docsify/themes/vue.css">
 
 </head>
 
 <body>
-<div id="app">loading...</div>
+    <div id="app">loading...</div>
 
-<script>
-  window.$docsify = {
-    subMaxLevel: 2,
+    <script>
+        window.$docsify = {
+            subMaxLevel: 2,
 
-    executeScript: true,
+            executeScript: true,
 
-    formatUpdated: '{MM}/{DD} {HH}:{mm}',
+            formatUpdated: '{MM}/{DD} {HH}:{mm}'
+        }
+    </script>
 
+    <script>
+        window.$docsify = {
+            loadSidebar: true,
+            alias: {
+                '/.*/_sidebar.md': '/_sidebar.md'
+            }
+        }
+    </script>
 
+    <script>
+        window.$docsify = {
+            loadNavbar: true
+        }
+    </script>
 
-    plugins: [
-        EditOnGithubPlugin.create(docBase, docEditBase, title)
-      ]
-  }
-</script>
+    <script>
+        window.$docsify = {
+            coverpage: true
+        }
+    </script>
 
-<script>
-  window.$docsify = {
-    loadSidebar: true,
-    alias: {
-      '/.*/_sidebar.md': '/_sidebar.md'
-    }
-  }
-</script>
+    <script>
+        window.$docsify = {
+            coverpage: true
+        }
+    </script>
 
-<script>
-  window.$docsify = {
-    loadNavbar: true
-  }
-</script>
+    <script src="//unpkg.com/docsify"></script>
 
-<script>
-  window.$docsify = {
-    coverpage: true
-  }
-</script>
+    <script src="//unpkg.com/docsify/lib/docsify.min.js"></script>
+    <script src="//unpkg.com/docsify/lib/plugins/external-script.js"></script>
+    <script src="//unpkg.com/docsify/lib/plugins/emoji.js"></script>
+    <script src="//unpkg.com/docsify/lib/plugins/zoom-image.js"></script>
+    <script src="//unpkg.com/prismjs/components/prism-java.js"></script>
 
-<script>
-  window.$docsify = {
-    repo: 'https://github.com/twentyworld',
-    basePath: '/blog/'
-  }
-</script>
+    <script src="//unpkg.com/docsify/lib/plugins/gitalk.min.js"></script>
+    <script src="//unpkg.com/gitalk/dist/gitalk.min.js"></script>
 
-<script>
-  window.$docsify = {
-    coverpage: true
-  }
-</script>
-
-
-<script src="//unpkg.com/docsify"></script>
-
-
-<script src="//unpkg.com/docsify/lib/docsify.min.js"></script>
-<script src="//unpkg.com/docsify/lib/plugins/external-script.js"></script>
-<script src="//unpkg.com/docsify/lib/plugins/emoji.js"></script>
-<script src="//unpkg.com/docsify/lib/plugins/zoom-image.js"></script>
-<script src="//unpkg.com/docsify-edit-on-github/index.js"></script>
-
-<script src="//unpkg.com/prismjs/components/prism-java.js"></script>
-
-<script src="//unpkg.com/docsify/lib/plugins/gitalk.min.js"></script>
-<script src="//unpkg.com/gitalk/dist/gitalk.min.js"></script>
-
-<script>
-  const gitalk = new Gitalk({
-    clientID: 'b88999296d359de92c81',
-    clientSecret: 'd51dfef86c3d3bd2e2485518f2f3b99a404ce020',
-    repo: 'twentyworld.github.io',
-    owner: 'twentyworld',
-    admin: ['twentyworld'],
-    // facebook-like distraction free mode
-    distractionFreeMode: false
-  })
-</script>
+    <script>
+        const gitalk = new Gitalk({
+            clientID: 'b88999296d359de92c81',
+            clientSecret: 'd51dfef86c3d3bd2e2485518f2f3b99a404ce020',
+            repo: 'twentyworld.github.io',
+            owner: 'twentyworld',
+            admin: ['twentyworld'],
+            distractionFreeMode: false
+        })
+    </script>
 
 </body>
-
-
 </html>
