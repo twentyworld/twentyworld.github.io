@@ -13,6 +13,6 @@
 * I pledge my life and honor to the Night's Watch, for this night, and all the nights to come.
 
 
-[GitHub](https://github.com/docsifyjs/docsify/)
-[知乎]()
+[GitHub](https://github.com/twentyworld)
+[知乎](https://www.zhihu.com/people/oven-lee/)
 [Get Started](README.md)

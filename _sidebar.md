@@ -1,6 +1,0 @@
-- [核心知识](核心知识/)
-  - [Synchronized](synchronized.md)
-- [Spring全家桶](Spring/)
-  - [Synchronized](Spring/synchronized.md)
-* [核心知识](核心知识/)
-* [Spring全家桶](Spring/)
