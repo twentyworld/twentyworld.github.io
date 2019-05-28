@@ -19,38 +19,16 @@
 
     <script>
         window.$docsify = {
-            subMaxLevel: 2,
-
-            executeScript: true,
-
-            formatUpdated: '{MM}/{DD} {HH}:{mm}'
-        }
-    </script>
-
-    <script>
-        window.$docsify = {
             loadSidebar: true,
             alias: {
                 '/.*/_sidebar.md': '/_sidebar.md'
-            }
-        }
-    </script>
-
-    <script>
-        window.$docsify = {
-            loadNavbar: true
-        }
-    </script>
-
-    <script>
-        window.$docsify = {
-            coverpage: true
-        }
-    </script>
-
-    <script>
-        window.$docsify = {
-            coverpage: true
+            },
+            subMaxLevel: 2,
+            formatUpdated: '{MM}/{DD} {HH}:{mm}',
+            loadNavbar: true,
+            coverpage: true,
+            homepage: 'README.md',
+            basePath: '/docs/'
         }
     </script>
 

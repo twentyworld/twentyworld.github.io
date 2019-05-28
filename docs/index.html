@@ -19,40 +19,28 @@
 
     <script>
         window.$docsify = {
-            subMaxLevel: 2,
-
+            loadSidebar: true,
+            // alias: {
+            //     '/.*/_sidebar.md': '/_sidebar.md'
+            // },
+            subMaxLevel: 3,
             executeScript: true,
-
-            formatUpdated: '{MM}/{DD} {HH}:{mm}'
+            formatUpdated: '{MM}/{DD} {HH}:{mm}',
+            loadNavbar: true,
+            coverpage: true,
+            homepage: 'README.md',
+            basePath: '/docs/'
         }
     </script>
 
-    <script>
+    <!-- <script>
         window.$docsify = {
             loadSidebar: true,
             alias: {
                 '/.*/_sidebar.md': '/_sidebar.md'
             }
         }
-    </script>
-
-    <script>
-        window.$docsify = {
-            loadNavbar: true
-        }
-    </script>
-
-    <script>
-        window.$docsify = {
-            coverpage: true
-        }
-    </script>
-
-    <script>
-        window.$docsify = {
-            coverpage: true
-        }
-    </script>
+    </script> -->
 
     <script src="//unpkg.com/docsify"></script>
 
