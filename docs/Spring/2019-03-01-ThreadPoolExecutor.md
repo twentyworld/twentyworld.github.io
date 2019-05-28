@@ -37,7 +37,7 @@ tags:
 
 其实看这三种方式创建的源码就会发现：
 
-```java
+```Java
     public static ExecutorService newCachedThreadPool() {
         return new ThreadPoolExecutor(0, Integer.MAX_VALUE,
                                       60L, TimeUnit.SECONDS,
@@ -51,7 +51,7 @@ tags:
 
 首先是创建线程的 api：
 
-```java
+```Java
 ThreadPoolExecutor(int corePoolSize, int maximumPoolSize, long keepAliveTime, TimeUnit unit, BlockingQueue<Runnable> workQueue, RejectedExecutionHandler handler)
 ```
 
@@ -67,7 +67,7 @@ ThreadPoolExecutor(int corePoolSize, int maximumPoolSize, long keepAliveTime, Ti
 
 通常我们都是使用:
 
-```java
+```Java
 threadPool.execute(new Job());
 ```
 
@@ -134,7 +134,7 @@ threadPool.execute(new Job());
 
 我通常是按照以下方式关闭线程池的：
 
-```java
+```Java
         long start = System.currentTimeMillis();
         for (int i = 0; i <= 5; i++) {
             pool.execute(new Job());
@@ -158,7 +158,7 @@ threadPool.execute(new Job());
 
 既然用了 SpringBoot ，那自然得发挥 Spring 的特性，所以需要 Spring 来帮我们管理线程池：
 
-```java
+```Java
 @Configuration
 public class TreadPoolConfig {
 
@@ -185,7 +185,7 @@ public class TreadPoolConfig {
 
 使用时：
 
-```java
+```Java
     @Resource(name = "consumerQueueThreadPool")
     private ExecutorService consumerQueueThreadPool;
 
@@ -255,7 +255,7 @@ public class TreadPoolConfig {
 
 首先需要定义两个线程池，分别用于执行订单、处理用户。
 
-```java
+```Java
 /**
  * Function:订单服务
  *
@@ -365,7 +365,7 @@ public class CommandUser extends HystrixCommand<String> {
 
 然后模拟运行：
 
-```java
+```Java
     public static void main(String[] args) throws Exception {
         CommandOrder commandPhone = new CommandOrder("手机");
         CommandOrder command = new CommandOrder("电视");
