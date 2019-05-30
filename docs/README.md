@@ -37,4 +37,4 @@
 - [容器的初始化](Java/Spring/IOC/容器的初始化.md)
 
 ### Spring Security
-- [Spring-security中文文档](Java/Spring/Spring Security/Spring-security中文文档.md)
+- [Spring-security中文文档](Java/Spring/Spring-Security/Spring-security中文文档.md)
