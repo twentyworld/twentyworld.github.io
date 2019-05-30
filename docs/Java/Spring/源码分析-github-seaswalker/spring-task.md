@@ -23,7 +23,7 @@ task:annotation-driven标签被以上两种功能共有。下面就这两种功�
 
 定义了一个定时任务，每隔5秒执行Task的print方法，Task:
 
-```java
+```Java
 public class Task {
     public void print() {
         System.out.println("print执行");
@@ -41,7 +41,7 @@ public class Task {
 
 此部分的解析器注册由TaskNamespaceHandler完成:
 
-```java
+```Java
 @Override
 public void init() {
     this.registerBeanDefinitionParser("annotation-driven", new AnnotationDrivenBeanDefinitionParser());
@@ -55,7 +55,7 @@ public void init() {
 
 SchedulerBeanDefinitionParser源码:
 
-```java
+```Java
 @Override
 protected String getBeanClassName(Element element) {
     return "org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler";
@@ -100,7 +100,7 @@ Spring将每一个task:scheduled标签解析为一个Task(的子类)，其类图
 
 ContextLifecycleScheduledTaskRegistrar只实现了afterSingletonsInstantiated方法:
 
-```java
+```Java
 @Override
 public void afterSingletonsInstantiated() {
     scheduleTasks();
@@ -109,7 +109,7 @@ public void afterSingletonsInstantiated() {
 
 ScheduledTaskRegistrar.scheduleTasks:
 
-```java
+```Java
 protected void scheduleTasks() {
      // shcheduler初始化
     if (this.taskScheduler == null) {
@@ -155,7 +155,7 @@ ConcurrentTaskExecutor来自另一个继承体系: TaskExecutor，这和spring-t
 
 以喜闻乐见的CronTask为例。ScheduledTaskRegistrar.scheduleCronTask:
 
-```java
+```Java
 public ScheduledTask scheduleCronTask(CronTask task) {
     ScheduledTask scheduledTask = this.unresolvedTasks.remove(task);
     if (this.taskScheduler != null) {
@@ -177,7 +177,7 @@ public ScheduledTask scheduleCronTask(CronTask task) {
 
 CronTask构造器:
 
-```java
+```Java
 public CronTask(Runnable runnable, String expression) {
     this(runnable, new CronTrigger(expression));
 }
@@ -185,7 +185,7 @@ public CronTask(Runnable runnable, String expression) {
 
 CronTrigger构造器:
 
-```java
+```Java
 public CronTrigger(String expression) {
     this.sequenceGenerator = new CronSequenceGenerator(expression);
 }
@@ -193,7 +193,7 @@ public CronTrigger(String expression) {
 
 答案便在CronSequenceGenerator构造器了:
 
-```java
+```Java
 public CronSequenceGenerator(String expression) {
     this(expression, TimeZone.getDefault());
 }
@@ -209,7 +209,7 @@ public CronSequenceGenerator(String expression, TimeZone timeZone) {
 
 ConcurrentTaskScheduler.schedule:
 
-```java
+```Java
 @Override
 public ScheduledFuture<?> schedule(Runnable task, Trigger trigger) {
     ErrorHandler errorHandler = (this.errorHandler != null ? this.errorHandler : 			 				TaskUtils.getDefaultErrorHandler(true));
@@ -225,7 +225,7 @@ public ScheduledFuture<?> schedule(Runnable task, Trigger trigger) {
 
 schedule方法:
 
-```java
+```Java
 public ScheduledFuture<?> schedule() {
     synchronized (this.triggerContextMonitor) {
         this.scheduledExecutionTime = this.trigger.nextExecutionTime(this.triggerContext);
@@ -241,7 +241,7 @@ public ScheduledFuture<?> schedule() {
 
 可以看出，这里设置了在下一次执行窗口调用this(ReschedulingRunnable)，从类图可以看出，ReschedulingRunnable本身实现了Runnable接口，其run方法:
 
-```java
+```Java
 @Override
 public void run() {
     Date actualExecutionTime = new Date();
@@ -259,7 +259,7 @@ public void run() {
 
 对我们自定义逻辑的调用是通过super.run实现的:
 
-```java
+```Java
 @Override
 public void run() {
     this.delegate.run();
@@ -268,7 +268,7 @@ public void run() {
 
 delegate便是前面提到过的ScheduledMethodRunnable，其run方法:
 
-```java
+```Java
 @Override
 public void run() {
     ReflectionUtils.makeAccessible(this.method);
@@ -278,7 +278,7 @@ public void run() {
 
 当然这只是针对CronTask的实现，而对于IntervalTask就要简单多了，ScheduledTaskRegistrar.scheduleFixedDelayTask部分源码:
 
-```java
+```Java
 public ScheduledTask scheduleFixedDelayTask(IntervalTask task) {
     if (this.taskScheduler != null) {
         if (task.getInitialDelay() > 0) {
@@ -312,7 +312,7 @@ public ScheduledTask scheduleFixedDelayTask(IntervalTask task) {
 
 这样在类或方法上加上注解即可:
 
-```java
+```Java
 @Async("executor")
 public void print() {
     System.out.println("print执行");

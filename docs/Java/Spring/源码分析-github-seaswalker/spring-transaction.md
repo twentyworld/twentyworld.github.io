@@ -20,7 +20,7 @@
 
 TxNamespaceHandler.init:
 
-```java
+```Java
 @Override
 public void init() {
     registerBeanDefinitionParser("advice", new TxAdviceBeanDefinitionParser());
@@ -32,7 +32,7 @@ public void init() {
 
 明显解析的入口便在AnnotationDrivenBeanDefinitionParser.parse:
 
-```java
+```Java
 @Override
 public BeanDefinition parse(Element element, ParserContext parserContext) {
     registerTransactionalEventListenerFactory(parserContext);
@@ -72,7 +72,7 @@ BeanFactoryTransactionAttributeSourceAdvisor->TransactionInterceptor->Annotation
 
 为类创建代理的入口位于AbstractAutoProxyCreator.postProcessAfterInitialization:
 
-```java
+```Java
 @Override
 public Object postProcessAfterInitialization(Object bean, String beanName) throws BeansException {
     if (bean != null) {
@@ -87,7 +87,7 @@ public Object postProcessAfterInitialization(Object bean, String beanName) throw
 
 wrapIfNecessary核心逻辑:
 
-```java
+```Java
 protected Object wrapIfNecessary(Object bean, String beanName, Object cacheKey) {
     // Create proxy if we have advice.
     Object[] specificInterceptors = getAdvicesAndAdvisorsForBean(bean.getClass(), beanName, null);
@@ -105,7 +105,7 @@ protected Object wrapIfNecessary(Object bean, String beanName, Object cacheKey) 
 
 getAdvicesAndAdvisorsForBean用于去容器中寻找适合当前bean的Advisor，其最终调用AbstractAdvisorAutoProxyCreator.findEligibleAdvisors:
 
-```java
+```Java
 protected List<Advisor> findEligibleAdvisors(Class<?> beanClass, String beanName) {
     List<Advisor> candidateAdvisors = findCandidateAdvisors();
     List<Advisor> eligibleAdvisors = findAdvisorsThatCanApply(candidateAdvisors, beanClass, beanName);
@@ -140,7 +140,7 @@ ClassFilter:
 
 位于StaticMethodMatcherPointcut:
 
-```java
+```Java
 private ClassFilter classFilter = ClassFilter.TRUE;
 ```
 
@@ -150,7 +150,7 @@ MethodMatcher:
 
 TransactionAttributeSourcePointcut.matches:
 
-```java
+```Java
 @Override
 public boolean matches(Method method, Class<?> targetClass) {
     //如果已经是事务代理，那么不应该再次代理
@@ -164,7 +164,7 @@ public boolean matches(Method method, Class<?> targetClass) {
 
 getTransactionAttribute方法使用了缓存的思想，但其核心逻辑位于AbstractFallbackTransactionAttributeSource.computeTransactionAttribute:
 
-```java
+```Java
 protected TransactionAttribute computeTransactionAttribute(Method method, Class<?> targetClass) {
     // Don't allow no-public methods as required.
     if (allowPublicMethodsOnly() && !Modifier.isPublic(method.getModifiers())) {
@@ -209,7 +209,7 @@ protected TransactionAttribute computeTransactionAttribute(Method method, Class<
 
 以JDK动态代理为例，JdkDynamicAopProxy.invoke简略版源码:
 
-```java
+```Java
 @Override
 public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
     List<Object> chain = this.advised.getInterceptorsAndDynamicInterceptionAdvice(method, targetClass);
@@ -234,7 +234,7 @@ public Object invoke(Object proxy, Method method, Object[] args) throws Throwabl
 
 根据Spring的定义，Advice可以是一个MethodInterceptor，也可以是类似于Aspectj的before, after通知。转换由DefaultAdvisorAdapterRegistry.getInterceptors完成:
 
-```java
+```Java
 @Override
 public MethodInterceptor[] getInterceptors(Advisor advisor) throws UnknownAdviceTypeException {
     List<MethodInterceptor> interceptors = new ArrayList<MethodInterceptor>(3);
@@ -262,7 +262,7 @@ AdvisorAdapter接口用以支持用户自定义的Advice类型，并将自定义
 
 ReflectiveMethodInvocation.proceed:
 
-```java
+```Java
 @Override
 public Object proceed() throws Throwable {
     if (this.currentInterceptorIndex == this.interceptorsAndDynamicMethodMatchers.size() - 1) {
@@ -293,7 +293,7 @@ public Object proceed() throws Throwable {
 
 invoke方法:
 
-```java
+```Java
 @Override
 public Object invoke(final MethodInvocation invocation) throws Throwable {
     Class<?> targetClass = (invocation.getThis() != null ?
@@ -311,7 +311,7 @@ public Object invoke(final MethodInvocation invocation) throws Throwable {
 
 invokeWithinTransaction简略版源码(仅保留PlatformTransactionManager部分):
 
-```java
+```Java
 protected Object invokeWithinTransaction(Method method, Class<?> targetClass, final InvocationCallback invocation){
     // If the transaction attribute is null, the method is non-transactional.
     final TransactionAttribute txAttr = getTransactionAttributeSource()
@@ -344,7 +344,7 @@ protected Object invokeWithinTransaction(Method method, Class<?> targetClass, fi
 
 determineTransactionManager方法用以确定使用的事务管理器:
 
-```java
+```Java
 protected PlatformTransactionManager determineTransactionManager(TransactionAttribute txAttr) {
     //如果没有事务属性，那么仅从缓存中查找，找不到返回null
     if (txAttr == null || this.beanFactory == null) {
@@ -390,7 +390,7 @@ invocation.proceedWithInvocation()便是我们的逻辑，而createTransactionIf
 
 TransactionAspectSupport.createTransactionIfNecessary:
 
-```java
+```Java
 protected TransactionInfo createTransactionIfNecessary(
     PlatformTransactionManager tm, TransactionAttribute txAttr, final String joinpointIdentification) {
     // If no name specified, apply method identification as transaction name.
@@ -420,7 +420,7 @@ protected TransactionInfo createTransactionIfNecessary(
 
 源码位于DataSourceTransactionManager.doGetTransaction，核心逻辑在TransactionSynchronizationManager.doGetResource:
 
-```java
+```Java
 private static Object doGetResource(Object actualKey) {
     Map<Object, Object> map = resources.get();
     if (map == null) {
@@ -442,7 +442,7 @@ private static Object doGetResource(Object actualKey) {
 
 actualKey实际上是DataSource对象，resources是一个ThreadLocal对象，其声明源码:
 
-```java
+```Java
 private static final ThreadLocal<Map<Object, Object>> resources =
             new NamedThreadLocal<Map<Object, Object>>("Transactional resources");
 ```
@@ -459,7 +459,7 @@ private static final ThreadLocal<Map<Object, Object>> resources =
 
 即当前方法需要在非事务的环境下执行，如果有事务存在，那么抛出异常。相关源码:
 
-```java
+```Java
 if (definition.getPropagationBehavior() == TransactionDefinition.PROPAGATION_NEVER) {
     throw new IllegalTransactionStateException(
         "Existing transaction found for transaction marked with propagation 'never'");
@@ -470,7 +470,7 @@ if (definition.getPropagationBehavior() == TransactionDefinition.PROPAGATION_NEV
 
 与前者的区别在于，如果有事务存在，那么将事务挂起，而不是抛出异常。
 
-```java
+```Java
 if (definition.getPropagationBehavior() == TransactionDefinition.PROPAGATION_NOT_SUPPORTED) {
     Object suspendedResources = suspend(transaction);
     boolean newSynchronization = (getTransactionSynchronization() == SYNCHRONIZATION_ALWAYS);
@@ -483,7 +483,7 @@ if (definition.getPropagationBehavior() == TransactionDefinition.PROPAGATION_NOT
 
 此部分的核心在于suspend方法，最终调用TransactionSynchronizationManager.doUnbindResource:
 
-```java
+```Java
 private static Object doUnbindResource(Object actualKey) {
     Map<Object, Object> map = resources.get();
     if (map == null) {
@@ -510,7 +510,7 @@ private static Object doUnbindResource(Object actualKey) {
 
 DataSourceTransactionManager.doSuspend:
 
-```java
+```Java
 @Override
 protected Object doSuspend(Object transaction) {
     DataSourceTransactionObject txObject = (DataSourceTransactionObject) transaction;
@@ -525,7 +525,7 @@ protected Object doSuspend(Object transaction) {
 
 ##### PROPAGATION_REQUIRES_NEW
 
-```java
+```Java
 if (definition.getPropagationBehavior() == TransactionDefinition.PROPAGATION_REQUIRES_NEW) {
     SuspendedResourcesHolder suspendedResources = suspend(transaction);
     boolean newSynchronization = (getTransactionSynchronization() != SYNCHRONIZATION_NEVER);
@@ -549,7 +549,7 @@ if (definition.getPropagationBehavior() == TransactionDefinition.PROPAGATION_REQ
 
 核心源码(忽略JTA部分):
 
-```java
+```Java
 if (definition.getPropagationBehavior() == TransactionDefinition.PROPAGATION_NESTED) {
     if (useSavepointForNestedTransaction()) {
         // Create savepoint within existing Spring-managed transaction,
@@ -565,7 +565,7 @@ if (definition.getPropagationBehavior() == TransactionDefinition.PROPAGATION_NES
 
 关键在于如何创建SavePoint, AbstractTransactionStatus.createAndHoldSavepoint:
 
-```java
+```Java
 public void createAndHoldSavepoint() throws TransactionException {
     setSavepoint(getSavepointManager().createSavepoint());
 }
@@ -573,7 +573,7 @@ public void createAndHoldSavepoint() throws TransactionException {
 
 DefaultTransactionStatus.getSavepointManager:
 
-```java
+```Java
 @Override
 protected SavepointManager getSavepointManager() {
     if (!isTransactionSavepointManager()) {
@@ -594,7 +594,7 @@ protected SavepointManager getSavepointManager() {
 
   - TransactionBean:
 
-    ```java
+    ```Java
     @Component
     public class TransactionBean {
         private NestedBean nestedBean;
@@ -615,7 +615,7 @@ protected SavepointManager getSavepointManager() {
 
   - NestedBean:
 
-    ```java
+    ```Java
     @Component
     public class NestedBean {
         @Transactional(propagation = Propagation.NESTED)
@@ -636,7 +636,7 @@ protected SavepointManager getSavepointManager() {
 
 - 入口:
 
-  ```java
+  ```Java
   public static void main(String[] args) {
     ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext("config.xml");
       TransactionBean bean = context.getBean(TransactionBean.class);
@@ -670,7 +670,7 @@ protected SavepointManager getSavepointManager() {
 
 JdbcTransactionObjectSupport.createSavepoint简略版源码:
 
-```java
+```Java
 @Override
 public Object createSavepoint() throws TransactionException {
     ConnectionHolder conHolder = getConnectionHolderForSavepoint();
@@ -680,7 +680,7 @@ public Object createSavepoint() throws TransactionException {
 
 ConnectionHolder.createSavepoint:
 
-```java
+```Java
 public Savepoint createSavepoint() throws SQLException {
     this.savepointCounter++;
     return getConnection().setSavepoint(SAVEPOINT_NAME_PREFIX + this.savepointCounter);
@@ -699,7 +699,7 @@ public Savepoint createSavepoint() throws SQLException {
 
 如果之前不存在事务，那么就需要创建了，核心逻辑位于DataSourceTransactionManager.doBegin:
 
-```java
+```Java
 @Override
 protected void doBegin(Object transaction, TransactionDefinition definition) {
     //此时，txObject不为null，只是其核心的ConnectHolder属性为null

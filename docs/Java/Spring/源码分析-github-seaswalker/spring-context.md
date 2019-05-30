@@ -2,13 +2,13 @@
 
 入口方法在BeanDefinitionParserDelegate.parseCustomElement：
 
-```java
+```Java
 return handler.parse(ele, new ParserContext(this.readerContext, this, containingBd));
 ```
 
 parse方法由各种NamespaceHandler的父类NamespaceHandlerSupport实现:
 
-```java
+```Java
 @Override
 public BeanDefinition parse(Element element, ParserContext parserContext) {
     return findParserForElement(element, parserContext).parse(element, parserContext);
@@ -17,7 +17,7 @@ public BeanDefinition parse(Element element, ParserContext parserContext) {
 
 findParserForElement方法用以寻找适用于此元素的BeanDefinitionParser对象:
 
-```java
+```Java
 private BeanDefinitionParser findParserForElement(Element element, ParserContext parserContext) {
     String localName = parserContext.getDelegate().getLocalName(element);
     BeanDefinitionParser parser = this.parsers.get(localName);
@@ -35,7 +35,7 @@ localName是个什么东西呢，比如对于context:annotation-config标签就�
 
 AnnotationConfigBeanDefinitionParser.parse:
 
-```java
+```Java
 @Override
 public BeanDefinition parse(Element element, ParserContext parserContext) {
     //返回null
@@ -62,7 +62,7 @@ public BeanDefinition parse(Element element, ParserContext parserContext) {
 
 AnnotationConfigUtils.registerAnnotationConfigProcessors源码:
 
-```java
+```Java
 //第一个参数其实就是DefaultListableBeanFactory,第二个参数为null
 public static Set<BeanDefinitionHolder> registerAnnotationConfigProcessors(
         BeanDefinitionRegistry registry, Object source) {
@@ -165,7 +165,7 @@ public static Set<BeanDefinitionHolder> registerAnnotationConfigProcessors(
 
 用于开启对JSR-250的支持，开启的先决条件是当前classpath中有其类，检测的源码:
 
-```java
+```Java
 private static final boolean jsr250Present =
     ClassUtils.isPresent("javax.annotation.Resource", AnnotationConfigUtils.class.getClassLoader());
 ```
@@ -178,7 +178,7 @@ private static final boolean jsr250Present =
 
 用于提供JPA支持，开启的先决条件仍然是检测classpath下是否有其类存在，源码:
 
-```java
+```Java
 private static final boolean jpaPresent =
     ClassUtils.isPresent("javax.persistence.EntityManagerFactory",
         AnnotationConfigUtils.class.getClassLoader()) &&
@@ -219,7 +219,7 @@ rt.jar下面并没有JPA的包，所以此Processor默认是没有被注册的�
 
 本身是一个BeanFactoryPostProcessor对象，其执行入口在AbstractApplicationContext.refresh方法:
 
-```java
+```Java
 invokeBeanFactoryPostProcessors(beanFactory);
 ```
 
@@ -233,7 +233,7 @@ invokeBeanFactoryPostProcessors(beanFactory);
 
 此部分源码:
 
-```java
+```Java
 @Override
 public void postProcessBeanDefinitionRegistry(BeanDefinitionRegistry registry) {
     RootBeanDefinition iabpp = new RootBeanDefinition(ImportAwareBeanPostProcessor.class);
@@ -255,7 +255,7 @@ public void postProcessBeanDefinitionRegistry(BeanDefinitionRegistry registry) {
 
 有一个类负责生成Student bean:
 
-```java
+```Java
 @Configuration
 public class StudentConfig implements ImportAware {
     @Bean
@@ -274,7 +274,7 @@ public class StudentConfig implements ImportAware {
 
 生成的bean就以所在的方法名命名。还有一个类负责生成SimpleBean:
 
-```java
+```Java
 @Configuration
 @Import(StudentConfig.class)
 public class SimpleBeanConfig {
@@ -291,7 +291,7 @@ public class SimpleBeanConfig {
 
 启动代码:
 
-```java
+```Java
 public static void main(String[] args) {
     AnnotationConfigApplicationContext context =
         new AnnotationConfigApplicationContext(SimpleBeanConfig.class);
@@ -316,7 +316,7 @@ public static void main(String[] args) {
 
 ConfigurationClassPostProcessor.processConfigBeanDefinitions相关代码:
 
-```java
+```Java
 // Detect any custom bean name generation strategy supplied through the enclosing application context
 SingletonBeanRegistry singletonRegistry = null;
 if (registry instanceof SingletonBeanRegistry) {
@@ -342,7 +342,7 @@ if (registry instanceof SingletonBeanRegistry) {
 
 此方法调用了enhanceConfigurationClasses，其实就是将@Configuration的beanClass转换为CGLIB代理子类。简略版的源码:
 
-```java
+```Java
 public void enhanceConfigurationClasses(ConfigurableListableBeanFactory beanFactory) {
     Map<String, AbstractBeanDefinition> configBeanDefs =
         new LinkedHashMap<String, AbstractBeanDefinition>();
@@ -375,7 +375,7 @@ public void enhanceConfigurationClasses(ConfigurableListableBeanFactory beanFact
 
 ConfigurationClassEnhancer.newEnhancer:
 
-```java
+```Java
 private Enhancer newEnhancer(Class<?> superclass, ClassLoader classLoader) {
     Enhancer enhancer = new Enhancer();
     enhancer.setSuperclass(superclass);
@@ -393,7 +393,7 @@ private Enhancer newEnhancer(Class<?> superclass, ClassLoader classLoader) {
 
 CALLBACK_FILTER是个什么东西呢:
 
-```java
+```Java
 private static final ConditionalCallbackFilter CALLBACK_FILTER =
     new ConditionalCallbackFilter(CALLBACKS);
 
@@ -410,7 +410,7 @@ private static final Callback[] CALLBACKS = new Callback[] {
 
   我们可以使用@Scope注解来使用注解的方式配置其Scope:
 
-  ```java
+  ```Java
   @Bean
   @Scope("prototype")
   public Student student() {
@@ -437,7 +437,7 @@ private static final Callback[] CALLBACKS = new Callback[] {
 
 AbstractAutowireCapableBeanFactory.doCreateBean(简略):
 
-```java
+```Java
 protected Object doCreateBean(final String beanName, final RootBeanDefinition mbd, final Object[] args) {
     // Instantiate the bean.
     BeanWrapper instanceWrapper = null;
@@ -461,7 +461,7 @@ protected Object doCreateBean(final String beanName, final RootBeanDefinition mb
 
 applyMergedBeanDefinitionPostProcessors:
 
-```java
+```Java
 protected void applyMergedBeanDefinitionPostProcessors(RootBeanDefinition mbd, Class<?> beanType,
     String beanName) {
     for (BeanPostProcessor bp : getBeanPostProcessors()) {
@@ -475,7 +475,7 @@ protected void applyMergedBeanDefinitionPostProcessors(RootBeanDefinition mbd, C
 
 ##### 源码
 
-```java
+```Java
 @Override
 public void postProcessMergedBeanDefinition(RootBeanDefinition beanDefinition, Class<?> beanType, String 	 beanName) {
     if (beanType != null) {
@@ -488,7 +488,7 @@ public void postProcessMergedBeanDefinition(RootBeanDefinition beanDefinition, C
 
 findAutowiringMetadata:
 
-```java
+```Java
 private InjectionMetadata findAutowiringMetadata(String beanName, Class<?> clazz, PropertyValues pvs) {
     // Fall back to class name as cache key, for backwards compatibility with custom callers.
     String cacheKey = (StringUtils.hasLength(beanName) ? beanName : clazz.getName());
@@ -519,7 +519,7 @@ injectionMetadataCache是一个ConcurrentHashMap对象，个人认为设置此�
 
 @Autowire注解的扫描在buildAutowiringMetadata方法:
 
-```java
+```Java
 private InjectionMetadata buildAutowiringMetadata(final Class<?> clazz) {
     LinkedList<InjectionMetadata.InjectedElement> elements =
         new LinkedList<InjectionMetadata.InjectedElement>();
@@ -582,7 +582,7 @@ private InjectionMetadata buildAutowiringMetadata(final Class<?> clazz) {
 
 ReflectionUtils的实现其实就是访问者模式，其源码:
 
-```java
+```Java
 public static void doWithLocalFields(Class<?> clazz, FieldCallback fc) {
     for (Field field : getDeclaredFields(clazz)) {
         try {
@@ -601,7 +601,7 @@ determineRequiredStatus方法用以判断是否是必须的，所谓的必须是
 
 就是方法扫描的第一行源码:
 
-```java
+```Java
 Method bridgedMethod = BridgeMethodResolver.findBridgedMethod(method);
 ```
 
@@ -609,7 +609,7 @@ Method bridgedMethod = BridgeMethodResolver.findBridgedMethod(method);
 
 有这样的demo代码:
 
-```java
+```Java
 public class JavaTest {
     private class MyList extends ArrayList {
         //注意父类的返回类型是Object
@@ -635,7 +635,7 @@ name: get, return: class java.lang.Object
 
 通过javap反编译命令也可以看到有两个get方法。其中返回Object的便是bridge方法。jdk从1.5开始便提供了方法判断是否是此种方法: Method:
 
-```java
+```Java
 /**
  * Returns {@code true} if this method is a bridge
  * method; returns {@code false} otherwise.
@@ -669,7 +669,7 @@ AbstractAutowireCapableBeanFactory.populateBean方法，执行时机是在bean�
 
 源码:
 
-```java
+```Java
 public void processInjection(Object bean) throws BeansException {
     Class<?> clazz = bean.getClass();
      // 查找缓存
@@ -696,7 +696,7 @@ public void processInjection(Object bean) throws BeansException {
 
 空实现，就是这么任性:
 
-```java
+```Java
 @Override
 public void postProcessMergedBeanDefinition(RootBeanDefinition beanDefinition, Class<?> beanType, String 	beanName) {
 }
@@ -706,7 +706,7 @@ public void postProcessMergedBeanDefinition(RootBeanDefinition beanDefinition, C
 
 源码:
 
-```java
+```Java
 @Override
 public PropertyValues postProcessPropertyValues(
         PropertyValues pvs, PropertyDescriptor[] pds, Object bean, String beanName)
@@ -740,7 +740,7 @@ validatedBeanNames是一个Set<String>类型，对于已经检查过的bean，�
 
 AbstractAutowireCapableBeanFactory.populateBean相关代码:
 
-```java
+```Java
 PropertyDescriptor[] filteredPds = filterPropertyDescriptorsForDependencyCheck(bw, mbd.allowCaching);
 if (hasInstAwareBpps) {
     for (BeanPostProcessor bp : getBeanPostProcessors()) {
@@ -757,7 +757,7 @@ if (hasInstAwareBpps) {
 
 filterPropertyDescriptorsForDependencyCheck单参数方法:
 
-```java
+```Java
 protected PropertyDescriptor[] filterPropertyDescriptorsForDependencyCheck(BeanWrapper bw) {
     List<PropertyDescriptor> pds =
             new LinkedList<PropertyDescriptor>(Arrays.asList(bw.getPropertyDescriptors()));
@@ -775,7 +775,7 @@ protected PropertyDescriptor[] filterPropertyDescriptorsForDependencyCheck(BeanW
 
 BeanWrapperImpl.getPropertyDescriptors:
 
-```java
+```Java
 @Override
 public PropertyDescriptor[] getPropertyDescriptors() {
     return getCachedIntrospectionResults().getPropertyDescriptors();
@@ -795,7 +795,7 @@ private CachedIntrospectionResults getCachedIntrospectionResults() {
 
 有一个bean如下:
 
-```java
+```Java
 @Component("simpleBean")
 public class SimpleBean {
     @Autowired(required = false)
@@ -828,7 +828,7 @@ public class SimpleBean {
 
 此方法的执行入口以及调用时机上面已经说过了。其源码:
 
-```java
+```Java
 @Override
 public void postProcessMergedBeanDefinition(RootBeanDefinition beanDefinition, Class<?> beanType, String 	 beanName) {
     super.postProcessMergedBeanDefinition(beanDefinition, beanType, beanName);
@@ -843,7 +843,7 @@ public void postProcessMergedBeanDefinition(RootBeanDefinition beanDefinition, C
 
 可以看出，首先调用了其父类InitDestroyAnnotationBeanPostProcessor的postProcessMergedBeanDefinition方法，源码:
 
-```java
+```Java
 @Override
 public void postProcessMergedBeanDefinition(RootBeanDefinition beanDefinition, Class<?> beanType, String 	 beanName) {
     if (beanType != null) {
@@ -855,7 +855,7 @@ public void postProcessMergedBeanDefinition(RootBeanDefinition beanDefinition, C
 
 findLifecycleMetadata的套路和上面运行-AutowiredAnnotationBeanPostProcessor-源码一节中所说完全一样，所不同的是此处是**遍历所有method寻找初始化和销毁方法标记**。这两个标记很有意思，Spring允许我们自定义是哪两个标记(getter/setter方法)。子类CommonAnnotationBeanPostProcessor在构造器中设置了其值:
 
-```java
+```Java
 public CommonAnnotationBeanPostProcessor() {
     setInitAnnotationType(PostConstruct.class);
     setDestroyAnnotationType(PreDestroy.class);
@@ -874,7 +874,7 @@ CommonAnnotationBeanPostProcessor本质上是一个BeanPostProcessor，所以我
 
 Init是一个很简单的自定义注解:
 
-```java
+```Java
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
 public @interface Init {}
@@ -882,7 +882,7 @@ public @interface Init {}
 
 在自己的bean中使用此注解:
 
-```java
+```Java
 @Init
 public void init() {
     System.out.println("Init!");
@@ -901,7 +901,7 @@ findResourceMetadata的套路还是一样，就是在属性和方法上寻找@Re
 
 源码:
 
-```java
+```Java
 @Override
 public PropertyValues postProcessPropertyValues(
         PropertyValues pvs, PropertyDescriptor[] pds, Object bean, String beanName) {
@@ -917,7 +917,7 @@ public PropertyValues postProcessPropertyValues(
 
 实现在父类InitDestroyAnnotationBeanPostProcessor：
 
-```java
+```Java
 @Override
 public Object postProcessBeforeInitialization(Object bean, String beanName) {
     LifecycleMetadata metadata = findLifecycleMetadata(bean.getClass());
@@ -928,7 +928,7 @@ public Object postProcessBeforeInitialization(Object bean, String beanName) {
 
 invokeInitMethods:
 
-```java
+```Java
 public void invokeInitMethods(Object target, String beanName) throws Throwable {
     Collection<LifecycleElement> initMethodsToIterate =
             (this.checkedInitMethods != null ? this.checkedInitMethods : this.initMethods);
@@ -955,7 +955,7 @@ public void invokeInitMethods(Object target, String beanName) throws Throwable {
 
 DefaultListableBeanFactory.preInstantiateSingletons相关源码:
 
-```java
+```Java
 // Trigger post-initialization callback for all applicable beans...
 for (String beanName : beanNames) {
     Object singletonInstance = getSingleton(beanName);
@@ -985,7 +985,7 @@ for (String beanName : beanNames) {
 
 ComponentScanBeanDefinitionParser.parse源码:
 
-```java
+```Java
 @Override
 public BeanDefinition parse(Element element, ParserContext parserContext) {
     // base-package属性
@@ -1008,7 +1008,7 @@ public BeanDefinition parse(Element element, ParserContext parserContext) {
 
 此部分负责初始化包扫描用到的扫描器，是一个ClassPathBeanDefinitionScanner对象，configureScanner方法源码:
 
-```java
+```Java
 protected ClassPathBeanDefinitionScanner configureScanner(ParserContext parserContext, Element element) {
     boolean useDefaultFilters = true;
     if (element.hasAttribute(USE_DEFAULT_FILTERS_ATTRIBUTE)) {
@@ -1078,7 +1078,7 @@ component-scan注解会默认扫描喜闻乐见的@Component、@Repository、@Se
 
 parseTypeFilters方法负责此部分的解析，只贴部分源码:
 
-```java
+```Java
 if (INCLUDE_FILTER_ELEMENT.equals(localName)) {
     TypeFilter typeFilter = createTypeFilter((Element) node, classLoader, parserContext);
     scanner.addIncludeFilter(typeFilter);
@@ -1096,7 +1096,7 @@ if (INCLUDE_FILTER_ELEMENT.equals(localName)) {
 
 入口方法便是ClassPathBeanDefinitionScanner.doScan:
 
-```java
+```Java
 protected Set<BeanDefinitionHolder> doScan(String... basePackages) {
     Assert.notEmpty(basePackages, "At least one base package must be specified");
     Set<BeanDefinitionHolder> beanDefinitions = new LinkedHashSet<BeanDefinitionHolder>();
@@ -1136,7 +1136,7 @@ protected Set<BeanDefinitionHolder> doScan(String... basePackages) {
 
 对class文件的读取、分析是通过ASM完成的，入口在SimpleMetadataReader的构造器:
 
-```java
+```Java
 SimpleMetadataReader(Resource resource, ClassLoader classLoader) throws IOException {
     InputStream is = new BufferedInputStream(resource.getInputStream());
     ClassReader classReader;
@@ -1158,7 +1158,7 @@ SimpleMetadataReader(Resource resource, ClassLoader classLoader) throws IOExcept
 
 核心在于其visitAnnotation方法:
 
-```java
+```Java
 @Override
 public AnnotationVisitor visitAnnotation(final String desc, boolean visible) {
     String className = Type.getType(desc).getClassName();
@@ -1176,7 +1176,7 @@ public AnnotationVisitor visitAnnotation(final String desc, boolean visible) {
 
 AnnotationScopeMetadataResolver.resolveScopeMetadata:
 
-```java
+```Java
 @Override
 public ScopeMetadata resolveScopeMetadata(BeanDefinition definition) {
     ScopeMetadata metadata = new ScopeMetadata();
@@ -1201,7 +1201,7 @@ public ScopeMetadata resolveScopeMetadata(BeanDefinition definition) {
 
 proxyMode和xml的scoped-proxy属性是一个概念:
 
-```java
+```Java
 @Scope(value = "singleton", proxyMode = ScopedProxyMode.DEFAULT)
 ```
 
@@ -1211,7 +1211,7 @@ proxyMode和xml的scoped-proxy属性是一个概念:
 
 AnnotationBeanNameGenerator.generateBeanName:
 
-```java
+```Java
 @Override
 public String generateBeanName(BeanDefinition definition, BeanDefinitionRegistry registry) {
     if (definition instanceof AnnotatedBeanDefinition) {
@@ -1230,7 +1230,7 @@ public String generateBeanName(BeanDefinition definition, BeanDefinitionRegistry
 
 默认会首先尝试根据@Component、@Service、@Controller、@Repository、@ManagedBean、@Named的value属性生成，determineBeanNameFromAnnotation:
 
-```java
+```Java
 protected String determineBeanNameFromAnnotation(AnnotatedBeanDefinition annotatedDef) {
     AnnotationMetadata amd = annotatedDef.getMetadata();
     Set<String> types = amd.getAnnotationTypes();
@@ -1258,7 +1258,7 @@ protected String determineBeanNameFromAnnotation(AnnotatedBeanDefinition annotat
 
 isStereotypeWithNameValue方法用于判断此注解是否可以用来生成beanName，比如@Scope便不适合:
 
-```java
+```Java
 protected boolean isStereotypeWithNameValue(String annotationType,
         Set<String> metaAnnotationTypes, Map<String, Object> attributes) {
     // org.springframework.stereotype.Component
@@ -1272,7 +1272,7 @@ protected boolean isStereotypeWithNameValue(String annotationType,
 
 metaAnnotationTypes用以判断元注解，针对这种情况:
 
-```java
+```Java
 @Component
 public @interface Controller {}
 ```
@@ -1283,7 +1283,7 @@ public @interface Controller {}
 
 如果上面提到的条件不满足，那么便会用默认策略生成beanName，buildDefaultBeanName：
 
-```java
+```Java
 protected String buildDefaultBeanName(BeanDefinition definition) {
     // base.SimpleBean -> SimpleBean
     String shortClassName = ClassUtils.getShortName(definition.getBeanClassName());
@@ -1298,7 +1298,7 @@ protected String buildDefaultBeanName(BeanDefinition definition) {
 
 入口在AnnotationConfigUtils.processCommonDefinitionAnnotations，其它指的是这几个:
 
-```java
+```Java
 @Lazy
 @Primary
 @DependsOn("student")
@@ -1313,7 +1313,7 @@ public class SimpleBean {}
 
 Spring会检测容器中是否已经存在同名的BeanDefinition。ClassPathBeanDefinitionScanner.checkCandidate:
 
-```java
+```Java
 protected boolean checkCandidate(String beanName, BeanDefinition beanDefinition) {
     // 没有同名的，直接返回
     if (!this.registry.containsBeanDefinition(beanName)) {
@@ -1333,7 +1333,7 @@ protected boolean checkCandidate(String beanName, BeanDefinition beanDefinition)
 
 isCompatible用于判断和之前的BeanDefinition是否兼容:
 
-```java
+```Java
 protected boolean isCompatible(BeanDefinition newDefinition, BeanDefinition existingDefinition) {
     //// explicitly registered overriding bean
     return (!(existingDefinition instanceof ScannedGenericBeanDefinition) ||
@@ -1350,14 +1350,14 @@ protected boolean isCompatible(BeanDefinition newDefinition, BeanDefinition exis
 
 入口: ClassPathBeanDefinitionScanner.doScan:
 
-```java
+```Java
 BeanDefinitionHolder definitionHolder = new BeanDefinitionHolder(candidate, beanName);
 definitionHolder = AnnotationConfigUtils.applyScopedProxyMode(scopeMetadata, definitionHolder, this.registry);
 ```
 
 AnnotationConfigUtils.applyScopedProxyMode:
 
-```java
+```Java
 static BeanDefinitionHolder applyScopedProxyMode(
         ScopeMetadata metadata, BeanDefinitionHolder definition, BeanDefinitionRegistry registry) {
     ScopedProxyMode scopedProxyMode = metadata.getScopedProxyMode();
@@ -1381,7 +1381,7 @@ static BeanDefinitionHolder applyScopedProxyMode(
 
 做个实验:
 
-```java
+```Java
 public class Boostrap {
     public static void main(String[] args) {
         ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext("config.xml");
@@ -1402,7 +1402,7 @@ base.SimpleBean$$EnhancerBySpringCGLIB$$27256c61
 
 DefaultListableBeanFactory.getBean(Class<T> requiredType, Object... args)部分源码:
 
-```java
+```Java
 String[] beanNames = getBeanNamesForType(requiredType);
 //不止一个满足条件(代理者和被代理者)
 if (beanNames.length > 1) {
@@ -1458,7 +1458,7 @@ student.name=dog
 
 运行如下的代码:
 
-```java
+```Java
 public static void main(String[] args) {
     ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext("config.xml");
     SimpleBean bean = SimpleBean.class.cast(context.getBean(SimpleBean.class));
@@ -1481,7 +1481,7 @@ public static void main(String[] args) {
 
 AbstractPropertyLoadingBeanDefinitionParser.doParse:
 
-```java
+```Java
 @Override
 protected void doParse(Element element, BeanDefinitionBuilder builder) {
     String location = element.getAttribute("location");
@@ -1543,7 +1543,7 @@ protected void doParse(Element element, BeanDefinitionBuilder builder) {
 
 这个属性让我很迷惑。Spring说是此选项决定"local"的属性是否可以覆盖属性文件中的值。正如下面说的，实际上属性文件被解析到了PropertyOverrideConfigurer对象，其父类PropertiesLoaderSupport有一个字段:
 
-```java
+```Java
 protected Properties[] localProperties;
 
 /**
@@ -1584,7 +1584,7 @@ public void setProperties(Properties properties) {
 
 入口当然是BeanFactoryPostProcessor.postProcessBeanFactory(PropertyResourceConfigurer):
 
-```java
+```Java
 @Override
 public void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory) {
     try {
@@ -1607,7 +1607,7 @@ public void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory) 
 
 PropertiesLoaderSupport.mergeProperties:
 
-```java
+```Java
 protected Properties mergeProperties() throws IOException {
     Properties result = new Properties();
     if (this.localOverride) {
@@ -1637,7 +1637,7 @@ convertProperties是个空实现，因为这里并不需要，在bean实际生�
 
 就是逐个属性调用PropertyOverrideConfigurer.applyPropertyValue:
 
-```java
+```Java
 protected void applyPropertyValue(
         ConfigurableListableBeanFactory factory, String beanName, String property, String value) {
 
@@ -1663,7 +1663,7 @@ addPropertyValue会遍历PropertyValue链表，找到name相同的进行value替
 
 PropertyPlaceholderBeanDefinitionParser.doParse:
 
-```java
+```Java
 @Override
 protected void doParse(Element element, BeanDefinitionBuilder builder) {
     super.doParse(element, builder);
@@ -1721,7 +1721,7 @@ Spring会将java的System.getProperties也当做属性的来源，此配置用�
 
 PropertySourcesPlaceholderConfigurer.postProcessBeanFactory：
 
-```java
+```Java
 @Override
 public void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory) throws BeansException {
     if (this.propertySources == null) {
@@ -1784,7 +1784,7 @@ Premain-Class: org.springframework.instrument.InstrumentationSavingAge
 
 Spring的这个jar包只有这一个类，premain方法便是jvm调用的入口，方法参数是固定的。源码:
 
-```java
+```Java
 public class InstrumentationSavingAgent {
 
     private static volatile Instrumentation instrumentation;
@@ -1813,7 +1813,7 @@ public class InstrumentationSavingAgent {
 
 LoadTimeWeaverBeanDefinitionParser的父类初始化了一个DefaultContextLoadTimeWeaver类型的BeanDefinition放入容器，类型的决定位于LoadTimeWeaverBeanDefinitionParser.getBeanClassName:
 
-```java
+```Java
 @Override
 protected String getBeanClassName(Element element) {
     // 如果配置了weaver-class属性，那么使用其值
@@ -1829,7 +1829,7 @@ protected String getBeanClassName(Element element) {
 
 LoadTimeWeaverBeanDefinitionParser.resolveId:
 
-```java
+```Java
 @Override
 protected String resolveId(Element element, AbstractBeanDefinition definition, ParserContext 	parserContext) {
     // loadTimeWeaver
@@ -1843,7 +1843,7 @@ DefaultContextLoadTimeWeaver其实是个包装类，包装了真正的LoadTimeWe
 
 LoadTimeWeaverBeanDefinitionParser.doParse:
 
-```java
+```Java
 @Override
 protected void doParse(Element element, ParserContext parserContext, BeanDefinitionBuilder builder) {
     builder.setRole(BeanDefinition.ROLE_INFRASTRUCTURE);
@@ -1870,7 +1870,7 @@ protected void doParse(Element element, ParserContext parserContext, BeanDefinit
 
 isAspectJWeavingEnabled方法用于判断是否启用:
 
-```java
+```Java
 protected boolean isAspectJWeavingEnabled(String value, ParserContext parserContext) {
     if ("on".equals(value)) {
         return true;
@@ -1894,13 +1894,13 @@ protected boolean isAspectJWeavingEnabled(String value, ParserContext parserCont
 
 如果isBeanConfigurerAspectEnabled方法返回true，那么将会生成一个此对象并调用其parse方法，查看ContextNamespaceHandler的init方法源码可以发现，spring-configured对应的解析器其实就是它:
 
-```java
+```Java
 registerBeanDefinitionParser("spring-configured", new SpringConfiguredBeanDefinitionParser());
 ```
 
 其parse方法:
 
-```java
+```Java
 @Override
 public BeanDefinition parse(Element element, ParserContext parserContext) {
     // org.springframework.context.config.internalBeanConfigurerAspect
@@ -1936,7 +1936,7 @@ AnnotationBeanConfigurerAspect及其父类其实是由aspectj源文件(.aj)编�
 
 在AnnotationBeanConfigurerAspect中定义，源码:
 
-```java
+```Java
 public pointcut inConfigurableBean() : @this(Configurable);
 ```
 
@@ -1946,7 +1946,7 @@ public pointcut inConfigurableBean() : @this(Configurable);
 
 源码:
 
-```java
+```Java
 public pointcut beanConstruction(Object bean) :
             initialization(ConfigurableObject+.new(..)) && this(bean);
 ```
@@ -1955,7 +1955,7 @@ initialization表示匹配构造器的调用，ConfigurableObject+表示Configur
 
 ##### preConstructionCondition
 
-```java
+```Java
 private pointcut preConstructionCondition() :
             leastSpecificSuperTypeConstruction() && preConstructionConfiguration();
 ```
@@ -1964,13 +1964,13 @@ private pointcut preConstructionCondition() :
 
 ##### leastSpecificSuperTypeConstruction
 
-```java
+```Java
 public pointcut leastSpecificSuperTypeConstruction() : initialization(ConfigurableObject.new(..));
 ```
 
 ##### preConstructionConfiguration
 
-```java
+```Java
 public pointcut preConstructionConfiguration() : preConstructionConfigurationSupport(*);
 private pointcut preConstructionConfigurationSupport(Configurable c) : @this(c) && if (c.preConstruction());
 ```
@@ -1979,14 +1979,14 @@ preConstruction表示@Configurable注解的preConstruction属性，此属性表�
 
 ##### postConstructionCondition
 
-```java
+```Java
 private pointcut postConstructionCondition() :
             mostSpecificSubTypeConstruction() && !preConstructionConfiguration();
 ```
 
 mostSpecificSubTypeConstruction:
 
-```java
+```Java
 public pointcut mostSpecificSubTypeConstruction() :
             if (thisJoinPoint.getSignature().getDeclaringType() == thisJoinPoint.getThis().getClass());
 ```
@@ -1997,7 +1997,7 @@ advise可以声明JoinPoint类型的方法参数，thisJoinpoint指的就是这�
 
 ##### 前置
 
-```java
+```Java
 before(Object bean) :
     beanConstruction(bean) && preConstructionCondition() && inConfigurableBean()  {
     configureBean(bean);
@@ -2008,7 +2008,7 @@ before(Object bean) :
 
 AspectJWeavingEnabler.postProcessBeanFactory:
 
-```java
+```Java
 @Override
 public void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory) throws BeansException {
     enableAspectJWeaving(this.loadTimeWeaver, this.beanClassLoader);
@@ -2017,7 +2017,7 @@ public void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory) 
 
 enableAspectJWeaving:
 
-```java
+```Java
 public static void enableAspectJWeaving(LoadTimeWeaver weaverToUse, ClassLoader beanClassLoader) {
     // 不为空
     if (weaverToUse == null) {
@@ -2039,7 +2039,7 @@ AspectJWeavingEnabler实现了LoadTimeWeaverAware接口，那么何时由谁进�
 
 当Context初始化时，AbstractApplicationContext.prepareBeanFactory部分源码:
 
-```java
+```Java
 // loadTimeWeaver
 if (beanFactory.containsBean(LOAD_TIME_WEAVER_BEAN_NAME)) {
     beanFactory.addBeanPostProcessor(new LoadTimeWeaverAwareProcessor(beanFactory));
@@ -2054,7 +2054,7 @@ if (beanFactory.containsBean(LOAD_TIME_WEAVER_BEAN_NAME)) {
 
 postProcessBeforeInitialization方法:
 
-```java
+```Java
 @Override
 public Object postProcessBeforeInitialization(Object bean, String beanName) {
     if (bean instanceof LoadTimeWeaverAware) {
@@ -2080,7 +2080,7 @@ BeanPostProcessor的注册是在BeanFactoryPostProcessor的调用之后进行的
 
 AbstractApplicationContext.refresh:
 
-```java
+```Java
 // Invoke factory processors registered as beans in the context.
 invokeBeanFactoryPostProcessors(beanFactory);
 // Register bean processors that intercept bean creation.
@@ -2091,7 +2091,7 @@ registerBeanPostProcessors(beanFactory);
 
 AbstractAutowireCapableBeanFactory.applyBeanPostProcessorsBeforeInitialization源码:
 
-```java
+```Java
 @Override
 public Object applyBeanPostProcessorsBeforeInitialization(Object existingBean, String beanName) {
     Object result = existingBean;
@@ -2107,7 +2107,7 @@ public Object applyBeanPostProcessorsBeforeInitialization(Object existingBean, S
 
 getBeanPostProcessors:
 
-```java
+```Java
 public List<BeanPostProcessor> getBeanPostProcessors() {
     return this.beanPostProcessors;
 }
@@ -2115,7 +2115,7 @@ public List<BeanPostProcessor> getBeanPostProcessors() {
 
 可以看出，并没有查找容器的过程，所以此处并不会导致BeanPostProcessor的初始化。问题的关键就在于LoadTimeWeaverAwareProcessor的添加方式:
 
-```java
+```Java
 beanFactory.addBeanPostProcessor(new LoadTimeWeaverAwareProcessor(beanFactory));
 ```
 
@@ -2131,7 +2131,7 @@ DefaultContextLoadTimeWeaver同样实现了此接口，那么哪里调用的呢?
 
 AbstractAutowireCapableBeanFactory.initializeBean调用了invokeAwareMethods方法，源码:
 
-```java
+```Java
 private void invokeAwareMethods(final String beanName, final Object bean) {
     if (bean instanceof Aware) {
         if (bean instanceof BeanNameAware) {
@@ -2151,7 +2151,7 @@ private void invokeAwareMethods(final String beanName, final Object bean) {
 
 这个方法很关键，对instrument的获取就是在这里。源码:
 
-```java
+```Java
 @Override
 public void setBeanClassLoader(ClassLoader classLoader) {
     LoadTimeWeaver serverSpecificLoadTimeWeaver = createServerSpecificLoadTimeWeaver(classLoader);
@@ -2177,7 +2177,7 @@ Spring首先会去检测是否存在服务器的agent代理。按照Spring doc�
 
 createServerSpecificLoadTimeWeaver源码:
 
-```java
+```Java
 protected LoadTimeWeaver createServerSpecificLoadTimeWeaver(ClassLoader classLoader) {
     String name = classLoader.getClass().getName();
     if (name.startsWith("weblogic")) {
@@ -2203,7 +2203,7 @@ protected LoadTimeWeaver createServerSpecificLoadTimeWeaver(ClassLoader classLoa
 
 这个也是测试时使用的。InstrumentationLoadTimeWeaver.isInstrumentationAvailable：
 
-```java
+```Java
 public static boolean isInstrumentationAvailable() {
     return (getInstrumentation() != null);
 }
@@ -2221,7 +2221,7 @@ AGENT_CLASS_PRESENT是一个布尔变量，就是判断org.springframework.instr
 
 InstrumentationAccessor是InstrumentationLoadTimeWeaver的内部类:
 
-```java
+```Java
 private static class InstrumentationAccessor {
     public static Instrumentation getInstrumentation() {
         return InstrumentationSavingAgent.getInstrumentation();
@@ -2235,7 +2235,7 @@ private static class InstrumentationAccessor {
 
 在这种情况中，Spring寄托于当前的ClassLoader实现了LoadTimeWeaver的功能，也就是必须有addTransformer方法，如果有，Spring便会把LoadTimeWeaver的职责委托给ClassLoader，如果没有只能抛异常了(抱歉，我们没法支持LTW...)，检测的源码位于ReflectiveLoadTimeWeaver的构造器:
 
-```java
+```Java
 public ReflectiveLoadTimeWeaver() {
     this(ClassUtils.getDefaultClassLoader());
 }
@@ -2263,7 +2263,7 @@ public ReflectiveLoadTimeWeaver(ClassLoader classLoader) {
 
 AspectJClassBypassingClassFileTransformer.transform:
 
-```java
+```Java
 @Override
 public byte[] transform(ClassLoader loader, String className, Class<?> classBeingRedefined,
         ProtectionDomain protectionDomain, byte[] classfileBuffer) {
@@ -2323,7 +2323,7 @@ aop.xml的解析便是在这里进行。解析的过程无非是xml的解析，�
 
 入口方法在ClassLoaderWeavingAdaptor.registerDefinitions:
 
-```java
+```Java
 private boolean registerDefinitions(final BcelWeaver weaver, final ClassLoader loader, List<Definition> definitions) {
     //对应<weaver options="-verbose">
     registerOptions(weaver, loader, definitions);

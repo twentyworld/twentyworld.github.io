@@ -28,7 +28,7 @@ CAS 操作包含三个操作数 —— 内存位置（V）、预期原值（A）
 ### CAS原理
 
 下面是sun.misc.Unsafe类的compareAndSwapInt()方法的源代码：
-```java
+```Java
 public final native boolean compareAndSwapInt(Object o, long offset,
                                               int expected,
                                               int x);

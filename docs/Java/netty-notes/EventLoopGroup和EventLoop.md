@@ -43,7 +43,7 @@
 NioEventLoop 有几个重载的构造器, 不过内容都没有什么大的区别, 最终都是调用的父类MultithreadEventLoopGroup构造器。
 
 在类MultithreadEventLoopGroup的初始化过程中， 我们可以发现如果没有指定thread数量， 就会默认指定一个数量．
-```java
+```Java
 protected MultithreadEventLoopGroup(int nThreads, Executor executor, Object... args) {
     super(nThreads == 0 ? DEFAULT_EVENT_LOOP_THREADS : nThreads, executor, args);
 }
@@ -59,7 +59,7 @@ static {
 ```
 
 这个类是比较核心的初始化过程，
-```java
+```Java
 protected MultithreadEventExecutorGroup(int nThreads, Executor executor, Object... args) {
         if (nThreads <= 0) {
             throw new IllegalArgumentException(String.format("nThreads: %d (expected: > 0)", nThreads));
@@ -107,7 +107,7 @@ protected MultithreadEventExecutorGroup(int nThreads, Executor executor, Object.
 根据上面的代码, 我们知道, MultithreadEventExecutorGroup 内部维护了一个 EventExecutor 数组, Netty 的 EventLoopGroup 的实现机制其实就建立在 MultithreadEventExecutorGroup 之上. 每当 Netty 需要一个 EventLoop 时, 会调用 next() 方法获取一个可用的 EventLoop.
 上面代码的最后一部分是 newChild 方法, 这个是一个抽象方法, 它的任务是实例化 EventLoop 对象. 我们跟踪一下它的代码, 可以发现, 这个方法在 NioEventLoopGroup 类中实现了, 其内容很简单
 
-```java
+```Java
 @Override
 protected EventLoop newChild(Executor executor, Object... args) throws Exception {
     return new NioEventLoop(this, executor, (SelectorProvider) args[0]);
@@ -141,7 +141,7 @@ NioEventLoop 继承于 SingleThreadEventLoop, 而 SingleThreadEventLoop 又继�
 ![][6]
 
 NioEventLoop的构造器同样是存在继承关系的， NioEventLoop只有一个构造器
-```java
+```Java
 NioEventLoop(NioEventLoopGroup parent, Executor executor, SelectorProvider selectorProvider) {
     super(parent, executor, false);
     if (selectorProvider == null) {
@@ -154,13 +154,13 @@ NioEventLoop(NioEventLoopGroup parent, Executor executor, SelectorProvider selec
 在向上初始化的过程中， SingleThreadEventLoop类会初始化一个DefaultChannelHandlerInvoker类型的字段invoker， 并且把NioEventLoop对象传进去，
 这个invoker内部只有一个对象，就是NioEventLoop， 其内部所有的方法都是在操作NioEventLoop。
 
-```java
+```Java
 public abstract class SingleThreadEventLoop extends SingleThreadEventExecutor implements EventLoop {
     private final ChannelHandlerInvoker invoker = new DefaultChannelHandlerInvoker(this);
 }
 ```
 
-```java
+```Java
 public DefaultChannelHandlerInvoker(EventExecutor executor) {
     if (executor == null) {
         throw new NullPointerException("executor");
@@ -172,7 +172,7 @@ public DefaultChannelHandlerInvoker(EventExecutor executor) {
 我们再回到NioEventLoop初始化的过程中去
 
 NioEventLoop 会在SingleThreadEventExecutor类中真正的赋值。
-```java
+```Java
 protected SingleThreadEventExecutor(EventExecutorGroup parent, Executor executor, boolean addTaskWakesUp) {
     super(parent);
 

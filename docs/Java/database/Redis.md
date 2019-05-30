@@ -190,7 +190,7 @@ setNX（SET if Not eXists 如果不存在，则 SET）
 **如果一个持有锁的客户端失败或崩溃了不能释放锁，该怎么解决？**
 
 如果一个客户端持有的锁超时了，任何客户端都可以检测超时并删除该锁，那么这里就会存在竞态关系，
-```java
+```Java
 C0操作超时了，但它还持有着锁，C1和C2读取lock.foo检查时间戳，先后发现超时了。 
 C1 发送DEL lock.foo 
 C1 发送SETNX lock.foo 并且成功了。 
@@ -199,7 +199,7 @@ C2 发送SETNX lock.foo 并且成功了。
 这样一来，C1，C2都拿到了锁！
 ```
 所以使用执行下面的命令解决上面问题
-```java
+```Java
 GETSET lock.foo <current Unix time + lock timeout + 1>
 ```
 通过GETSET，C1拿到的时间戳如果是超时的，那就说明中间锁超时并且中间没有被其他客户端抢先获得锁，因此C1拿到锁。 

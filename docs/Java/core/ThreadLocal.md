@@ -10,7 +10,7 @@ ThreadLocal，很多地方叫做线程本地变量，也有些地方叫做线程
 
 
 首先我们可以看一个完整的例子:
-```java
+```Java
 public class ThreadLocalTest {
 
     public Integer getAfterSet() {
@@ -291,7 +291,7 @@ private int expungeStaleEntry(int staleSlot) {
 
 #### `cleanSomeSlots(int i, int n)`
 
-```java
+```Java
 private boolean cleanSomeSlots(int i, int n) {
     boolean removed = false;
     Entry[] tab = table;
@@ -337,7 +337,7 @@ private boolean cleanSomeSlots(int i, int n) {
 
 #### `replaceStaleEntry`
 
-```java
+```Java
 private void replaceStaleEntry(ThreadLocal<?> key, Object value,
                                int staleSlot) {
     Entry[] tab = table;
@@ -469,7 +469,7 @@ private void replaceStaleEntry(ThreadLocal<?> key, Object value,
 有的博客会说`get`之前必须`set`，否则会报空指针异常. **这个理解是错误的**,正如前面的例子，并不会报错，只是会返回一个`null`，读完代码，也可以发现这一点。
 
 我们以这个代码为例，这里是不会报错的。
-```java
+```Java
 public class ThreadLocalTest {
 
     public Integer getAfterSet() {
@@ -493,7 +493,7 @@ public class ThreadLocalTest {
 
 但是如果代码改成这个样子， 把函数返回从包装类型变成基本数据类型，才会真正的报出`NullPointerException`异常。
 
-```java
+```Java
 public class ThreadLocalTest {
 
     public Integer getAfterSet() {

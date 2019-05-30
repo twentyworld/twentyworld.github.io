@@ -440,7 +440,7 @@ AbstractCompiler是一个抽象类，它通过正则表达式获取到对象的�
 - getExtensionLoader()：new一个ExtensionLoader对象，用到单例模式、工厂模式，然后换成起来。
 - getAdaptiveExtension()：为了获取扩展装饰类或代理类的对像，不过有个规则：如果@Adaptive注解在类上就是一个装饰类；如果注解在方法上就是一个动态代理类。
 
-```java
+```Java
 public abstract class AbstractCompiler implements Compiler {
 
     private static final Pattern PACKAGE_PATTERN = Pattern.compile("package\\s+([$_a-zA-Z][$_a-zA-Z0-9\\.]*);");

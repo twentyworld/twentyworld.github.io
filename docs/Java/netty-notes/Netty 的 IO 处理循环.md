@@ -19,7 +19,7 @@
 
 
 上面的使用流程用代码来体现就是:
-```java
+```Java
 public class MultiplexerTimeServer implements Runnable {
 
     Logger logger = LoggerFactory.getLogger(MultiplexerTimeServer.class);
@@ -131,7 +131,7 @@ public class MultiplexerTimeServer implements Runnable {
 ```
 
 还记得不, 上面操作的第一步 **通过 Selector.open() 打开一个 Selector** 我们已经在第一章的 **Channel 实例化** 这一小节中已经提到了, Netty 中是通过调用 SelectorProvider.openSocketChannel() 来打开一个新的 Java NIO SocketChannel:
-```java
+```Java
 private static SocketChannel newSocket(SelectorProvider provider) {
     ...
     return provider.openSocketChannel();
@@ -151,7 +151,7 @@ Bootstrap.initAndRegister ->
 
 在 AbstractUnsafe.register 方法中调用了 register0 方法:
 
-```java
+```Java
 @Override
 public final void register(EventLoop eventLoop, final ChannelPromise promise) {
 	// 省略条件判断和错误处理
@@ -162,7 +162,7 @@ public final void register(EventLoop eventLoop, final ChannelPromise promise) {
 
 register0 方法代码如下:
 
-```java
+```Java
 private void register0(ChannelPromise promise) {
     boolean firstRegistration = neverRegistered;
     doRegister();
@@ -179,7 +179,7 @@ private void register0(ChannelPromise promise) {
 ```
 register0 又调用了 AbstractNioChannel.doRegister:
 
-```java
+```Java
 @Override
 protected void doRegister() throws Exception {
 	// 省略错误处理
@@ -195,7 +195,7 @@ protected void doRegister() throws Exception {
 
 在 **EventLoop 的启动** 一小节中, 我们已经了解到了, 当 EventLoop.execute **第一次被调用**时, 就会触发 **startThread()** 的调用, 进而导致了 EventLoop 所对应的 Java 线程的启动. 接着更深入一些, 来看一下此线程启动后都会做什么
 
-```java
+```Java
 private void startThread() {
     synchronized (stateLock) {
         if (state == ST_NOT_STARTED) {
@@ -211,7 +211,7 @@ private void startThread() {
 
 下面是此线程的 doStartThread() 方法, 已经把一些异常处理和收尾工作的代码都去掉了. 这个 doStartThread 方法可以说是十分简单, 主要就是调用了 **SingleThreadEventExecutor.this.run()** 方法.
 
-```java
+```Java
 private void doStartThread() {
     assert thread == null;
     executor.execute(new Runnable() {
@@ -237,7 +237,7 @@ private void doStartThread() {
 而 SingleThreadEventExecutor.run() 是一个抽象方法, 它的实现在 NioEventLoop 中.
 继续跟踪到 NioEventLoop.run() 方法, 其源码如下:
 
-```java
+```Java
 @Override
 protected void run() {
     for (;;) {
@@ -287,7 +287,7 @@ protected void run() {
 ### IO 事件的轮询
 首先, 在 `run` 方法中, 第一步是调用 **hasTasks()** 方法来判断当前任务队列中是否有任务:
 
-```java
+```Java
 protected boolean hasTasks() {
     assert inEventLoop();
     return !taskQueue.isEmpty();
@@ -297,7 +297,7 @@ protected boolean hasTasks() {
 这个方法很简单, 仅仅是检查了一下 **taskQueue** 是否为空. 至于 taskQueue 是什么呢, 其实它就是存放一系列的需要由此 EventLoop 所执行的任务列表. 关于 taskQueue, 我们这里暂时不表, 等到后面再来详细分析它.
 当 taskQueue 不为空时, 就执行到了 if 分支中的 selectNow() 方法. 然而当 taskQueue 为空时, 执行的是 select(oldWakenUp) 方法. 那么 **selectNow()** 和 **select(oldWakenUp)** 之间有什么区别呢? 来看一下, selectNow() 的源码如下:
 
-```java
+```Java
 void selectNow() throws IOException {
     try {
         selector.selectNow();
@@ -315,7 +315,7 @@ void selectNow() throws IOException {
 看了 if 分支的 selectNow 方法后, 我们再来看一下 else 分支的 **select(oldWakenUp)** 方法.
 其实 else 分支的 **select(oldWakenUp)** 方法的处理逻辑比较复杂, 而我们这里的目的暂时不是分析这个方法调用的具体工作, 因此我这里长话短说, 只列出我们我们关注的内如:
 
-```java
+```Java
 private void select(boolean oldWakenUp) throws IOException {
     Selector selector = this.selector;
     try {
@@ -336,7 +336,7 @@ private void select(boolean oldWakenUp) throws IOException {
 在 NioEventLoop.run() 方法中, 第一步是通过 select/selectNow 调用查询当前是否有就绪的 IO 事件. 那么当有 IO 事件就绪时, 第二步自然就是处理这些 IO 事件啦.
 首先让我们来看一下 NioEventLoop.run 中循环的剩余部分:
 
-```java
+```Java
 final int ioRatio = this.ioRatio;
 if (ioRatio == 100) {
     processSelectedKeys();
@@ -366,7 +366,7 @@ if (ioRatio == 100) {
 我们这里先分析一下 **processSelectedKeys()** 方法调用, **runAllTasks()** 我们留到下一节再分析.
 **processSelectedKeys()** 方法的源码如下:
 
-```java
+```Java
 private void processSelectedKeys() {
     if (selectedKeys != null) {
         processSelectedKeysOptimized(selectedKeys.flip());

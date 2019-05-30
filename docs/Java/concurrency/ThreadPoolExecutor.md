@@ -29,7 +29,7 @@
 
 其实看这三种方式创建的源码就会发现：
 
-```java
+```Java
     public static ExecutorService newCachedThreadPool() {
         return new ThreadPoolExecutor(0, Integer.MAX_VALUE,
                                       60L, TimeUnit.SECONDS,
@@ -43,8 +43,8 @@
 
 首先是创建线程的 api：
 
-```java
-ThreadPoolExecutor(int corePoolSize, int maximumPoolSize, long keepAliveTime, TimeUnit unit, BlockingQueue<Runnable> workQueue, RejectedExecutionHandler handler) 
+```Java
+ThreadPoolExecutor(int corePoolSize, int maximumPoolSize, long keepAliveTime, TimeUnit unit, BlockingQueue<Runnable> workQueue, RejectedExecutionHandler handler)
 ```
 
 这几个核心参数的作用：
@@ -59,7 +59,7 @@ ThreadPoolExecutor(int corePoolSize, int maximumPoolSize, long keepAliveTime, Ti
 
 通常我们都是使用:
 
-```java
+```Java
 threadPool.execute(new Job());
 ```
 
@@ -103,7 +103,7 @@ threadPool.execute(new Job());
 
 通常我们是需要根据这批任务执行的性质来确定的。
 
-- IO 密集型任务：由于线程并不是一直在运行，所以可以尽可能的多配置线程，比如 CPU 个数 * 2 
+- IO 密集型任务：由于线程并不是一直在运行，所以可以尽可能的多配置线程，比如 CPU 个数 * 2
 - CPU 密集型任务（大量复杂的运算）应当分配较少的线程，比如 CPU 个数相当的大小。
 
 
@@ -126,7 +126,7 @@ threadPool.execute(new Job());
 
 我通常是按照以下方式关闭线程池的：
 
-```java
+```Java
         long start = System.currentTimeMillis();
         for (int i = 0; i <= 5; i++) {
             pool.execute(new Job());
@@ -150,7 +150,7 @@ threadPool.execute(new Job());
 
 既然用了 SpringBoot ，那自然得发挥 Spring 的特性，所以需要 Spring 来帮我们管理线程池：
 
-```java
+```Java
 @Configuration
 public class TreadPoolConfig {
 
@@ -177,7 +177,7 @@ public class TreadPoolConfig {
 
 使用时：
 
-```java
+```Java
     @Resource(name = "consumerQueueThreadPool")
     private ExecutorService consumerQueueThreadPool;
 
@@ -247,7 +247,7 @@ public class TreadPoolConfig {
 
 首先需要定义两个线程池，分别用于执行订单、处理用户。
 
-```java
+```Java
 /**
  * Function:订单服务
  *
@@ -357,7 +357,7 @@ public class CommandUser extends HystrixCommand<String> {
 
 然后模拟运行：
 
-```java
+```Java
     public static void main(String[] args) throws Exception {
         CommandOrder commandPhone = new CommandOrder("手机");
         CommandOrder command = new CommandOrder("电视");

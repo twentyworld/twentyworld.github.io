@@ -154,7 +154,7 @@ public interface WebRequestInterceptor {
 ```
 
 **`WebRequestHandlerInterceptorAdapter`接口:**
-```java
+```Java
 public class WebRequestHandlerInterceptorAdapter implements AsyncHandlerInterceptor {
 
 	private final WebRequestInterceptor requestInterceptor;

@@ -2,7 +2,7 @@
 
 以CacheLoader的方式为例:
 
-```java
+```Java
 LoadingCache<String, String> cache = CacheBuilder.newBuilder().maximumSize(2)
     .build(new CacheLoader<String, String>() {
         @Override
@@ -37,7 +37,7 @@ Segment代表了其中的一段。其类图(部分):
 
 相关源码:
 
-```java
+```Java
 LocalCache(
       CacheBuilder<? super K, ? super V> builder, @Nullable CacheLoader<? super K, V> loader) {
     concurrencyLevel = Math.min(builder.getConcurrencyLevel(), MAX_SEGMENTS);
@@ -61,7 +61,7 @@ ReferenceEntry是guava-cache中实际进行存储的数据结构，其类图:
 
 **取最小的大于等于(initialCapacity / segmentCount)的2的整次幂的值**。关键代码:
 
-```java
+```Java
 LocalCache(
       CacheBuilder<? super K, ? super V> builder, @Nullable CacheLoader<? super K, V> loader) {
     int segmentCapacity = initialCapacity / segmentCount;
@@ -81,7 +81,7 @@ initialCapacity由CacheBuilder的同名方法进行设置，默认16.
 
 关键代码:
 
-```java
+```Java
 LocalCache(
       CacheBuilder<? super K, ? super V> builder, @Nullable CacheLoader<? super K, V> loader) {
     if (evictsBySize()) {
@@ -117,7 +117,7 @@ createSegment其实就是对Segment构造器的调用，此构造器主要做了
 
 关键代码:
 
-```java
+```Java
 Segment(LocalCache<K, V> map, int initialCapacity, long maxSegmentWeight, StatsCounter statsCounter) {
      initTable(newEntryArray(initialCapacity));
 }
@@ -125,7 +125,7 @@ Segment(LocalCache<K, V> map, int initialCapacity, long maxSegmentWeight, StatsC
 
 newEntryArray方法只是创建了一个initialCapacity大小的数组，关键在于initTable:
 
-```java
+```Java
 void initTable(AtomicReferenceArray<ReferenceEntry<K, V>> newTable) {
   this.threshold = newTable.length() * 3 / 4; // 0.75
   if (!map.customWeigher() && this.threshold == maxSegmentWeight) {
@@ -142,7 +142,7 @@ void initTable(AtomicReferenceArray<ReferenceEntry<K, V>> newTable) {
 
 关键代码:
 
-```java
+```Java
 Segment(LocalCache<K, V> map, int initialCapacity, long maxSegmentWeight, StatsCounter statsCounter) {
     //当不是强引用的时候成立
     keyReferenceQueue = map.usesKeyReferences() ? new ReferenceQueue<K>() : null;
@@ -168,7 +168,7 @@ keyReferenceQueue和valueReferenceQueue用于结合软引用、弱引用以及�
 
 usesKeyReferences源码:
 
-```java
+```Java
 boolean usesKeyReferences() {
     return keyStrength != Strength.STRONG;
 }
@@ -176,7 +176,7 @@ boolean usesKeyReferences() {
 
 keyStrength通过CacheBuilder.getKeyStrength获取:
 
-```java
+```Java
 Strength getKeyStrength() {
     return MoreObjects.firstNonNull(keyStrength, Strength.STRONG);
 }
@@ -190,7 +190,7 @@ recencyQueue等队列将在后面结合get方法进行说明。
 
 LocalCache.put:
 
-```java
+```Java
 @Override
 public V put(K key, V value) {
     checkNotNull(key);
@@ -204,7 +204,7 @@ public V put(K key, V value) {
 
 LocalCache.hash:
 
-```java
+```Java
 int hash(@Nullable Object key) {
     int h = keyEquivalence.hash(key);
     return rehash(h);
@@ -219,7 +219,7 @@ Equivalence接口类图:
 
 keyEquivalence属性由CacheBuilder的getKeyEquivalence方法获得:
 
-```java
+```Java
 Equivalence<Object> getKeyEquivalence() {
     return MoreObjects.firstNonNull(keyEquivalence, getKeyStrength().defaultEquivalence());
 }
@@ -227,7 +227,7 @@ Equivalence<Object> getKeyEquivalence() {
 
 可以看出，**使用的hash算法与Strength相关联**。Strength部分源码(仅展示defaultEquivalence方法):
 
-```java
+```Java
 enum Strength {
     STRONG {
         @Override
@@ -252,7 +252,7 @@ enum Strength {
 
 以强引用为例。Equivalence.equals()返回的其实是一个单例的Equals对象，由上面类图可以看出，Equals是Equivalence的子类，源码:
 
-```java
+```Java
 static final class Equals extends Equivalence<Object> implements Serializable {
 
     static final Equals INSTANCE = new Equals();
@@ -277,7 +277,7 @@ static final class Equals extends Equivalence<Object> implements Serializable {
 
 而对于weak和soft引用来说，对应的是Identity实例，源码:
 
-```java
+```Java
 static final class Identity extends Equivalence<Object> implements Serializable {
     static final Identity INSTANCE = new Identity();
     @Override
@@ -306,7 +306,7 @@ guava cache采用了和ConcurrentHashMap同样的算法。
 
 LocalCache.segmentFor:
 
-```java
+```Java
 Segment<K, V> segmentFor(int hash) {
     return segments[(hash >>> segmentShift) & segmentMask];
 }
@@ -314,7 +314,7 @@ Segment<K, V> segmentFor(int hash) {
 
 segmentShift和segmentMask的取值，LocalCache构造器源码:
 
-```java
+```Java
 int segmentShift = 0;
 int segmentCount = 1;
 while (segmentCount < concurrencyLevel && (!evictsBySize() || segmentCount * 20 <= maxWeight)) {
@@ -335,7 +335,7 @@ segmentMask = segmentCount - 1;
 
 部分源码:
 
-```java
+```Java
 @Nullable
 V put(K key, int hash, V value, boolean onlyIfAbsent) {
     lock();
@@ -354,14 +354,14 @@ V put(K key, int hash, V value, boolean onlyIfAbsent) {
 
 相关源码:
 
-```java
+```Java
 long now = map.ticker.read();
 preWriteCleanup(now);
 ```
 
 ticker.read方法返回的实际上就是System.nanoTime的值。preWriteCleanup最终调用runLockedCleanup方法:
 
-```java
+```Java
 void runLockedCleanup(long now) {
     //必定通过
     if (tryLock()) {
@@ -382,7 +382,7 @@ void runLockedCleanup(long now) {
 
 drainReferenceQueues:
 
-```java
+```Java
 @GuardedBy("this")
 void drainReferenceQueues() {
     if (map.usesKeyReferences()) {
@@ -396,7 +396,7 @@ void drainReferenceQueues() {
 
 以drainKeyReferenceQueue为例:
 
-```java
+```Java
 @GuardedBy("this")
 void drainKeyReferenceQueue() {
     Reference<? extends K> ref;
@@ -416,7 +416,7 @@ DRAIN_MAX取值16，猜测这样做的目的在于降低开销，防止一次put
 
 reclaimKey用于清理ReferenceEntry对象，因为**keyReference和valueReference是保存在此类中的**。
 
-```java
+```Java
 boolean reclaimKey(ReferenceEntry<K, V> entry, int hash) {
     lock();
     try {
@@ -458,7 +458,7 @@ boolean reclaimKey(ReferenceEntry<K, V> entry, int hash) {
 
 removeValueFromChain:
 
-```java
+```Java
 ReferenceEntry<K, V> removeValueFromChain(
     ReferenceEntry<K, V> first,
     ReferenceEntry<K, V> entry,
@@ -480,7 +480,7 @@ ReferenceEntry<K, V> removeValueFromChain(
 
 enqueueNotification用于进行一些移除之后的善后工作(然而却是在 移除之前执行的):
 
-```java
+```Java
 @GuardedBy("this")
 void enqueueNotification(@Nullable K key, int hash, @Nullable V value, int weight, RemovalCause cause) {
     //减少权重
@@ -498,7 +498,7 @@ void enqueueNotification(@Nullable K key, int hash, @Nullable V value, int weigh
 
 加入removalNotificationQueue的目的在于通知我们自定义的**移除监听器**，LocalCache构造器相关源码回顾:
 
-```java
+```Java
 //...
 removalListener = builder.getRemovalListener();
     removalNotificationQueue =
@@ -514,7 +514,7 @@ removalListener = builder.getRemovalListener();
 
 初始化在Segment构造器，相关源码:
 
-```java
+```Java
  writeQueue =
           map.usesWriteQueue()
               ? new WriteQueue<K, V>()
@@ -523,7 +523,7 @@ removalListener = builder.getRemovalListener();
 
 usesWriteQueue最终的逻辑在expiresAfterWrite:
 
-```java
+```Java
 boolean expiresAfterWrite() {
     return expireAfterWriteNanos > 0;
 }
@@ -548,7 +548,7 @@ WriteQueue利用了双端队列实现了时间轴的概念，即**每次在队�
 如果已被回收的key对应的value尚处于正在加载的状态，那么将终止加载过程。有意义的实现位于LoadingValueReference
 (其它类均是空实现):
 
-```java
+```Java
 @Override
 public void notifyNewValue(@Nullable V newValue) {
     if (newValue != null) {
@@ -569,7 +569,7 @@ unset方法返回一个占位符对象，此对象用以说明此ValueReference�
 
 真正的移除位于removeEntryFromChain方法中:
 
-```java
+```Java
 @GuardedBy("this")
 @Nullable
 ReferenceEntry<K, V> removeEntryFromChain(ReferenceEntry<K, V> first, ReferenceEntry<K, V> entry) {
@@ -603,7 +603,7 @@ ReferenceEntry<K, V> removeEntryFromChain(ReferenceEntry<K, V> first, ReferenceE
 
 WeakEntry部分源码:
 
-```java
+```Java
 final int hash;
 final ReferenceEntry<K, V> next;
 volatile ValueReference<K, V> valueReference = unset();
@@ -615,7 +615,7 @@ volatile ValueReference<K, V> valueReference = unset();
 
 expireEntries:
 
-```java
+```Java
 @GuardedBy("this")
 void expireEntries(long now) {
     //recencyQueue和accessQueue区分不清，暂且跳过
@@ -640,7 +640,7 @@ void expireEntries(long now) {
 
 相关源码:
 
-```java
+```Java
 int newCount = this.count + 1;
 if (newCount > this.threshold) { // ensure capacity
     expand();
@@ -672,7 +672,7 @@ guava cache扩容仍然采用了ConcurrentHashMap的思想。**扩容是针对Se
 
 即LocalLoadingCache.get:
 
-```java
+```Java
 @Override
 public V get(K key) throws ExecutionException {
     return localCache.getOrLoad(key);
@@ -681,7 +681,7 @@ public V get(K key) throws ExecutionException {
 
 LocalCache.getOrLoad:
 
-```java
+```Java
 V getOrLoad(K key) throws ExecutionException {
     return get(key, defaultLoader);
 }
@@ -691,7 +691,7 @@ defaultLoader便是在构造时指定的CacheLoader对象。
 
 LocalCache.get:
 
-```java
+```Java
 V get(K key, CacheLoader<? super K, V> loader) throws ExecutionException {
     int hash = hash(checkNotNull(key));
     return segmentFor(hash).get(key, hash, loader);
@@ -702,7 +702,7 @@ V get(K key, CacheLoader<? super K, V> loader) throws ExecutionException {
 
 Segment.get简略版源码:
 
-```java
+```Java
 V get(K key, int hash, CacheLoader<? super K, V> loader) throws ExecutionException {
   try {
     //快速判断
@@ -738,7 +738,7 @@ V get(K key, int hash, CacheLoader<? super K, V> loader) throws ExecutionExcepti
 
 逻辑注释里已经很清楚了，这里只需要补充一点，scheduleRefresh方法:
 
-```java
+```Java
 V scheduleRefresh(ReferenceEntry<K, V> entry,K key,int hash,V oldValue,long now,CacheLoader<? super K, V> loader) {
     if (map.refreshes()
         && (now - entry.getWriteTime() > map.refreshNanos)

@@ -172,7 +172,7 @@ e. 当变量采用的是times变量，而表的字段采用的是date变量时.�
 三种锁的算法：Record Lock、Gap Lock 和 Next-Key Lock
 ### Record Lock
 记录锁（Record Lock）是加到索引记录上的锁，假设我们存在下面的一张表 users：
-```java
+```Java
   CREATE TABLE users(
         id INT NOT NULL AUTO_INCREMENT,
         last_name VARCHAR(255) NOT NULL,

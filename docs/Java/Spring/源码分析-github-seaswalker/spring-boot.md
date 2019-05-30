@@ -2,7 +2,7 @@
 
 启动程序首先初始化了一个SpringApplication对象。来看一看在它的构造器了发生了什么。
 
-```java
+```Java
 public SpringApplication(ResourceLoader resourceLoader, Object... sources) {
 	this.resourceLoader = resourceLoader;
 	initialize(sources);
@@ -11,7 +11,7 @@ public SpringApplication(ResourceLoader resourceLoader, Object... sources) {
 
 initialize方法:
 
-```java
+```Java
 private void initialize(Object[] sources) {
 	if (sources != null && sources.length > 0) {
 		this.sources.addAll(Arrays.asList(sources));
@@ -79,7 +79,7 @@ debug可以发现，对启动事件感兴趣的只有LoggingApplicationListener�
 
 - 依次检测classpath中这些类是否存在:
 
-  ```java
+  ```Java
   ch.qos.logback.core.Appender;
   org.apache.logging.log4j.core.impl.Log4jContextFactory;
   java.util.logging.LogManager;
@@ -89,7 +89,7 @@ debug可以发现，对启动事件感兴趣的只有LoggingApplicationListener�
 
 相关源码:
 
-```java
+```Java
 ConfigurableEnvironment environment = prepareEnvironment(listeners, applicationArguments);
 ```
 
@@ -111,7 +111,7 @@ Spring里面的Environment到底是个什么东西，详细参考隔壁(Spring.m
 
 SpringApplication.configureProfiles方法:
 
-```java
+```Java
 protected void configureProfiles(ConfigurableEnvironment environment, String[] args) {
 	environment.getActiveProfiles(); // ensure they are initialized
 	// But these ones should go first (last wins in a property key clash)
@@ -137,7 +137,7 @@ active profile取自上一节中的属性来源，key为`spring.profiles.active`
 
 此监听器是如何加载的?源码:
 
-```java
+```Java
 private void onApplicationEnvironmentPreparedEvent(ApplicationEnvironmentPreparedEvent event) {
 	List<EnvironmentPostProcessor> postProcessors = loadPostProcessors();
 	postProcessors.add(this);
