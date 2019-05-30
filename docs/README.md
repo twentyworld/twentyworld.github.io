@@ -18,12 +18,12 @@
 - [ReentrantLock](Java/concurrency/ReentrantLock.md)
 - [ThreadPoolExecutor](Java/concurrency/ThreadPoolExecutor.md)
 - [Java线程上下文切换](Java/concurrency/Java线程上下文切换.md)
-- [Future][Java/concurrency/callback/Future.md]
-- [Callable][Java/concurrency/callback/Callable.md]
-- [FutureTask][Java/concurrency/callback/FutureTask.md]
+- [Future](Java/concurrency/callback/Future.md)
+- [Callable](Java/concurrency/callback/Callable.md)
+- [FutureTask](Java/concurrency/callback/FutureTask.md)
 
 #### 线程辅助类
-- [FutureTask][Java/concurrency/callback/FutureTask.md]
+- [FutureTask](Java/concurrency/callback/FutureTask.md)
 
 ### 关键字
 - [final](Java/key-words/final.md)
@@ -31,10 +31,10 @@
 ## Spring 全家桶
 
 ### Spring-IOC
-- [ApplicationContext && BeanFactory](Java/Spring/IOC/ApplicationContext && BeanFactory.md)
+- [ApplicationContext-&&-BeanFactory](Java/Spring/IOC/ApplicationContext-&&-BeanFactory.md)
 - [Spring摘要](Java/Spring/IOC/Spring摘要.md)
 - [IOC容器的依赖注入](Java/Spring/IOC/IOC容器的依赖注入.md)
 - [容器的初始化](Java/Spring/IOC/容器的初始化.md)
 
 ### Spring Security
-- [Spring security中文文档](Java/Spring/Spring Security/Spring security中文文档.md)
+- [Spring-security中文文档](Java/Spring/Spring Security/Spring-security中文文档.md)
