@@ -112,7 +112,7 @@ O(1) < O(log2N) < O(n) < O(N * log2N) < O(N2) < O(N3) < 2N < 3N < N!
 
 服务器节点我们肯定用字符串来表示，比如”192.168.1.1″、”192.168.1.2″，根据字符串得到其Hash值，那么另外一个重要的问题就是Hash值要重新计算，这个问题是我在测试String的hashCode()方法的时候发现的，不妨来看一下为什么要重新计算Hash值：
 
-```Java
+```java
 /**
 * String的hashCode()方法运算结果查看
 * @author 哓哓
@@ -134,7 +134,7 @@ public class StringHashCodeTest
 ```
 我们在做集群的时候，集群点的IP以这种连续的形式存在是很正常的。看一下运行结果为：
 
-```Java
+```java
 192.168.0.0:111的哈希值：1845870087
 192.168.0.1:111的哈希值：1874499238
 192.168.0.2:111的哈希值：1903128389
@@ -156,7 +156,7 @@ public class StringHashCodeTest
 
 下面来看一下不带虚拟节点的一致性Hash算法的Java代码实现：
 
-```Java
+```java
 /**
  * 不带虚拟结点的一致性Hash算法
  * @author 哓哓
@@ -234,7 +234,7 @@ public class ConsistentHashWithoutVN {
 
 可以运行一下看一下结果：
 
-```Java
+```java
 [192.168.0.0:111]加入集合中, 其Hash值为575774686
 [192.168.0.1:111]加入集合中, 其Hash值为8518713
 [192.168.0.2:111]加入集合中, 其Hash值为1361847097
@@ -273,7 +273,7 @@ public class ConsistentHashWithoutVN {
 
 下面来看一下带虚拟节点的一致性Hash算法的Java代码实现：
 
-```Java
+```java
 /**
  * 带虚拟结点的一致性Hash算法
  *

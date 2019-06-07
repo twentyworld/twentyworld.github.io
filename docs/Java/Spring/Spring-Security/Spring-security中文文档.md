@@ -14,7 +14,7 @@
 **获取当前用户的信息**
 
 因为身份信息是与线程绑定的，所以可以在程序的任何地方使用静态方法获取用户信息。一个典型的获取当前登录用户的姓名的例子如下所示：
-```Java
+```java
 Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
 if (principal instanceof UserDetails) {
@@ -30,7 +30,7 @@ if (principal instanceof UserDetails) {
 #### 1.2 Authentication
 
 先看看这个接口的源码长什么样：
-```Java
+```java
 package org.springframework.security.core;// <1>
 
 public interface Authentication extends Principal, Serializable { // <1>
@@ -68,7 +68,7 @@ public interface Authentication extends Principal, Serializable { // <1>
 
 `AuthenticationManager`将上述的流程转换成代码，便是如下的流程：
 
-```Java
+```java
 public class AuthenticationExample {
     private static AuthenticationManager am = new SampleAuthenticationManager();
 
@@ -116,7 +116,7 @@ class SampleAuthenticationManager implements AuthenticationManager {
 
 初次接触`Spring Security`的朋友相信会被`AuthenticationManager`，`ProviderManager` ，`AuthenticationProvider` …这么多相似的`Spring`认证类搞得晕头转向，但只要稍微梳理一下就可以理解清楚它们的联系和设计者的用意。`AuthenticationManager`（接口）是认证相关的核心接口，也是发起认证的出发点，因为在实际需求中，我们可能会允许用户使用用户名+密码登录，同时允许用户使用邮箱+密码，手机号码+密码登录，甚至，可能允许用户使用指纹登录（还有这样的操作？没想到吧），所以说`AuthenticationManager`一般不直接认证，`AuthenticationManager`接口的常用实现类`ProviderManager` 内部会维护一个`List<AuthenticationProvider>`列表，存放多种认证方式，实际上这是委托者模式的应用（Delegate）。也就是说，核心的认证入口始终只有一个：`AuthenticationManage`，不同的认证方式：用户名+密码（`UsernamePasswordAuthenticationToken`），邮箱+密码，手机号码+密码登录则对应了三个`AuthenticationProvider`。这样一来四不四就好理解多了？熟悉`shiro`的朋友可以把`AuthenticationProvider`理解成`Realm`。在默认策略下，只需要通过一个`AuthenticationProvider`的认证，即可被认为是登录成功。
 
-```Java
+```java
 public class ProviderManager implements AuthenticationManager, MessageSourceAware, InitializingBean {
 
     // 维护一个AuthenticationProvider列表
@@ -185,7 +185,7 @@ public class ProviderManager implements AuthenticationManager, MessageSourceAwar
 
 #### 1.5 UserDetails与UserDetailsService
 
-```Java
+```java
 public interface UserDetails extends Serializable {
 
    Collection<? extends GrantedAuthority> getAuthorities();
@@ -206,7 +206,7 @@ public interface UserDetails extends Serializable {
 ```
 它和`Authentication`接口很类似，比如它们都拥有`username，authorities`，区分他们也是本文的重点内容之一。`Authentication`的`getCredentials()`与`UserDetails`中的`getPassword()`需要被区分对待，前者是用户提交的密码凭证，后者是用户正确的密码，认证器其实就是对这两者的比对。`Authentication`中的`getAuthorities()`实际是由`UserDetails`的`getAuthorities()`传递而形成的。还记得`Authentication`接口中的`getUserDetails()`方法吗？其中的`UserDetails`用户详细信息便是经过了`AuthenticationProvider`之后被填充的。
 
-```Java
+```java
 public interface UserDetailsService {
    UserDetails loadUserByUsername(String username) throws UsernameNotFoundException;
 }
@@ -229,7 +229,7 @@ public interface UserDetailsService {
 ---
 
 ##### 一般配置表
-```Java
+```java
 @Configuration
 @EnableWebSecurity
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
@@ -262,7 +262,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
 #### 2.1  @EnableWebSecurity
 我们自己定义的配置类`WebSecurityConfig`加上了`@EnableWebSecurity`注解，同时继承了`WebSecurityConfigurerAdapter`。你可能会在想谁的作用大一点，毫无疑问`@EnableWebSecurity`起到决定性的配置作用，它其实是个组合注解。
-```Java
+```java
 @Import({ WebSecurityConfiguration.class, // <2>
       SpringWebMvcImportSelector.class }) // <1>
 @EnableGlobalAuthentication // <3>
@@ -277,7 +277,7 @@ public @interface EnableWebSecurity {
 
 #####  2.1.1 @EnableGlobalAuthentication
 
-```Java
+```java
 @Import(AuthenticationConfiguration.class)
 @Configuration
 public @interface EnableGlobalAuthentication {
@@ -286,7 +286,7 @@ public @interface EnableGlobalAuthentication {
 
 ##### 2.1.2 WebSecurityConfiguration
 在这个配置类中，有一个非常重要的Bean被注册了。
-```Java
+```java
 @Configuration
 public class WebSecurityConfiguration {
 
@@ -304,7 +304,7 @@ public class WebSecurityConfiguration {
 
 ##### 2.1.3 AuthenticationConfiguration
 
-```Java
+```java
 @Configuration
 @Import(ObjectPostProcessorConfiguration.class)
 public class AuthenticationConfiguration {
@@ -326,7 +326,7 @@ public class AuthenticationConfiguration {
 
 #### 2.2 WebSecurityConfigurerAdapter
 适配器模式在`spring`中被广泛的使用，在配置中使用`Adapter`的好处便是，我们可以选择性的配置想要修改的那一部分配置，而不用覆盖其他不相关的配置。`WebSecurityConfigurerAdapter`中我们可以选择自己想要修改的内容，来进行重写，而其提供了三个`configure`重载方法，是我们主要关心的：
-```Java
+```java
 protected void configure(AuthenticationManagerBuilder auth) throws Exception {
   this.disableLocalConfigureAuthenticationBldr = true;
 }
@@ -349,7 +349,7 @@ protected void configure(HttpSecurity http) throws Exception {
 
 ##### 2.2.1HttpSecurity常用配置
 
-```Java
+```java
 @Configuration
 @EnableWebSecurity
 public class CustomWebSecurityConfig extends WebSecurityConfigurerAdapter {
@@ -393,7 +393,7 @@ public class CustomWebSecurityConfig extends WebSecurityConfigurerAdapter {
 
 
 ##### 2.2.2WebSecurityBuilder
-```Java
+```java
 @Configuration
 @EnableWebSecurity
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
@@ -407,7 +407,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 ```
 
 ##### 2.2.3AuthenticationManagerBuilder
-```Java
+```java
 @Configuration
 @EnableWebSecurity
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
@@ -434,7 +434,7 @@ Spring Security使用了springSecurityFillterChian作为了安全过滤的入口
 
 由于过滤器链路中的过滤较多，即使是Spring Security的官方文档中也并未对所有的过滤器进行介绍，以此为例，来看看这过程中Spring Security都帮我们自动配置了哪些过滤器。
 
-```Java
+```java
 Creating filter chain: org.springframework.security.web.util.matcher.AnyRequestMatcher@1,
 [
 	org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter@85ec632,
@@ -480,7 +480,7 @@ Creating filter chain: org.springframework.security.web.util.matcher.AnyRequestM
 
 >org.springframework.security.web.context.SecurityContextPersistenceFilter
 
-```Java
+```java
 public class SecurityContextPersistenceFilter extends GenericFilterBean {
 
     static final String FILTER_APPLIED = "__spring_security_scpf_applied";
@@ -532,7 +532,7 @@ public class SecurityContextPersistenceFilter extends GenericFilterBean {
 
 ##### 3.2.2 HttpSessionSecurityContextRepository
 
-```Java
+```java
 public class HttpSessionSecurityContextRepository implements SecurityContextRepository {
    // 'SPRING_SECURITY_CONTEXT'是安全上下文默认存储在Session中的键值
    public static final String SPRING_SECURITY_CONTEXT_KEY = "SPRING_SECURITY_CONTEXT";
@@ -599,7 +599,7 @@ public class HttpSessionSecurityContextRepository implements SecurityContextRepo
 上述的时序图，可以看出`UsernamePasswordAuthenticationFilter`主要肩负起了调用身份认证器，校验身份的作用，至于认证的细节，在前面几章花了很大篇幅进行了介绍，到这里，其实Spring Security的基本流程就已经走通了。
 
 >org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter#attemptAuthentication
-```Java
+```java
 public Authentication attemptAuthentication(HttpServletRequest request,
       HttpServletResponse response) throws AuthenticationException {
    //获取表单中的用户名和密码
@@ -619,7 +619,7 @@ public Authentication attemptAuthentication(HttpServletRequest request,
 
 `UsernamePasswordAuthenticationFilter`本身的代码只包含了上述这么一个方法，非常简略，而在其父类`AbstractAuthenticationProcessingFilter`中包含了大量的细节.
 
-```Java
+```java
 public abstract class AbstractAuthenticationProcessingFilter extends GenericFilterBean
       implements ApplicationEventPublisherAware, MessageSourceAware {
 	//包含了一个身份认证器
@@ -671,7 +671,7 @@ public abstract class AbstractAuthenticationProcessingFilter extends GenericFilt
 
 ##### 3.2.4 AnonymousAuthenticationFilter
 匿名认证过滤器，可能有人会想：匿名了还有身份？我自己对于`Anonymous`匿名身份的理解是`Spirng Security`为了整体逻辑的统一性，即使是未通过认证的用户，也给予了一个匿名身份。而`AnonymousAuthenticationFilter`该过滤器的位置也是非常的科学的，它位于常用的身份认证过滤器（如`UsernamePasswordAuthenticationFilter`、`BasicAuthenticationFilter`、`RememberMeAuthenticationFilter`）之后，意味着只有在上述身份过滤器执行完毕后，`SecurityContext`依旧没有用户信息，`AnonymousAuthenticationFilter`该过滤器才会有意义—-基于用户一个匿名身份。
-```Java
+```java
 public class AnonymousAuthenticationFilter extends GenericFilterBean implements
       InitializingBean {
 
@@ -738,7 +738,7 @@ public class AnonymousAuthenticationFilter extends GenericFilterBean implements
 由什么控制哪些资源是受限的，这些受限的资源需要什么权限，需要什么角色…这一切和访问控制相关的操作，都是由`FilterSecurityInterceptor`完成的。
 `FilterSecurityInterceptor`的工作流程用笔者的理解可以理解如下：`FilterSecurityInterceptor`从`SecurityContextHolder`中获取`Authentication`对象，然后比对用户拥有的权限和资源所需的权限。前者可以通过`Authentication`对象直接获得，而后者则需要引入我们之前一直未提到过的两个类：`SecurityMetadataSource`，`AccessDecisionManager`。理解清楚决策管理器的整个创建流程和`SecurityMetadataSource`的作用需要花很大一笔功夫，这里，暂时只介绍其大概的作用。
 
-```Java
+```java
 @Override
 protected void configure(HttpSecurity http) throws Exception {
   http

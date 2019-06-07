@@ -11,7 +11,7 @@
 
 我们在浏览Channel的代码的时候，就发现，每个Channel的初始化的时候，就会自动在内部创建一个Pipeline。
 
-```Java
+```java
 protected AbstractChannel(Channel parent) {
     this.parent = parent;
     id = DefaultChannelId.newInstance();
@@ -22,7 +22,7 @@ protected AbstractChannel(Channel parent) {
 
 AbstractChannel 有一个 pipeline 字段, 在构造器中会初始化它为 DefaultChannelPipeline的实例. 这里的代码就印证了一点: `每个 Channel 都有一个 ChannelPipeline`. 接着我们跟踪一下 DefaultChannelPipeline 的初始化过程. 首先进入到 DefaultChannelPipeline 构造器中:
 
-```Java
+```java
 DefaultChannelPipeline(AbstractChannel channel) {
     if (channel == null) {
         throw new NullPointerException("channel");
@@ -49,7 +49,7 @@ DefaultChannelPipeline(AbstractChannel channel) {
 从类层次结构图中可以很清楚地看到, head 实现了 ChannelInboundHandler, 而 tail 实现了 ChannelOutboundHandler 接口, 并且它们都实现了 ChannelHandlerContext 接口, 因此可以说 head 和 tail 即是一个 ChannelHandler, 又是一个 ChannelHandlerContext.
 
 下面我们以HeadContext为例子看一下:
-```Java
+```java
 HeadContext(DefaultChannelPipeline pipeline) {
     super(pipeline, null, HEAD_NAME, false, true);
     unsafe = pipeline.channel().unsafe();
@@ -62,7 +62,7 @@ HeadContext(DefaultChannelPipeline pipeline) {
 
 我们已经分析了 Channel 的组成, 其中我们了解到, 最开始的时候 ChannelPipeline 中含有两个 ChannelHandlerContext(同时也是 ChannelHandler), 但是这个 Pipeline并不能实现什么特殊的功能, 因为我们还没有给它添加自定义的 ChannelHandler. 通常来说, 我们在初始化 Bootstrap, 会添加我们自定义的 ChannelHandler.
 在本文的上下文中，我们是使用的自定义的TimeClientHandler
-```Java
+```java
 bootstrap.group(group).channel(NioSocketChannel.class)
         .option(ChannelOption.TCP_NODELAY,true)
         .handler(new ChannelInitializer<SocketChannel>() {
@@ -76,7 +76,7 @@ bootstrap.group(group).channel(NioSocketChannel.class)
 
 ChannelInitializer 实现了 ChannelHandler, 那么它是在什么时候添加到 ChannelPipeline 中的呢?
 还记的在initAndRegister()方法吗，这个方法主要做的事情，就是首先创建一个Channel然后init, 我们自定义的handler就是在这个时候被添加到ChannelPipeline的.
-```Java
+```java
 void init(Channel channel) throws Exception {
     ChannelPipeline p = channel.pipeline();
     p.addLast(handler());
@@ -94,7 +94,7 @@ void init(Channel channel) throws Exception {
 
 addLast 有很多重载的方法, 我们关注这个比较重要的方法就可以了. 上面的 addLast 方法中, 首先检查这个 ChannelHandler 的名字是否是重复的, 如果不重复的话, 则为这个 Handler 创建一个对应的 DefaultChannelHandlerContext 实例, 并与之关联起来(Context 中有一个 handler 属性保存着对应的 Handler 实例). 判断此 Handler 是否重名的方法很简单: Netty 中有一个 name2ctx Map 字段, key 是 handler 的名字, 而 value 则是 handler 本身. 因此通过如下代码就可以判断一个 handler 是否重名了:
 
-```Java
+```java
 public ChannelPipeline addLast(ChannelHandlerInvoker invoker, String name, ChannelHandler handler) {
     synchronized (this) {
         name = filterName(name, handler);
@@ -105,7 +105,7 @@ public ChannelPipeline addLast(ChannelHandlerInvoker invoker, String name, Chann
 ```
 可以发现, ChannelInitializer首先是ChannelHandler的一个子类， ChannelHandler会被包装秤一个DefaultChannelHandlerContext类型.
 
-```Java
+```java
 DefaultChannelHandlerContext(
         DefaultChannelPipeline pipeline, EventExecutorGroup group, String name, ChannelHandler handler) {
     super(pipeline, group, name, isInbound(handler), isOutbound(handler));
@@ -118,7 +118,7 @@ DefaultChannelHandlerContext(
 inbound 和 outbound 两个字段, 其实这两个字段关系到 pipeline 的事件的流向与分类, 因此是十分关键的, 后面我们再来详细分析这两个字段所起的作用. 在这里, 只需要记住, ChannelInitializer 所对应的 DefaultChannelHandlerContext 的 inbound = true, outbound = false 即可. 或者可以这么理解，ChannelInitializer实现了ChannelInboundHandler接口.
 
 最后执行addLast0方法把ChannelHandler插入pipeline:
-```Java
+```java
 private void addLast0(final String name, AbstractChannelHandlerContext newCtx) {
     checkMultiplicity(newCtx);
 

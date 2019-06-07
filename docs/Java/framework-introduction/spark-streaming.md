@@ -6,7 +6,7 @@ http://spark.apache.org/docs/latest/streaming-programming-guide.html
 
 ## 一个简单例子
 
-```Java
+```java
 package com.didi;
 
 import org.apache.spark.SparkConf;

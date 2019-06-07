@@ -18,7 +18,7 @@ Callable接口使用泛型去定义它的返回类型。Executors类提供了一
 -  Callable并不像Runnable那样通过Thread的start方法就能启动实现类的run方法，所以它通常利用ExecutorService的submit方法去启动call方法自执行任务，而ExecutorService的submit又返回一个Future类型的结果，因此Callable通常也与Future一起使用
 
 或者利用FutureTask封装Callable再由Thread去启动：
-```Java
+```java
 FutureTask<String> task = new FutureTask(new Callable{
        public void call(){
              //TODO
@@ -31,7 +31,7 @@ thread.start();
 
 #### 2.1 Callable转换
 Executors 类包含一些从其他普通形式（Runnable、PrivilegedAction等）转换成 Callable 类的实用方法。
-```Java
+```java
 /**
  * 返回 Callable 对象，调用它时可运行给定的任务并返回 null
  */  
@@ -43,7 +43,7 @@ static <T> Callable<T> callable(Runnable task, T result)
 ```
 我们可以通过 Executors类的callable方法将 Runnable 转换成 Callable，其中 result为返回结果，以下是callable方法的源代码
 
-```Java
+```java
  public static <T> Callable<T> callable(Runnable task, T result) {  
     if (task == null)  
         throw new NullPointerException();  
@@ -75,7 +75,7 @@ static final class RunnableAdapter<T> implements Callable<T> {
 
 Callable接口位于java.util.concurrent包，这是一个泛型接口，里面只声明了一个call()方法：
 
-```Java
+```java
 
 /**
  * A task that returns a result and may throw an exception.
@@ -117,12 +117,12 @@ The Executors class contains utility methods to convert from other common forms 
 
 ### 4.  Callable的使用
 因为 Callable 接口并没有相关实现类，所以我们无法直接使用它，所以使用 Callable 需要调用 ExecutorService接口的 submit方法
-```Java
+```java
 <T> Future<T> submit(Callable<T> task)  
 ```
 submit提交一个返回值的任务用于执行，返回一个表示任务的未决结果的 Future。该 Future 的 get 方法在成功完成时将会返回该任务的结果。
 
-```Java
+```java
 result = executorService.submit(aCallable).get();   
 ```
 
@@ -131,7 +131,7 @@ result = executorService.submit(aCallable).get();
 #### 4.1 Callable 异步原理简析
 Callable又是如何实现的异步的呢，下面我们循序渐进，慢慢分析。 先看一个例子，实现Callable接口，进行异步计算：
 
-```Java
+```java
 public class Demo {
 
     public static void main(String[] args) throws ExecutionException, InterruptedException {
@@ -151,7 +151,7 @@ public class Demo {
 在不阻塞当前线程的情况下计算，那么必然需要另外的线程去执行具体的业务逻辑，上面代码中可以看到，是把Callable放入了线程池中，等待执行，并且立刻返回futrue。可以猜想下，需要从Future中得到Callable的结果，那么Future的引用必然会被两个线程共享，一个线程执行完成后改变Future的状态位并唤醒挂起在get上的线程，到底是不是这样呢？
 
 ##### 源码分析
-```Java
+```java
 public <T> Future<T> submit(Callable<T> task) {
     if (task == null) throw new NullPointerException();
     RunnableFuture<T> ftask = newTaskFor(task);

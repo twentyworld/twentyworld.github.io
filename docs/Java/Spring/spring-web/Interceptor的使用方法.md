@@ -29,7 +29,7 @@
 
 
 **`HandlerInterceptor`接口:**
-```Java
+```java
 public interface HandlerInterceptor {
 
 	boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
@@ -46,7 +46,7 @@ public interface HandlerInterceptor {
 ```
 
 **`AsyncHandlerInterceptor`接口:**
-```Java
+```java
 public interface AsyncHandlerInterceptor extends HandlerInterceptor {
 
 
@@ -60,7 +60,7 @@ public interface AsyncHandlerInterceptor extends HandlerInterceptor {
 
 **`HandlerInterceptorAdapter` 抽象类：**
 
-```Java
+```java
 public abstract class HandlerInterceptorAdapter implements AsyncHandlerInterceptor {
 
 	@Override
@@ -94,7 +94,7 @@ public abstract class HandlerInterceptorAdapter implements AsyncHandlerIntercept
 
 如上面的代码所示，其实在`HandlerInterceptor`和`AsyncHandlerInterceptor`中还有很多的代码注释，只是感觉太多了，就将其全部删除啦！如果大家对这些注释感兴趣的话，可以自行查看源代码。下面，咱们以继承`HandlerInterceptorAdapter`抽象类为例进行演示：
 
-```Java
+```java
 @Component
 public class WebHandlerInterceptor extends HandlerInterceptorAdapter {
     @Autowired
@@ -140,7 +140,7 @@ public class WebHandlerInterceptor extends HandlerInterceptorAdapter {
 
 **`WebRequestInterceptor`接口:**
 
-```Java
+```java
 public interface WebRequestInterceptor {
 
 	void preHandle(WebRequest request) throws Exception;
@@ -154,7 +154,7 @@ public interface WebRequestInterceptor {
 ```
 
 **`WebRequestHandlerInterceptorAdapter`接口:**
-```Java
+```java
 public class WebRequestHandlerInterceptorAdapter implements AsyncHandlerInterceptor {
 
 	private final WebRequestInterceptor requestInterceptor;
@@ -210,7 +210,7 @@ public class WebRequestHandlerInterceptorAdapter implements AsyncHandlerIntercep
 - `init()`方法，一般用来进行初始化操作；
 `destroy()`方法，一般用来进行释放资源的操作；
 `intercept()`方法，该方法是实现拦截功能的主要方法，咱们就在该方法中编写拦截的逻辑。
-```Java
+```java
 public interface Interceptor extends Serializable {
 
     /**
@@ -239,7 +239,7 @@ public interface Interceptor extends Serializable {
 ```
 
 **`AbstractInterceptor`接口：**
-```Java
+```java
 public abstract class AbstractInterceptor implements Interceptor {
 
     public void init() {
@@ -319,7 +319,7 @@ public abstract class AbstractInterceptor implements Interceptor {
 在Spring中, 通过继承`WebMvcConfigurerAdapter`可以实现上面的效果。
 
 但是请注意，`Interceptor`的载入顺序在`Bean`之前，所以，如果想要在`interceptor`中注入`Bean`的话，要在`WebMvcConfigurerAdapter`中先声明一个`Interceptor Bean`，然后引入`Interceptor`。
-```Java
+```java
 @Configuration
 public class WebMvcConfigureRegistration extends WebMvcConfigurerAdapter {
 
@@ -345,7 +345,7 @@ public class WebMvcConfigureRegistration extends WebMvcConfigurerAdapter {
 #### 4.1.1 `HandlerInterceptorAdapter` 失败
 所以最初的时候，尝试的是`HandlerInterceptorAdapter`去做的全局添加`Response Header`：
 
-```Java
+```java
 @Component
 public class WebHandlerInterceptor extends HandlerInterceptorAdapter {
     @Autowired
@@ -397,7 +397,7 @@ cache-name:
 3. 暴露`@RequestMapping`方法返回值为模型数据：放在功能处理方法的返回值上时，是暴露功能处理方法的返回值为模型数据，用于视图页面展示时使用。
 
 
-```Java
+```java
 @RestController
 public class TestController {
 
@@ -421,7 +421,7 @@ public class TestController {
 
 执行过程在`RequestMappingHandlerAdapter`中，每次执行`Controller`时会执行`@ModelAttribute`注解的方法：
 
-```Java
+```java
 
 protected ModelAndView invokeHandlerMethod(HttpServletRequest request, HttpServletResponse response,
  HandlerMethod handlerMethod) throws Exception {
@@ -446,7 +446,7 @@ Implementations may be registered directly with `RequestMappingHandlerAdapter` a
 
 
 **ResponseBodyAdvice<T>** 接口：
-```Java
+```java
 /**
  * Allows customizing the response after the execution of an {@code @ResponseBody}
  * or a {@code ResponseEntity} controller method but before the body is written
@@ -495,7 +495,7 @@ public interface ResponseBodyAdvice<T> {
 也就是可以定制化通过`@ResponseBody`或者`ResponseEntity`配置的`controller`的返回值的`response`，而且是在生成`HttpMessageConverter`之前。
 注意这里跟`HandlerInterceptorAdapter`的区别，`HandlerInterceptorAdapter`的`postHandler`方法是在生成`HttpMessageConverter`之后，才执行。
 具体代码：
-```Java
+```java
 @RestControllerAdvice
 public class HeaderModifierAdvice implements ResponseBodyAdvice {
 

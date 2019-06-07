@@ -24,7 +24,7 @@ Apple a = new Apple();
 
 后来业务变复杂了， 抽象出了一个水果(Fruit)的类， 创建对象会变成这个样子：
 
-```Java
+```java
 Fruit f1 = new Apple();
 Fruit f2 = new Banana();
 Fruit f3 = ......
@@ -115,7 +115,7 @@ MockEmailService 也不会真的发邮件， 而是把代码中试图发的邮�
 
 应用程序使用起来就简单了：
 
-```Java
+```java
 XmlAppContext ctx = new XmlAppContext("c:\\bean.xml");
 
 OrderProcessor op = (OrderProcessor) ctx.getBean("order-processor");

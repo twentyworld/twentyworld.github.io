@@ -5,7 +5,7 @@
 上面对容器的初始化过程进行了详细的分析,这个初始化过程完成的主要工作是在容器中建立`BeanDefinition`数据映射。在此过程中并没有看到`IoC`容器对`Bean`依赖关系进行注入,接下来分析一下`IoC`容器是怎样对`Bean`的依赖关系进行注入的。
 假设当前容器已经载入了用户定义的`Bean`信息,开始分析依赖注入的原理。首先,注意到依赖注入的过程是用户第一次向`loC`容器索要`Bean`时触发的,当然也有例外,也就是我们可以在`BeanDefinition`信息中通过控制`lazy-init`属性来让容器完成对`Bean`的预实例化。这个预实例化实际上也是一个完成依赖注入的过程,但它是在初始化的过程中完成的,稍后我们会详细分析这个预实例化的处理。当用户向`IoC`容器索要`Bean`时,如果读者还有印象,那么一定还记得在基本的容器接口`BeanFactory`中,有一个`getBean`的接口定义,这个接口的实现就是触发依赖注入发生的地方。为了进一步了解这个依赖注入过程的实现,下面从`DefaultListableBeanFactory`的基类`AbstractBeanFactory`入手去看看`getBean`的实现。
 
-```Java
+```java
 //获取IoC容器中指定名称的Bean  
 public Object getBean(String name) throws BeansException {  
    //doGetBean才是真正向IoC容器获取被管理Bean的过程  
@@ -181,7 +181,7 @@ protected <T> T doGetBean(
 
 重点来说, `getBean`是依赖注入的起点,之后会调用 `createBean`,下面通过`createBean`代码来了解这个实现过程。在这个过程中,`Bean`对象会依据 `BeanDefinition`定义的要求生成在`AbstractAutowireCapableBeanFactory`中实现了这个`createBean`, `createBean`不但生成了需要的`Bean`,还对`Bean`初始化进行了处理,比如实现了在`BeanDefinition`中的`init-method`属性定义,`Bean`后置处理器等。
 
-```Java
+```java
 //创建Bean实例对象  
 protected Object createBean(final String beanName, final RootBeanDefinition mbd, final Object[] args)  
        throws BeanCreationException {  
@@ -324,7 +324,7 @@ protected Object doCreateBean(final String beanName, final RootBeanDefinition mb
 4、createBeanInstance方法创建Bean的java实例对象：
 
 在createBeanInstance方法中，根据指定的初始化策略，使用静态工厂、工厂方法或者容器的自动装配特性生成java实例对象，创建对象的源码如下：
-```Java
+```java
 //创建Bean的实例对象  
 protected BeanWrapper createBeanInstance(String beanName, RootBeanDefinition mbd, Object[] args) {  
    //检查确认Bean是可实例化的  
@@ -407,7 +407,7 @@ protected BeanWrapper instantiateBean(final String beanName, final RootBeanDefin
 
 在使用默认的无参构造方法创建Bean的实例化对象时，方法getInstantiationStrategy().instantiate调用了SimpleInstantiationStrategy类中的实例化Bean的方法，其源码如下：
 
-```Java
+```java
 //使用初始化策略实例化Bean对象  
 public Object instantiate(RootBeanDefinition beanDefinition, String beanName, BeanFactory owner) {  
    //如果Bean定义中没有方法覆盖，则就不需要CGLIB父类类的方法  
@@ -454,7 +454,7 @@ public Object instantiate(RootBeanDefinition beanDefinition, String beanName, Be
 通过上面的代码分析，我们看到了如果Bean有方法被覆盖了，则使用JDK的反射机制进行实例化，否则，使用CGLIB进行实例化。
 
 instantiateWithMethodInjection方法调用SimpleInstantiationStrategy的子类CglibSubclassingInstantiationStrategy使用CGLIB来进行初始化，其源码如下：
-```Java
+```java
 //使用CGLIB进行Bean对象实例化  
 public Object instantiate(Constructor ctor, Object[] args) {  
      //CGLIB中的类  
@@ -488,7 +488,7 @@ GLIB是一个常用的字节码生成器的类库，它提供了一系列API实�
 第4、5步中我们已经分析了容器初始化生成Bean所包含的Java实例对象的过程，现在我们继续分析生成对象后，Spring IoC容器是如何将Bean的属性依赖关系注入Bean实例对象中并设置好的，属性依赖注入的代码如下：
 
 
-```Java
+```java
 //将Bean属性设置到生成的实例对象上  
 protected void populateBean(String beanName, AbstractBeanDefinition mbd, BeanWrapper bw) {  
    //获取容器在解析Bean定义资源时为BeanDefiniton中设置的属性值  
@@ -680,7 +680,7 @@ protected void applyPropertyValues(String beanName, BeanDefinition mbd, BeanWrap
 
 
 当容器在对属性进行依赖注入时，如果发现属性值需要进行类型转换，如属性值是容器中另一个Bean实例对象的引用，则容器首先需要根据属性值解析出所引用的对象，然后才能将该引用对象注入到目标实例对象的属性上去，对属性进行解析的由resolveValueIfNecessary方法实现，其源码如下：
-```Java
+```java
 //解析属性值，对注入类型进行转换  
 public Object resolveValueIfNecessary(Object argName, Object value) {  
    //对引用类型的属性进行解析  
@@ -877,7 +877,7 @@ private Map resolveManagedMap(Object argName, Map<?, ?> mm) {
 
 BeanWrapperImpl类主要是对容器中完成初始化的Bean实例对象进行属性的依赖注入，即把Bean对象设置到它所依赖的另一个Bean的属性中去，依赖注入的相关源码如下：
 
-```Java
+```java
 //实现属性依赖注入功能  
 private void setPropertyValue(PropertyTokenHolder tokens, PropertyValue pv) throws BeansException {  
    //PropertyTokenHolder主要保存属性的名称、路径，以及集合的size等信息  

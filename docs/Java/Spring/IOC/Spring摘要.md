@@ -25,7 +25,7 @@ BeanPostProcessor是容器绑定的，即BeanPostProcessor只能对跟它属于�
 
 BeanFactoryPostProcessor的核心作用是在bean在实例化前更改bean的配置信息。
 这里我们可以从类的注释中清晰的发现：
-```Java
+```java
 
 /**
  * Allows for custom modification of an application context's bean definitions,

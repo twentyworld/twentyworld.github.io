@@ -19,7 +19,7 @@ JDK 默认提供了以下几个ClassLoader：
   另外我们知道ClassLoader中有个getSystemClassLoader方法,此方法返回的正是AppclassLoader.AppClassLoader主要负责加载classpath所指定的位置的类或者是jar文档，它也是Java程序默认的类加载器。
 
 看sun.misc.Launcher,它是一个java虚拟机的入口应用。
-```Java
+```java
 public class Launcher {
 private static URLStreamHandlerFactory factory = new Launcher.Factory();
     private static Launcher launcher = new Launcher();
@@ -66,13 +66,13 @@ C:\Program Files\Java\jre1.8.0_91\classes
 ```
 
 我们先前的内容有说过，可以指定-D java.ext.dirs参数来添加和改变ExtClassLoader的加载路径。这里我们通过可以编写测试代码。
-```Java
+```java
 System.out.println(System.getProperty("java.ext.dirs"));
 
 C:\Program Files\Java\jre1.8.0_91\lib\ext;C:\Windows\Sun\Java\lib\ext
 ```
 可以看到AppClassLoader加载的就是java.class.path下的路径。我们同样打印它的值。
-```Java
+```java
 System.out.println(System.getProperty("java.class.path"));
 
 D:\workspace\ClassLoaderDemo\bin
@@ -103,7 +103,7 @@ D:\workspace\ClassLoaderDemo\bin
 
 ##### loadClass()
 JDK文档中是这样写的，通过指定的全限定类名加载class，它通过同名的loadClass(String,boolean)方法。
-```Java
+```java
 protected Class<?> loadClass(String name,
                              boolean resolve)
                       throws ClassNotFoundException
@@ -115,7 +115,7 @@ protected Class<?> loadClass(String name,
 
 如果class在上面的步骤中找到了，参数resolve又是true的话，那么loadClass()又会调用resolveClass(Class)这个方法来生成最终的Class对象。 我们可以从源代码看出这个步骤。
 
-```Java
+```java
 protected Class<?> loadClass(String name, boolean resolve)
         throws ClassNotFoundException
     {
@@ -171,7 +171,7 @@ protected Class<?> loadClass(String name, boolean resolve)
 > 一个ClassLoader创建时如果没有指定parent，那么它的parent默认就是AppClassLoader。
 上面说的是，如果自定义一个ClassLoader，默认的parent父加载器是AppClassLoader，因为这样就能够保证它能访问系统内置加载器加载成功的class文件。
 
-```Java
+```java
 public class DiskClassLoader extends ClassLoader {
 
     private String mLibPath;
@@ -231,7 +231,7 @@ public class DiskClassLoader extends ClassLoader {
 ```
 测试：
 
-```Java
+```java
 public class ClassLoaderTest {
 
     public static void main(String[] args) {

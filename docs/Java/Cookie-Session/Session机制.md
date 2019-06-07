@@ -23,7 +23,7 @@
 
 `Session`对应的类为`javax.servlet.http.HttpSession`类。每个来访者对应一个`Session`对象，所有该客户的状态信息都保存在这个`Session`对象里。`Session`对象是在客户端第一次请求服务器的时候创建的。`Session`也是一种`key-value`的属性对，通过`getAttribute(Stringkey)`和`setAttribute(String key，Objectvalue)`方法读写客户状态信息。`Servlet`里通过`request.getSession()`方法获取该客户的`Session`，例如：
 
-```Java
+```java
 HttpSession session = request.getSession();       // 获取Session对象
 session.setAttribute("loginTime", new Date());     // 设置Session中的属性
 
@@ -106,7 +106,7 @@ out.println("登录时间为：" +(Date)session.getAttribute("loginTime"));     
 ```
 
 该方法会自动判断客户端是否支持`Cookie`。如果客户端支持`Cookie`，会将`URL`原封不动地输出来。如果客户端不支持`Cookie`，则会将用户`Session`的`id`重写到`URL`中。重写后的输出可能是这样的：
-```Java
+```java
 <td>
     <a href="index.jsp;jsessionid=0CCD096E7F8D97B0BE608AFDC3E1931E?c=1&wd=Java">Homepage</a>
 </td>
@@ -114,7 +114,7 @@ out.println("登录时间为：" +(Date)session.getAttribute("loginTime"));     
 即在文件名的后面，在`URL`参数的前面添加了字符串`;jsessionid=XXX`。其中`XXX`为`Session`的`id`。分析一下可以知道，增添的`jsessionid`字符串既不会影响请求的文件名，也不会影响提交的地址栏参数。用户单击这个链接的时候会把`Session`的`id`通过`URL`提交到服务器上，服务器通过解析`URL`地址获得`Session`的`id`。
 
 如下：
-```Java
+```java
 <%
     if(“administrator”.equals(userName)) {
         response.sendRedirect(response.encodeRedirectURL(“administrator.jsp”));

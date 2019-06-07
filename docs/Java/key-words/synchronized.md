@@ -120,7 +120,7 @@ notifyAll 会唤醒所有等待(对象的)线程，尽管哪一个线程将会�
 你可以在[github][5]上看到源码：
 
 一个java bean类，线程将会使用它并调用wait和notify方法。
-```Java
+```java
 public class Message {
     private String msg;
     public Message(String str){this.msg=str;}
@@ -129,7 +129,7 @@ public class Message {
 }
 ```
 一个Waiter类，等待其它的线程调用notify方法以唤醒线程完成处理。注意等待线程必须通过加synchronized同步锁拥有Message对象的监视器。
-```Java
+```java
 public class Waiter implements Runnable {
     private Message msg;
     public Waiter(Message m) {this.msg = m;}
@@ -151,7 +151,7 @@ public class Waiter implements Runnable {
 }
 ```
 一个Notifier类，处理Message对象并调用notify方法唤醒等待Message对象的线程。注意synchronized代码块被用于持有Message对象的监视器。
-```Java
+```java
 public class Notifier implements Runnable {
     private Message msg;
     public Notifier(Message msg) {this.msg = msg;}
@@ -173,7 +173,7 @@ public class Notifier implements Runnable {
 }
 ```
 一个测试类，交付创建多个等待线程和一个通过线程，并启动这些线程。
-```Java
+```java
 public class WaitNotifyTest {
     public static void main(String[] args) {
 
@@ -191,7 +191,7 @@ public class WaitNotifyTest {
 }
 ```
 在当前例子中，我们可以得到控制台中打出的结果：
-```Java
+```java
 waiter1 waiting to get notified at time:1525606113222
 waiter waiting to get notified at time:1525606113222
 All the threads are started
@@ -201,7 +201,7 @@ waiter1 processed: notifier Notifier work done
 ```
 
 现在我们修改原来样例为：
-```Java
+```java
 public class Notifier implements Runnable {
     private Message msg;
     public Notifier(Message msg) {this.msg = msg;}
@@ -223,7 +223,7 @@ public class Notifier implements Runnable {
 ```
 
 得到预期的结果：
-```Java
+```java
 waiter waiting to get notified at time:1525610336743
 waiter1 waiting to get notified at time:1525610336743
 All the threads are started
@@ -251,7 +251,7 @@ wait()一般是在控制条件Condition下协同使用，如果Condition不能�
 
 #### 2.3.2 线程中断(interrupt)
 在Java提供的线程支持类Thread中，有三个用于线程中断的方法：
-```Java
+```java
 //中断线程。
 public void interrupt();
 
@@ -265,7 +265,7 @@ public boolean isInterrupted();
 以下是测试代码，你可以在[github][8]中看到：
 
 打印线程如果没有被中断，会一直打印。
-```Java
+```java
 public class InterruptThread implements Runnable {
     @Override
     public void run() {
@@ -281,7 +281,7 @@ public class InterruptThread implements Runnable {
 }
 ```
 测试类：
-```Java
+```java
 public class InterruptedThreadLearn {
     public static void main(String[] args) {
         InterruptThread printer = new InterruptThread();
@@ -301,7 +301,7 @@ public class InterruptedThreadLearn {
 ```
 
 result:
-```Java
+```java
 打印线程打印中… …
 打印线程打印中… …
 打印线程打印中… …
@@ -319,7 +319,7 @@ isInterrupted:false
 ![img][6]
 你可以在[github][7]上看到源码：
 两个插件线程：
-```Java
+```java
 public class PluginFirst implements Runnable {
     @Override
     public void run() {
@@ -334,7 +334,7 @@ public class PluginFirst implements Runnable {
     }
 }
 ```
-```Java
+```java
 public class PluginSecond implements Runnable {
 
     @Override
@@ -352,7 +352,7 @@ public class PluginSecond implements Runnable {
 }
 ```
 主线程(测试)
-```Java
+```java
 public class ThreadJoinTest {
     public static void main(String[] args) {
         System.out.println("主线程开启...");
@@ -374,7 +374,7 @@ public class ThreadJoinTest {
 #### 2.3.4 优先级(Priority)
 
 线程优先级是指获得CPU资源的优先程序。优先级高的容易获得CPU资源，优先级底的较难获得CPU资源，表现出来的情况就是优先级越高执行的时间越多。Java中通过getPriority和setPriority方法获取和设置线程的优先级。Thread类提供了三个表示优先级的常量：MIN_PRIORITY优先级最低，为1；NORM_PRIORITY是正常的优先级；为5，MAX_PRIORITY优先级最高，为10。我们创建线程对象后，如果不显示的设置优先级的话，默认为5。
-```Java
+```java
 thread1.setPriority(Thread.MAX_PRIORITY);
 thread2.setPriority(8);
 ```
@@ -392,7 +392,7 @@ synchronized是Java中的关键字，是一种同步锁。它修饰的对象有�
 我们可以把第一个第二个在同一个例子中展示(你可以在[github][9]中查看源码)。
 
 Message是同步对象
-```Java
+```java
 public class Message {
 
     private int number;
@@ -430,7 +430,7 @@ public class Message {
 ```
 
 下面我们创建若干个不同的thread用于获取不同的方法。
-```Java
+```java
 public class SynchronizedThreadA implements Runnable {
     private Message object;
     public SynchronizedThreadA(Message object) {
@@ -464,7 +464,7 @@ public class SynchronizedThreadD implements Runnable {
 }
 ```
 注意，这里，我们主要是使用的是同一个对象object，在测试类中测试代码：
-```Java
+```java
 public class SynchronizedInstanceTest {
     public static void main(String[] args) {
         Message object = new Message(); //不同的线程使用同一对象。
@@ -481,7 +481,7 @@ public class SynchronizedInstanceTest {
 }
 ```
 会发现在控制台中，按照时间间隔打印出：
-```Java
+```java
 Thread-0, method a, number= 1
 Thread-8, method c, number= 2
 Thread-7, method c, number= 3
@@ -495,7 +495,7 @@ Thread-1, method a, number= 9
 你会发现，synchronized用代码块和在方法上的效果是一样的。
 
 #### 3.1.1 synchronized 作用于不同对象
-```Java
+```java
 public class SyncDiffMethodTest {
     public static void main(String[] args) {
         Message message1 = new Message();
@@ -510,7 +510,7 @@ public class SyncDiffMethodTest {
 }
 ```
 result:
-```Java
+```java
 Thread-0, method a, number= 1
 Thread-3, method b, number= 1
 Thread-1, method a, number= 2
@@ -523,7 +523,7 @@ Thread-5, method b, number= 3
 #### 3.1.2 synchronized 和 非synchronized方法
 
 同样是获取同一个对象。
-```Java
+```java
 public class SyncAndNoSyncMethodTest {
     public static void main(String[] args) {
         Message message = new Message();
@@ -538,7 +538,7 @@ public class SyncAndNoSyncMethodTest {
 ```
 
 result：
-```Java
+```java
 ···
 Thread-2, method a, number= 8929
 ···
@@ -578,7 +578,7 @@ public class StaticMethodTest {
 }
 ```
 result:
-```Java
+```java
 Thread-0, method e, number= 1
 Thread-2, method e, number= 2
 Thread-5, method e, number= 3
@@ -592,7 +592,7 @@ synchronized应用在static方法上，那是对当前对应的*.Class进行持�
 
 
 在message中添加方法：
-```Java
+```java
 public static synchronized int methodE() {
 
     try {
@@ -617,7 +617,7 @@ public int methodG() {
 }
 ```
 在测试类中测试代码
-```Java
+```java
 public class SyncClassTest {
     public static void main(String[] args) {
         Message message1 = new Message();
@@ -636,7 +636,7 @@ public class SyncClassTest {
 }
 ```
 result:
-```Java
+```java
 Thread-1, method e, number= 1
 Thread-8, method g, number= 2
 Thread-7, method g, number= 3
@@ -739,7 +739,7 @@ ObjectMonitor() {
 ObjectMonitor中有两个队列，\_WaitSet 和 \_EntryList，用来保存ObjectWaiter对象列表( 每个等待锁的线程都会被封装成ObjectWaiter对象)，\_owner指向持有ObjectMonitor对象的线程，当多个线程同时访问一段同步代码时，首先会进入 \_EntryList 集合，当线程获取到对象的monitor 后进入 \_Owner 区域并把monitor中的owner变量设置为当前线程同时monitor中的计数器count加1，若线程调用 wait() 方法，将释放当前持有的monitor，owner变量恢复为null，count自减1，同时该线程进入 WaitSe t集合中等待被唤醒。若当前线程执行完毕也将释放monitor(锁)并复位变量的值，以便其他线程进入获取monitor(锁)。
 
 ### 4.2 synchronized代码块底层原理
-​```Java
+​```java
 public class SyncCodeBlock {
    public int i;
    public void syncTask(){
@@ -751,7 +751,7 @@ public class SyncCodeBlock {
 }
 ```
 编译上述代码并使用javap反编译后得到字节码如下:
-```Java
+```java
 //===========主要看看syncTask方法实现================
   public void syncTask();
     descriptor: ()V
@@ -781,7 +781,7 @@ public class SyncCodeBlock {
       //省略其他字节码.......
 ```
 核心：
-```Java
+```java
 3: monitorenter  //进入同步方法
 //..........省略其他  
 15: monitorexit   //退出同步方法
@@ -795,7 +795,7 @@ public class SyncCodeBlock {
 ### 4.3 synchronized方法底层原理
 
 方法级的同步是隐式，即无需通过字节码指令来控制的，它实现在方法调用和返回操作之中。JVM可以从方法常量池中的方法表结构`(method_info Structure)`中的 `ACC_SYNCHRONIZED`访问标志区分一个方法是否同步方法。当方法调用时，调用指令将会 检查方法的 `ACC_SYNCHRONIZED` 访问标志是否被设置，如果设置了，执行线程将先持有`monitor`（虚拟机规范中用的是管程一词）， 然后再执行方法，最后再方法完成(无论是正常完成还是非正常完成)时释放`monitor`。在方法执行期间，执行线程持有了`monitor`，其他任何线程都无法再获得同一个`monitor`。如果一个同步方法执行期间抛 出了异常，并且在方法内部无法处理此异常，那这个同步方法所持有的`monitor`将在异常抛到同步方法之外时自动释放。下面我们看看字节码层面如何实现。
-```Java
+```java
 public class SyncMethod {
    public int i;
    public synchronized void syncTask(){
@@ -804,7 +804,7 @@ public class SyncMethod {
 }
 ```
 同样，编译之后，主要字节码如下：
-```Java
+```java
 //==================syncTask方法======================
   public synchronized void syncTask();
     descriptor: ()V
@@ -934,7 +934,7 @@ NUMA(Non Uniform Memory Access Achitecture）架构：
 
 ### 5.4 锁消除
 消除锁是虚拟机另外一种锁的优化，这种优化更彻底，Java虚拟机在JIT编译时(可以简单理解为当某段代码即将第一次被执行时进行编译，又称即时编译)，通过对运行上下文的扫描，去除不可能存在共享资源竞争的锁，通过这种方式消除没有必要的锁，可以节省毫无意义的请求锁时间，如下StringBuffer的append是一个同步方法，但是在add方法中的StringBuffer属于一个局部变量，并且不会被其他线程所使用，因此StringBuffer不可能存在共享资源竞争的情景，JVM会自动将其锁消除。
-```Java
+```java
 public class StringBufferRemoveSync {
 
     public void add(String str1, String str2) {
@@ -955,7 +955,7 @@ public class StringBufferRemoveSync {
 ## 6 synchronized的几个特点
 ### 6.1 synchronized的可重入性
 从互斥锁的设计上来说，当一个线程试图操作一个由其他线程持有的对象锁的临界资源时，将会处于阻塞状态，但当一个线程再次请求自己持有对象锁的临界资源时，这种情况属于重入锁，请求将会成功，在java中synchronized是基于原子性的内部锁机制，是可重入的，因此在一个线程调用synchronized方法的同时在其方法体内部调用该对象另一个synchronized方法，也就是说一个线程得到一个对象锁后再次请求该对象锁，是允许的，这就是synchronized的可重入性。
-```Java
+```java
 public class AccountingSync implements Runnable{
     static AccountingSync instance=new AccountingSync();
     static int i=0;
@@ -993,7 +993,7 @@ public class AccountingSync implements Runnable{
 需要特别理解的一点是，与`sleep`方法不同的是`wait`方法调用完成后，线程将被暂停，但`wait`方法将会释放当前持有的监视器锁(monitor)，直到有线程调用`notify/notifyAll`方法后方能继续执行，而`sleep`方法只让线程休眠并不释放锁。同时`notify/notifyAll`方法调用后，并不会马上释放监视器锁，而是在相应的`synchronized(){}/synchronized`方法执行结束后才自动释放锁。
 
 ### 6.3 线程中断与synchronized
-```Java
+```java
 public class InterruptThreadTest {
     public static void main(String[] args) throws InterruptedException {
         Thread t1 = new Thread() {
@@ -1022,14 +1022,14 @@ public class InterruptThreadTest {
 }
 ```
 output:
-```Java
+```java
 Interruted When Sleep
 interrupt:false
 ```
 如上述代码所示，我们创建一个线程，并在线程中调用了sleep方法从而使用线程进入阻塞状态，启动线程后，**调用线程实例对象的interrupt方法中断阻塞异常，并抛出InterruptedException异常，此时中断状态也将被复位**。
 
 除了阻塞中断的情景，我们还可能会遇到处于运行期且非阻塞的状态的线程，这种情况下，直接调用Thread.interrupt()中断线程是不会得到任响应的。
-```Java
+```java
 public class InterruptThread2 {
     public static void main(String[] args) throws InterruptedException {
         Thread t1=new Thread(){
@@ -1052,7 +1052,7 @@ output:
   ···
 ```
 虽然我们调用了interrupt方法，但线程t1并未被中断，因为处于非阻塞状态的线程需要我们手动进行中断检测并结束程序
-```Java
+```java
 public class RunningInterruptThread {
     public static void main(String[] args) throws InterruptedException {
         Thread t1 = new Thread() {
@@ -1077,7 +1077,7 @@ public class RunningInterruptThread {
 是的，我们在代码中使用了实例方法`isInterrupted`判断线程是否已被中断，如果被中断将跳出循环以此结束线程,注意非阻塞状态调用`interrupt()`并不会导致中断状态重置。综合所述，可以简单总结一下中断两种情况，一种是当线程处于阻塞状态或者试图执行一个阻塞操作时，我们可以使用实例方法`interrupt()`进行线程中断，执行中断操作后将会抛出`interruptException`异常(该异常必须捕捉无法向外抛出)并将中断状态复位，另外一种是当线程处于运行状态时，我们也可调用实例方法interrupt()进行线程中断，但同时必须手动判断中断状态，并编写中断线程的代码(其实就是结束run方法体的代码).
 
 有时候需要兼顾这两种情况：
-```Java
+```java
 public void run(){
     try {
     //判断当前线程是否已中断,注意interrupted方法是静态的,执行后会对中断状态进行复位
@@ -1091,7 +1091,7 @@ public void run(){
 ```
 ### 6.4 synchronized 与锁等待
 事实上线程的中断操作对于正在等待获取的锁对象的synchronized方法或者代码块并不起作用，也就是对于synchronized来说，如果一个线程在等待锁，那么结果只有两种，要么它获得这把锁继续执行，要么它就保存等待，即使调用中断线程的方法，也不会生效。
-```Java
+```java
 public class SynchronizedBlocked implements Runnable {
 
     public synchronized void f() {

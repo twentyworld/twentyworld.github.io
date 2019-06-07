@@ -7,7 +7,7 @@ FutureTask是一个可取消的异步计算任务。FutureTask提供了对 Futur
 除了作为一个独立的类外，FutureTask还提供了 protected 功能（done()、set(V v)等方法），这在创建自定义任务类时可能很有用。
 
 ### Future的构造方法
-```Java
+```java
 
 public interface RunnableFuture<V> extends Runnable, Future<V> {
     /**
@@ -56,7 +56,7 @@ public class FutureTask<V> implements RunnableFuture<V> {
 
 ### 1.  FutureTask的状态
 根据Future接口，我们至少判断FutureTask有三种状态，新建状态，完成状态和取消状态。但是因为还有异常和中断操作，状态多了几种。
-```Java
+```java
     // 表示FutureTask当前的状态
     private volatile int state;
     // NEW 新建状态，表示这个FutureTask还没有开始运行
@@ -108,7 +108,7 @@ public class FutureTask<V> implements RunnableFuture<V> {
 > 1.  如果FutureTask任务已经完结，那么就返回结果值.
 > 2.  如果FutureTask任务没有完结，那么当前线程就应该等待，直到任务运行完结，会唤醒这个等待结果的线程，返回结果值。
 
-```Java
+```java
 public V get() throws InterruptedException, ExecutionException {
     int s = state;
     /**
@@ -166,7 +166,7 @@ report方法就是根据传入的状态值s，来决定是抛出异常，还是�
 ### 3.  运行FutureTask任务
 运行FutureTask任务也很简单，只要调用FutureTask任务的run方法，那么这个线程也是运行FutureTask任务的线程，取消任务时，可能会中断这个线程。
 
-```Java
+```java
 // 开始运行FutureTask任务
     public void run() {
         // 如果状态state不是NEW，或者设置runner值失败
@@ -215,7 +215,7 @@ report方法就是根据传入的状态值s，来决定是抛出异常，还是�
 
 不过因为FutureTask任务都是在多线程环境中使用，所以要注意并发冲突问题。注意在run方法中，我们没有使用synchronized代码块或者Lock来解决并发问题，而是使用了CAS这个乐观锁来实现并发安全，保证只有一个线程能运行FutureTask任务。
 
-```Java
+```java
 protected void set(V v) {
     // 调用CAS函数，将状态state从NEW改成COMPLETING
     if (UNSAFE.compareAndSwapInt(this, stateOffset, NEW, COMPLETING)) {
@@ -249,7 +249,7 @@ set与setException方法流程几乎一样：
 
 
 ### 4.  取消FutureTask任务
-```Java
+```java
 public boolean cancel(boolean mayInterruptIfRunning) {
     /**
      * 如果当前状态不是NEW，或者使用CAS修改当前状态失败，那么直接返回false，取消失败
@@ -281,7 +281,7 @@ public boolean cancel(boolean mayInterruptIfRunning) {
 
 
 ### 5.  等待结果的线程队列
-```Java
+```java
 /**
  * 简单地单向链表的节点。记录着所有等待FutureTask运行结果的线程
  */
@@ -302,7 +302,7 @@ private volatile WaitNode waiters;
 ### 6.  将当前线程插入到等待队列中
 
 
-```Java
+```java
 private int awaitDone(boolean timed, long nanos)
     throws InterruptedException {
     // 计算截止日期
@@ -366,7 +366,7 @@ private int awaitDone(boolean timed, long nanos)
 3. 当s == COMPLETING：表示run方法已经执行完毕，还有一点后序操作没有完成，所以当前线程让出执行权，等待FutureTask任务状态变成完结状态。
 4. 剩下的就表示状态是NEW，那么就用当前线程创建一个WaitNode节点，然后插入到等待线程队列waiters中，最后调用LockSupport的park系列方法将当前线程阻塞。
 5. 被阻塞的线程等待着被唤醒，然后进行下一次for循环，继续判断。
-```Java
+```java
 // 从链表中删除节点node
 private void removeWaiter(WaitNode node) {
     if (node != null) {
@@ -398,7 +398,7 @@ private void removeWaiter(WaitNode node) {
 }
 ```
 ### 7.  唤醒所有等待结果的线程
-```Java
+```java
 /**
  * 当FutureTask任务结束时(包括运行完成、抛出异常以及手动取消都表示任务结束)，都会调用这个方法。
  * 用来唤醒所有等待运行结果的线程。
@@ -440,7 +440,7 @@ private void finishCompletion() {
 
 
 ### 8.  重复运行FutureTask任务
-```Java
+```java
  // 可以重复运行FutureTask任务
 protected boolean runAndReset() {
     // 如果状态state不是NEW，或者设置runner值失败
@@ -485,7 +485,7 @@ Future就是监控Callable任务完成情况的，通过组合的方式，即Fut
 
 ### 重要示例
 
-```Java
+```java
 import java.util.concurrent.*;
 import java.util.concurrent.Callable;
 

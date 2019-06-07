@@ -27,7 +27,7 @@ Shiro对session的支持更加易用，而且他可以在任何应用、任何�
 
 使用Shiro session时，无论是在JavaSE还是web，方法都是一样的。
 
-```Java
+```java
 public static void main(String[] args) {
     Factory<SecurityManager> factory = new IniSecurityManagerFactory("classpath:shiro/shiro.ini");
 
@@ -66,7 +66,7 @@ public static void main(String[] args) {
 以DelegatingSubject为例：
 (注意!从Shiro 1.2开始多了一个isSessionCreationEnabled属性，其默认值为true。)
 
-```Java
+```java
 public Session getSession() {
     return getSession(true);
 }
@@ -105,7 +105,7 @@ public Session getSession(boolean create) {
 和Shiro中的其他核心组件一样，他由SecurityManager维护。
 > (注意：public interface SecurityManager extends Authenticator, Authorizer, SessionManager)。
 
-```Java
+```java
 public interface SessionManager {
     Session start(SessionContext context);
     Session getSession(SessionKey key) throws SessionException;
@@ -143,7 +143,7 @@ Shiro为SessionManager提供了3个实现类(顺便也整理一下与SecurityMan
 
 session过期的验证方法可以参考SimpleSession：
 
-```Java
+```java
 protected boolean isTimedOut() {
 
     if (isExpired()) {
@@ -187,7 +187,7 @@ protected boolean isTimedOut() {
 试着从SecurityUtils.getSubject()一步步detect，感受一下session是如何设置到subject中的。
 判断线程context中是否存在Subject后，若不存在，我们使用Subject的内部类Builder进行buildSubject();
 
-```Java
+```java
 public static Subject getSubject() {
     Subject subject = ThreadContext.getSubject();
     if (subject == null) {
@@ -201,7 +201,7 @@ public static Subject getSubject() {
 buildSubject()将建立Subject的工作委托给securityManager.createSubject(subjectContext)
 createSubject会调用resolveSession处理session。
 
-```Java
+```java
 protected SubjectContext resolveSession(SubjectContext context) {
     if (context.resolveSession() != null) {
         log.debug("Context already contains a session.  Returning.");
@@ -230,7 +230,7 @@ resolveSession(subjectContext)，首先尝试从context(MapContext)中获取sess
 
 getSession(key)的任务直接交给sessionManager来执行。
 
-```Java
+```java
 public Session getSession(SessionKey key) throws SessionException {
     return this.sessionManager.getSession(key);
 }
@@ -244,7 +244,7 @@ doGetSession调用retrieveSession(key)，该方法尝试通过sessionDAO获得se
 
 最后，判断session是否为空后对其进行验证(参考SimpleSession.validate())。
 
-```Java
+```java
 protected final Session doGetSession(final SessionKey key) throws InvalidSessionException {
     enableSessionValidationIfNecessary();
 
@@ -262,7 +262,7 @@ Session Listener
 
 我们可以通过SessionListener接口或者SessionListenerAdapter来进行session监听，在session创建、停止、过期时按需进行操作。
 
-```Java
+```java
 public interface SessionListener {
 
     void onStart(Session session);
@@ -275,7 +275,7 @@ public interface SessionListener {
 
 我只需要定义一个Listener并将它注入到sessionManager中。
 
-```Java
+```java
 package pac.testcase.shiro.listener;
 
 import org.apache.shiro.session.Session;
@@ -320,7 +320,7 @@ SessionManager将session CRUD的工作委托给SessionDAO。
 
 我们可以用特定的数据源API实现SessionDAO，以将session存储于任何一种数据源中。
 
-```Java
+```java
 public interface SessionDAO {
 
     Serializable create(Session session);
@@ -454,7 +454,7 @@ public static final String ACTIVESESSIONCACHE_NAME = "shiro-activeSessionCache";
 当创建一个新的session时，SessionDAO的实现类使用SessionIdGenerator来为session生成ID。
 默认使用的SessionIdGenerator是JavaUuidSessionIdGenerator，其实现为：
 
-```Java
+```java
 public Serializable generateId(Session session) {
     return UUID.randomUUID().toString();
 }
@@ -470,7 +470,7 @@ public Serializable generateId(Session session) {
 为了防止垃圾被一点点堆积起来，我们需要周期性地检查session并在必要时删除session。
 于是我们有SessionValidationScheduler：
 
-```Java
+```java
 public interface SessionValidationScheduler {
 
     boolean isEnabled();

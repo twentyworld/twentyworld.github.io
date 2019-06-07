@@ -18,7 +18,7 @@ Java处理JSON数据有三个比较流行的类库`FastJSON`、`Gson`和`Jackson
 ---
 
 首先我们定义两个类。
-```Java
+```java
 public class Person {
     private String name;
     private int age;
@@ -40,7 +40,7 @@ public class Person {
 
 ```
 
-```Java
+```java
 public class House {
     public int price;
     private String address;
@@ -73,7 +73,7 @@ public class House {
 
 示例：
 我们修改一下`House`类：
-```Java
+```java
 public class House {
     public int price;
     private String address;
@@ -88,7 +88,7 @@ public class House {
 
 ```
 测试：
-```Java
+```java
 public static void main(String[] args) throws JsonProcessingException {
     ObjectMapper mapper = getObjectMapper();
     String json = mapper.writeValueAsString(getPerson());
@@ -109,7 +109,7 @@ public static ObjectMapper getObjectMapper() {
 }
 ```
 OutPut:
-```Java
+```java
 // 只有price， 没有Address。
 {"name":"zed","age":24,"houses":[{"price":300},{"price":400}]}
 
@@ -118,7 +118,7 @@ OutPut:
 
 给`House`类添加注解`@JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)`：
 OutPut:
-```Java
+```java
 // 有price， 有Address。
 {"name":"zed","age":24,"houses":[{"price":300,"address":"beijing"},{"price":400,"address":"shanghai"}]}
 ```
@@ -127,7 +127,7 @@ OutPut:
 你可以配置`MapperFeature`来启动/禁止一些特别类型(`getters`,`setters``,fields`,`creators`)的自动检测。
 
 例如：
-```Java
+```java
 public static ObjectMapper getObjectMapper() {
     ObjectMapper mapper = new ObjectMapper();
     mapper.configure(FAIL_ON_EMPTY_BEANS,false);
@@ -142,7 +142,7 @@ public static ObjectMapper getObjectMapper() {
 
 示例：
 我们修改一下`House`类·：
-```Java
+```java
 public class House {
     public int price;
     @JsonIgnore
@@ -158,7 +158,7 @@ public class House {
 
 ```
 测试：
-```Java
+```java
 public static void main(String[] args) throws JsonProcessingException {
     ObjectMapper mapper = getObjectMapper();
     String json = mapper.writeValueAsString(getPerson());
@@ -182,7 +182,7 @@ public static ObjectMapper getObjectMapper() {
 }
 ```
 OutPut:
-```Java
+```java
 // 只有price， 没有Address。
 // 即使我们设置了全局可见。
 {"name":"zed","age":24,"houses":[{"price":300},{"price":400}]}
@@ -198,7 +198,7 @@ OutPut:
 作用在字段或方法上，用来对属性的序列化/反序列化，可以用来避免遗漏属性，同时提供对属性名称重命名.
 示例：
 我们修改一下`House`类：
-```Java
+```java
 public class House {
     public int price;
     @JsonProperty("destination")
@@ -214,7 +214,7 @@ public class House {
 
 ```
 测试：
-```Java
+```java
 public static void main(String[] args) throws JsonProcessingException {
     ObjectMapper mapper = getObjectMapper();
     String json = mapper.writeValueAsString(getPerson());
@@ -234,7 +234,7 @@ public static ObjectMapper getObjectMapper() {
 }
 ```
 OutPut:
-```Java
+```java
 {"name":"zed","age":24,"houses":[{"price":300,"destination":"beijing"},{"price":400,"destination":"shanghai"}]}
 ```
 
@@ -246,7 +246,7 @@ OutPut:
 
 示例：
 我们修改一下House：
-```Java
+```java
 //注意，@JsonIgnoreProperties("address")不行。
 @JsonIgnoreProperties("destination")
 public class House {
@@ -264,7 +264,7 @@ public class House {
 
 ```
 测试：
-```Java
+```java
 public static void main(String[] args) throws JsonProcessingException {
     ObjectMapper mapper = getObjectMapper();
     String json = mapper.writeValueAsString(getPerson());
@@ -284,7 +284,7 @@ public static ObjectMapper getObjectMapper() {
 }
 ```
 OutPut:
-```Java
+```java
 {"name":"zed","age":24,"houses":[{"price":300},{"price":400}]}
 ```
 也可以注明过滤掉未知的属性如`@JsonIgnoreProperties(ignoreUnknown=true)`。
@@ -300,7 +300,7 @@ OutPut:
 
 示例：
 我们修改一下Person：
-```Java
+```java
 public class Person {
     private String name;
     private int age;
@@ -322,7 +322,7 @@ public class Person {
 
 ```
 测试：
-```Java
+```java
 public static void main(String[] args) throws JsonProcessingException {
     ObjectMapper mapper = getObjectMapper();
     String json = mapper.writeValueAsString(getPerson());
@@ -341,12 +341,12 @@ public static ObjectMapper getObjectMapper() {
 
 ```
 OutPut:
-```Java
+```java
 {"name":"zed","age":24,"houses":{"price":400,"destination":"shanghai"}}
 ```
 
 我们给`House`属性加上`@JsonUnwrapped`注解：
-```Java
+```java
 public class Person {
     private String name;
     private int age;
@@ -370,7 +370,7 @@ public class Person {
 ```
 
 OutPut:
-```Java
+```java
 {"name":"zed","age":24,"price":400,"destination":"shanghai"}
 ```
 在2.0+版本中`@JsonUnwrapped`添加了`prefix`和`suffix`属性，用来对字段添加前后缀，这在有关属性分组上比较有用。
@@ -382,18 +382,18 @@ OutPut:
 2.0+版本新注解，作用于类或属性上，被用来在序列化/反序列化时为该对象或字段添加一个对象识别码，通常是用来解决循环嵌套的问题，比如数据库中的多对多关系，通过配置属性`generator`来确定识别码生成的方式，有简单的，配置属性`property`来确定识别码的名称，识别码名称没有限制。
 
 - 对象识别码可以是虚拟的，即存在在`JSON`中，但不是`POJO`的一部分，这种情况下我们可以如此使用注解：
-  ```Java
+  ```java
   @JsonIdentityInfo(generator =
     ObjectIdGenerators.IntSequenceGenerator.class,property = "@id")
   ```
 - 对象识别码也可以是真实存在的，即以对象的属性为识别码，通常这种情况下我们一般以`id`属性为识别码，可以这么使用注解：
-  ```Java
+  ```java
   @JsonIdentityInfo(generator =
     ObjectIdGenerators.PropertyGenerator.class,property = "id")
   ```
 
 示例：
-```Java
+```java
 @Test
 public void jsonIdentityInfo() throws Exception {
 	Parent parent = new Parent();
@@ -430,7 +430,7 @@ public static class Child{
 jackson 2.1+版本的注解，作用于类或方法，注意这个注解是在`jackson-databind`包中而不是在`jackson-annotations`包里，它可以让你定制属性命名策略，作用和前面提到的`@JsonProperty`的重命名属性名称相同。
 
 可以用`@JsonProperty`，可是如果`POJO`里有很多属性，给每个属性都要加上`@JsonProperty`是多么繁重的工作，这里就需要用到`@JsonNaming`了，它不仅能制定统一的命名规则，还能任意按自己想要的方式定制。
-```Java
+```java
 @JsonNaming(PropertyNamingStrategy.LowerCaseWithUnderscoresStrategy.class)
 public class TestPOJO {
 
@@ -448,7 +448,7 @@ public class TestPOJO {
 `@JsonNaming`使用了`jackson`已经实现的`PropertyNamingStrategy.LowerCaseWithUnderscoresStrategy`，它可以将大写转换为小写并添加下划线。你可以自定义，必须继承类`PropertyNamingStrategy`，建议继承`PropertyNamingStrategyBase`.
 
 如果你想让自己定制的策略对所有解析都实现，除了对每个具体的实体类对应的位置加上`@JsonNaming`外你还可以如下做全局配置.
-```Java
+```java
 public static ObjectMapper getObjectMapper() {
     ObjectMapper mapper = new ObjectMapper();
     mapper.setPropertyNamingStrategy(new MyPropertyNamingStrategy());
@@ -463,7 +463,7 @@ jackson允许配置多态类型处理，当进行反序列话时，`JSON`数据�
 #### 1. @JsonTypeInfo
 作用于类/接口，被用来开启多态类型处理，对基类/接口和子类/实现类都有效。
 
-```Java
+```java
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
 ```
 
@@ -498,7 +498,7 @@ jackson允许配置多态类型处理，当进行反序列话时，`JSON`数据�
 作用于类/接口，用来列出给定类的子类，只有当子类类型无法被检测到时才会使用它。
 
 一般是配合`@JsonTypeInfo`在基类上使用。
-```Java
+```java
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
 @JsonSubTypes({
         @JsonSubTypes.Type(value=Person.class,name = "com.learn.Person"),
@@ -519,7 +519,7 @@ jackson允许配置多态类型处理，当进行反序列话时，`JSON`数据�
 ###### 1.序列化和反序列化转换
 通常我们在需要自定义序列化和反序列化时会用到，比如下面的例子中的日期转换.
 
-```Java
+```java
 
 class Person {
     private String name;
@@ -562,7 +562,7 @@ class MyDateDeserializer extends JsonDeserializer<Date> {
 
 ###### 2. 实现多态类型转换
 也可以通过使用`as(JsonSerializer)`和`as(JsonDeserializer)`来实现多态类型转换，上面我们有提到多态类型处理时可以使用`@JsonTypeInfo`实现，还有一种比较简便的方式就是使用`@JsonSerialize`和`@JsonDeserialize`指定`as`的子类类型，注意这里必须指定为子类类型才可以实现替换运行时的类型。
-```Java
+```java
     public static class Person {
         private String name;
         @JsonSerialize(as = Sub1.class)
@@ -591,7 +591,7 @@ class MyDateDeserializer extends JsonDeserializer<Date> {
 ###### 3. 过滤掉空的属性或有默认值的属性
 最后`@JsonSerialize`可以配置`include`属性来指定序列化时被注解的属性被包含的方式，默认总是被包含进来，但是可以过滤掉空的属性或有默认值的属性，举个简单的过滤空属性的例子如下:
 
-```Java
+```java
 @Test
 public void jsonSerializeAndDeSerialize() throws Exception {
     TestPOJO testPOJO = new TestPOJO();
@@ -616,7 +616,7 @@ public static class TestPOJO{
 `@JsonPropertyOrder`有个方法是`alphabetic`：布尔类型，表示是否采用字母拼音顺序排序，默认是为`false`，即不排序。
 
 也可以通过配置来使之生效：
-```Java
+```java
 objectMapper.configure(MapperFeature.SORT_PROPERTIES_ALPHABETICALLY,true);
 ```
 
@@ -625,7 +625,7 @@ objectMapper.configure(MapperFeature.SORT_PROPERTIES_ALPHABETICALLY,true);
 
 #### 4. @JsonAnySetter
 作用于方法，在反序列化时用来处理遇到未知的属性的时候调用，在本文前面我们知道可以通过注解`@JsonIgnoreProperties(ignoreUnknown=true)`来过滤未知的属性，但是如果需要这些未知的属性该如何是好?那么`@JsonAnySetter`就可以派上用场了，它通常会和`map`属性配合使用用来保存未知的属性。
-```Java
+```java
 public static class Person{
     private String name;
     private Map other = new HashMap();
@@ -639,7 +639,7 @@ public static class Person{
 
 #### 5. @JsonCreator
 作用于方法，通常用来标注构造方法或静态工厂方法上，使用该方法来构建实例，默认的是使用无参的构造方法，通常是和`@JsonProperty`或`@JacksonInject`配合使用。
- ```Java
+ ```java
  public static class TestPOJO{
      private String name;
      private int age;
@@ -661,7 +661,7 @@ public static class Person{
 > 上面是在构造方法上标注了@JsonCreator，同样也可以标注在静态工厂方法上.
 
 还有一种构造方式成为授权式构造器，也是我们平常比较常用到的，这个构造器只有一个参数，且不能使用`@JsonProperty`。
-```Java
+```java
 public static class TestPOJO{
     private String name;
     private int age;
@@ -680,7 +680,7 @@ public static class TestPOJO{
 ```
 #### 6. @JacksonInject
 作用于属性、方法、构造参数上，被用来反序列化时标记已经被注入的属性.
-```Java
+```java
 @Test
 public void jacksonInject() throws Exception {
     ObjectMapper objectMapper = new ObjectMapper();
@@ -701,7 +701,7 @@ public static class Person {
 ```
 #### 7. @JsonPOJOBuilder
 作用于类，用来标注如何定制构建对象，使用的是`builder`模式来构建，比如`Value v = new ValueBuilder().withX(3).withY(4).build()`;这种就是`builder`模式来构建对象，通常会和`@JsonDeserialize.builder`来配合使用。
-```Java
+```java
 @Test
 public void jacksonInject() throws Exception {
     ObjectMapper objectMapper = new ObjectMapper();
@@ -761,7 +761,7 @@ public static class PersonBuilder {
 
 ## 三 配置SerializationFeature
 > 以下的示例除去`getObjectMapper()`都相同。
-```Java
+```java
 public static void main(String[] args) throws JsonProcessingException {
     ObjectMapper mapper = getObjectMapper();
     String json = mapper.writeValueAsString(getPerson());
@@ -783,7 +783,7 @@ public static ObjectMapper getObjectMapper() {
 
 #### SerializationFeature.WRAP_ROOT_VALUE
 是否环绕根元素，默认`false`，如果为`true`，则默认以类名作为根元素，你也可以通过`@JsonRootName`来自定义根元素名称
-```Java
+```java
 public static ObjectMapper getObjectMapper() {
     ObjectMapper mapper = new ObjectMapper();
     mapper.configure(SerializationFeature.WRAP_ROOT_VALUE,true);
@@ -791,13 +791,13 @@ public static ObjectMapper getObjectMapper() {
 }
 ```
 OutPut:
-```Java
+```java
 // 有Person 有houses。
 {"Person":{"name":"zed","age":24,"houses":[{"price":300,"address":"beijing"},{"price":400,"address":"shanghai"}]}}
 ```
 #### SerializationFeature.INDENT_OUTPUT
 是否缩放排列输出，默认`false`，有些场合为了便于排版阅读则需要对输出做缩放排列
-```Java
+```java
 public static ObjectMapper getObjectMapper() {
     ObjectMapper mapper = new ObjectMapper();
     mapper.configure(SerializationFeature.INDENT_OUTPUT,true);
@@ -833,7 +833,7 @@ OutPut:
 需要注意的是对于第二种通过配置`SerializationConfig`和`DeserializationConfig`方式只能启动/禁止自动检测，无法修改我们所需的可见级别。
 
 有时候对每个实例进行可见级别的注解可能会非常麻烦，这时候我们需要配置一个全局的可见级别，通过`objectMapper.setVisibilityChecker()`来实现，默认的`VisibilityChecker`实现类为`VisibilityChecker.Std`，这样可以满足实现复杂场景下的基础配置。
-```Java
+```java
 public static ObjectMapper getObjectMapper() {
     ObjectMapper mapper = new ObjectMapper();
     mapper.setVisibility(PropertyAccessor.FIELD, JsonAutoDetect.Visibility.ANY) // auto-detect all member fields
@@ -845,7 +845,7 @@ public static ObjectMapper getObjectMapper() {
 ```
 ## 四 集合的操作。
 
-```Java
+```java
 //思考:为什么需要指定类型？(类型擦除)
 Map<String, ResultValue> results = mapper.readValue(jsonSource,
         new TypeReference<Map<String, ResultValue>>() {});
@@ -856,7 +856,7 @@ Map<String, ResultValue> results = mapper.readValue(jsonSource,
 ## 五 树模型
 虽然看起来处理的很方便，但是某些时候会有一些很麻烦的情况，这时候可以考虑使用树模型:
 
-```Java
+```java
 //如果结果可能是Object或者是Array，那可以使用JsonNode;
 //如果你知道是Object，你可以直接强转成ObjectNode;如果你知道是Array，你可以直接强转成ArrayNode;
 String json = ...;

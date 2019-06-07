@@ -12,7 +12,7 @@
 #### demo.
 你可以在通过[github][2]看到源码。
 
-```Java
+```java
 public interface Animal {
     String sound();
 }
@@ -27,7 +27,7 @@ public class Dog implements Animal {
 
 通过实现InvocationHandler接口来自定义自己的InvocationHandler
 
-```Java
+```java
 public class DogProxyHandler implements InvocationHandler {
 
     private Object proxyied; //代理对象
@@ -50,7 +50,7 @@ public class DogProxyHandler implements InvocationHandler {
 ```
 client调用过程。
 
-```Java
+```java
 public class Test {
     public static void main(String[] args) {
         Dog dog = new Dog();
@@ -67,7 +67,7 @@ public class Test {
 ```
 
 console 打印输出：
-```Java
+```java
 before invoked...
 Wang, Wang, Wang
 after invoked...
@@ -79,7 +79,7 @@ after invoked...
 
 ###源码分析
 **1.newProxyInstance(ClassLoader loader,Class<?>[] interfaces,InvocationHandler h)**
-```Java
+```java
 @CallerSensitive
 public static Object newProxyInstance(ClassLoader loader,
                                       Class<?>[] interfaces,
@@ -138,7 +138,7 @@ public static Object newProxyInstance(ClassLoader loader,
 在这里，我们要关心的是`ProxyClassFactory`具体做了什么。
 
 **2.ProxyClassFactory.apply(ClassLoader loader, Class<?>[] interfaces)**
-```Java
+```java
 
     /**
      * A factory function that generates, defines and returns the proxy class given
@@ -253,7 +253,7 @@ public static Object newProxyInstance(ClassLoader loader,
 我们可以看到，这个方法主要是做了一些验证性工作，做了一些准备工作，生成字节码的工作，主要是交给了`ProxyGenerator`的`generateProxyClass`来做。
 **3.ProxyGenerator.generateProxyClass(proxyName, interfaces, accessFlags);**
 
-```Java
+```java
     private static final boolean saveGeneratedFiles =
       ((Boolean)AccessController.doPrivileged(new GetBooleanAction("sun.misc.ProxyGenerator.saveGeneratedFiles"))).booleanValue();
 
@@ -284,7 +284,7 @@ public static Object newProxyInstance(ClassLoader loader,
 层层调用后，最终`generateClassFile`才是真正生成代理类字节码文件的方法，注意开头的三个`addProxyMethod`方法是只将`Object`的`hashcode`,`equals`,`toString`方法添加到代理方法容器中，代理类除此之外并没有重写其他`Object`的方法，所以除这三个方法外，代理类调用其他方法的行为与`Object`调用这些方法的行为一样不通过Invoke.
 
 **4.generateClassFile--根源**
-```Java
+```java
     private byte[] generateClassFile() {
             /*addProxyMethod系列方法就是将接口的方法和Object的hashCode,equals,toString方法添加到代理方法容器(proxyMethods),
        其中方法签名作为key,proxyMethod作为value*/
@@ -412,7 +412,7 @@ public static Object newProxyInstance(ClassLoader loader,
 在动态代理中InvocationHandler是核心，每个代理实例都具有一个关联的调用处理程序`InvocationHandler`。对代理实例调用方法时，将对方法调用进行编码并将其指派到它的调用处理程序`InvocationHandler`的 `invoke` 方法。所以对代理方法的调用都是通`InvocationHadler`的`invoke`来实现中，而`invoke`方法根据传入的代理对象，方法和参数来决定调用代理的哪个方法`invoke`方法签名：`invoke（Object Proxy，Method method，Object[] args）`
 
 **5.生成的代理类**
-```Java
+```java
 public final class $Proxy0 extends Proxy implements Animal {
     private static Method m1;
     private static Method m2;

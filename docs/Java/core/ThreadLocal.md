@@ -10,7 +10,7 @@ ThreadLocal，很多地方叫做线程本地变量，也有些地方叫做线程
 
 
 首先我们可以看一个完整的例子:
-```Java
+```java
 public class ThreadLocalTest {
 
     public Integer getAfterSet() {
@@ -40,7 +40,7 @@ ThreadLocal 被设计成一个，可以在同一个线程中存在多个ThreadLo
 
 ### 1.1 初始化和插入数据 `threadLocal.set(1)`
 我们可以首先根据源码来分析一下:
-```Java
+```java
 public void set(T value) {
     Thread t = Thread.currentThread();
     ThreadLocalMap map = getMap(t);     --------- 1
@@ -60,13 +60,13 @@ public void set(T value) {
 
 我们可以通过方法getMap看出，`ThreadLocalMap`实例实际上是绑定在Thread类中的。
 
-```Java
+```java
 ThreadLocalMap getMap(Thread t) {
     return t.threadLocals;
 }
 ```
 
-```Java
+```java
 public class Thread implements Runnable {
   /* ThreadLocal values pertaining to this thread. This map is maintained
    * by the ThreadLocal class.
@@ -80,12 +80,12 @@ public class Thread implements Runnable {
 
 #### 1.1.3 创建`ThreadLocalMap`过程
 
-```Java
+```java
 void createMap(Thread t, T firstValue) {
     t.threadLocals = new ThreadLocalMap(this, firstValue);
 }
 ```
-```Java
+```java
 ThreadLocalMap(ThreadLocal<?> firstKey, Object firstValue) {
     table = new Entry[INITIAL_CAPACITY];
     int i = firstKey.threadLocalHashCode & (INITIAL_CAPACITY - 1);
@@ -100,7 +100,7 @@ ThreadLocalMap(ThreadLocal<?> firstKey, Object firstValue) {
 3. 通过`hash`值在被`hash`之后，插入对应的位置
 
 由此可以看出， `threadLocalHashCode`是一个递增的数字，每当生成一个新的`ThreadLocal`实例，就会使`threadLocalHashCode`递增加一。
-```Java
+```java
 public class ThreadLocal<T> {
   private final int threadLocalHashCode = nextHashCode();
   private static AtomicInteger nextHashCode = new AtomicInteger();
@@ -119,7 +119,7 @@ public class ThreadLocal<T> {
 
 #### 1.1.4 插入数据到ThreadLocalMap
 首先看源码怎么写:
-```Java
+```java
 private void set(ThreadLocal<?> key, Object value) {
 
     // We don't use a fast path as with get() because it is at
@@ -161,7 +161,7 @@ private void set(ThreadLocal<?> key, Object value) {
 接下来，我们可以看看`ThreadLocal.get()`是如何工作的。
 
 ### 1.2 获取线程副本`threadLocal.get()`
-```Java
+```java
 public T get() {
     Thread t = Thread.currentThread();
     ThreadLocalMap map = getMap(t);
@@ -178,7 +178,7 @@ public T get() {
 ```
 和`set`相对应，我们在`get`的时候，通过`map`来查询结果，有可能`map`并不存在，也就是说没有执行`set`，就直接`get`。
 
-```Java
+```java
 private T setInitialValue() {
     T value = initialValue();
     Thread t = Thread.currentThread();
@@ -245,7 +245,7 @@ Entry是一个以ThreadLocal为key,Object为value的键值对，另外需要注�
 
 
 #### `expungeStaleEntry(int staleSlot)`
-```Java
+```java
 private int expungeStaleEntry(int staleSlot) {
     Entry[] tab = table;
     int len = tab.length;
@@ -291,7 +291,7 @@ private int expungeStaleEntry(int staleSlot) {
 
 #### `cleanSomeSlots(int i, int n)`
 
-```Java
+```java
 private boolean cleanSomeSlots(int i, int n) {
     boolean removed = false;
     Entry[] tab = table;
@@ -337,7 +337,7 @@ private boolean cleanSomeSlots(int i, int n) {
 
 #### `replaceStaleEntry`
 
-```Java
+```java
 private void replaceStaleEntry(ThreadLocal<?> key, Object value,
                                int staleSlot) {
     Entry[] tab = table;
@@ -469,7 +469,7 @@ private void replaceStaleEntry(ThreadLocal<?> key, Object value,
 有的博客会说`get`之前必须`set`，否则会报空指针异常. **这个理解是错误的**,正如前面的例子，并不会报错，只是会返回一个`null`，读完代码，也可以发现这一点。
 
 我们以这个代码为例，这里是不会报错的。
-```Java
+```java
 public class ThreadLocalTest {
 
     public Integer getAfterSet() {
@@ -493,7 +493,7 @@ public class ThreadLocalTest {
 
 但是如果代码改成这个样子， 把函数返回从包装类型变成基本数据类型，才会真正的报出`NullPointerException`异常。
 
-```Java
+```java
 public class ThreadLocalTest {
 
     public Integer getAfterSet() {
@@ -519,7 +519,7 @@ public class ThreadLocalTest {
 
 包装数据类型变成了以下字节码
 
-```Java
+```java
 public Integer getLong() {
     System.out.println(this.longLocal);
     return (Integer)this.longLocal.get();
@@ -527,7 +527,7 @@ public Integer getLong() {
 ```
 
 简单数据类型变成了以下字节码
-```Java
+```java
 public int getLong() {
     System.out.println(this.longLocal);
     return (int)this.longLocal.get();

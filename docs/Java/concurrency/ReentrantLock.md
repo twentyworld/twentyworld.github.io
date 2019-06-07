@@ -7,7 +7,7 @@ ReentrantLock，意思是“可重入锁”，关于可重入锁的概念在下�
 你可以在[github][1]中看到。
 #### 1.1 lock();
 首先，我们尝试写一个错误的代码：
-```Java
+```java
 public class ReentrantLockWrongSample {
     public static void main(String[] args) {
 
@@ -47,7 +47,7 @@ public class WrongSampleThread implements Runnable {
 }
 ```
 output:
-```Java
+```java
 Thread[Thread-0,5,main]得到了锁
 Thread[Thread-3,5,main]得到了锁
 Thread[Thread-2,5,main]得到了锁
@@ -59,7 +59,7 @@ Thread[Thread-2,5,main]释放了锁
 ```
 第二个线程怎么会在第一个线程释放锁之前得到了锁？原因在于，在insert方法中的lock变量是局部变量，每个线程执行该方法时都会保存一个副本，那么理所当然每个线程执行到lock.lock()处获取的是不同的锁，所以就不会发生冲突。
 所以我们只需要把Lock设置为类的属性：
-```Java
+```java
 public class ReentrantLockRightSample {
     public static void main(String[] args) {
         ArrayList<Integer> list = new ArrayList<Integer>();
@@ -108,7 +108,7 @@ Thread[Thread-1,5,main]释放了锁
 
 #### 3.2 tryLock()
 
-```Java
+```java
 public class ReentrantLockTryLockLearn {
     public static void main(String[] args) {
         List<Integer> list = new ArrayList<Integer>();
@@ -194,7 +194,7 @@ Thread[Thread-2,5,main]得到了锁
 Thread[Thread-2,5,main]释放了锁
 ```
 #### 3.3 lockInterruptibly()
-```Java
+```java
 public class LockInterruptiblyLockLearn {
     public static void main(String[] args) {
         Lock lock = new ReentrantLock();
@@ -243,7 +243,7 @@ public class LockInterruptiblyThread implements Runnable {
 }
 ```
 output:
-```Java
+```java
 Thread[Thread-0,5,main]得到了锁
 java.lang.InterruptedException
 	at java.util.concurrent.locks.AbstractQueuedSynchronizer.doAcquireInterruptibly(AbstractQueuedSynchronizer.java:898)
@@ -269,7 +269,7 @@ Condition 将 Object 监视器方法（wait、notify 和 notifyAll）分解成�
 
 首先我们建立一个`ArrayBuffer`类，这个类中，我们设置了两个方法，`read()`和`put(String number)`。
 `write`方法是向队列中写入数据，`read`方法是从队列中读取数据。
-```Java
+```java
 public class ArrayBuffer {
 
     private Lock lock = new ReentrantLock();
@@ -333,7 +333,7 @@ public class ArrayBuffer {
 
 ```
 其次，我们建立两个不同的thread，分别读取和写入。
-```Java
+```java
 public class ReadThread implements Runnable {
     private ArrayBuffer buffer;
     public ReadThread(ArrayBuffer buffer) {
@@ -363,7 +363,7 @@ public class WriteThread implements Runnable {
 }
 ```
 测试类
-```Java
+```java
 public class ConditionOnReadWriteLearn {
     public static void main(String[] args) {
         ArrayBuffer buffer = new ArrayBuffer();

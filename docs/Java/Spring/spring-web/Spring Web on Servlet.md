@@ -9,7 +9,7 @@ Spring MVC, like many other web frameworks, is designed around the front control
 The DispatcherServlet, as any Servlet, needs to be declared and mapped according to the Servlet specification using Java configuration or in web.xml. In turn the DispatcherServlet uses Spring configuration to discover the delegate components it needs for request mapping, view resolution, exception handling, and more.
 
 Below is an example of the Java configuration that registers and initializes the DispatcherServlet. This class is auto-detected by the Servlet container:
-```Java
+```java
 public class MyWebApplicationInitializer implements WebApplicationInitializer {
 
     @Override

@@ -15,7 +15,7 @@ Spring Security is a framework that focuses on providing both authentication and
 #### Java Configuration
 
 The first step is to create our Spring Security Java Configuration。
-```Java
+```java
 @EnableWebSecurity
 public class WebSecurityConfig implements WebMvcConfigurer {
 
@@ -32,7 +32,7 @@ The next step is to register the springSecurityFilterChain with the war.
 Spring Security provides a base class AbstractSecurityWebApplicationInitializer that will ensure the springSecurityFilterChain gets registered for you. The way in which we use AbstractSecurityWebApplicationInitializer differs depending on if we are already using Spring or if Spring Security is the only Spring component in our application.
 
 - If you are not using Spring or Spring MVC, you will need to pass in the WebSecurityConfig into the superclass to ensure the configuration is picked up. You can find an example below:
-  ```Java
+  ```java
   public class SecurityWebApplicationInitializer
   	extends AbstractSecurityWebApplicationInitializer {
   	public SecurityWebApplicationInitializer() {
@@ -41,7 +41,7 @@ Spring Security provides a base class AbstractSecurityWebApplicationInitializer 
   }
   ```
 - If we were using Spring elsewhere in our application we probably already had a WebApplicationInitializer that is loading our Spring Configuration. If we use the previous configuration we would get an error. Instead, we should register Spring Security with the existing ApplicationContext
-  ```Java
+  ```java
   public class MvcWebApplicationInitializer extends
   		AbstractAnnotationConfigDispatcherServletInitializer {
   	@Override
@@ -55,7 +55,7 @@ Spring Security provides a base class AbstractSecurityWebApplicationInitializer 
 ---
 #### HttpSecurity
 the WebSecurityConfigurerAdapter provides a default configuration in the configure(HttpSecurity http) method that looks like:
-```Java
+```java
 protected void configure(HttpSecurity http) throws Exception {
 	http
 		.authorizeRequests()
@@ -74,7 +74,7 @@ The default configuration above:
 ---
 #### Java Configuration and Form Login
 While the automatically generated log in page is convenient to get up and running quickly, most applications will want to provide their own log in page. To do so we can update our configuration as seen below:
-```Java
+```java
 protected void configure(HttpSecurity http) throws Exception {
 	http
 		.authorizeRequests()
@@ -92,7 +92,7 @@ protected void configure(HttpSecurity http) throws Exception {
 #### Authorize Requests
 
 We can specify custom requirements for our URLs by adding multiple children to our http.authorizeRequests() method. For example:
-```Java
+```java
 protected void configure(HttpSecurity http) throws Exception {
 	http
 		.authorizeRequests()                                                              1
@@ -122,7 +122,7 @@ When using the WebSecurityConfigurerAdapter, logout capabilities are automatical
 - Redirect to /login?logout
 - Similar to configuring login capabilities, however, you also have various options to further customize your logout requirements:
 
-```Java
+```java
 protected void configure(HttpSecurity http) throws Exception {
 	http
 		.logout()                                                                   1
@@ -184,7 +184,7 @@ more advanced options for configuring authentication.
 
 ##### In-Memory Authentication
 We have already seen an example of configuring in-memory authentication for a single user. Below is an example to configure multiple users:
-```Java
+```java
 @Bean
 public UserDetailsService userDetailsService() throws Exception {
 	// ensure the passwords are encoded properly
@@ -198,7 +198,7 @@ public UserDetailsService userDetailsService() throws Exception {
 
 ##### JDBC Authentication
 You can find the updates to support JDBC based authentication. The example below assumes that you have already defined a DataSource within your application. The jdbc-javaconfig sample provides a complete example of using JDBC based authentication.
-```Java
+```java
 @Autowired
 private DataSource dataSource;
 
@@ -221,7 +221,7 @@ You can find the updates to support LDAP based authentication. The ldap-javaconf
 
 ##### AuthenticationProvider.
 You can define custom authentication by exposing a custom AuthenticationProvider as a bean. For example, the following will customize authentication assuming that SpringAuthenticationProvider implements AuthenticationProvider:
-```Java
+```java
 @Bean
 public SpringAuthenticationProvider springAuthenticationProvider() {
 	return new SpringAuthenticationProvider();
@@ -231,14 +231,14 @@ public SpringAuthenticationProvider springAuthenticationProvider() {
 ##### UserDetailsService
 You can define custom authentication by exposing a custom UserDetailsService as a bean. For example, the following will customize authentication assuming that SpringDataUserDetailsService implements UserDetailsService:
 >This is only used if the AuthenticationManagerBuilder has not been populated and no AuthenticationProviderBean is defined.
-```Java
+```java
 @Bean
 public SpringDataUserDetailsService springDataUserDetailsService() {
 	return new SpringDataUserDetailsService();
 }
 ```
 You can also customize how passwords are encoded by exposing a PasswordEncoder as a bean. For example, if you use bcrypt you can add a bean definition as shown below:
-```Java
+```java
 @Bean
 public BCryptPasswordEncoder passwordEncoder() {
 	return new BCryptPasswordEncoder();
@@ -247,7 +247,7 @@ public BCryptPasswordEncoder passwordEncoder() {
 ---
 #### Multiple HttpSecurity
 We can configure multiple HttpSecurity instances just as we can have multiple <http> blocks. The key is to extend the WebSecurityConfigurationAdapter multiple times. For example, the following is an example of having a different configuration for URL’s that start with /api/.
-```Java
+```java
 @EnableWebSecurity
 public class MultiHttpSecurityConfig {
 	@Bean                                                                    1
@@ -317,14 +317,14 @@ You can apply security to a single bean, using the intercept-methods element to 
 
 ##### EnableGlobalMethodSecurity
 We can enable annotation-based security using the @EnableGlobalMethodSecurity annotation on any @Configuration instance. For example, the following would enable Spring Security’s @Secured annotation.
-```Java
+```java
 @EnableGlobalMethodSecurity(securedEnabled = true)
 public class MethodSecurityConfig {
 // ...
 }
 ```
 Adding an annotation to a method (on a class or interface) would then limit the access to that method accordingly. Spring Security’s native annotation support defines a set of attributes for the method. These will be passed to the AccessDecisionManager for it to make the actual decision:
-```Java
+```java
 public interface BankService {
 
 	@Secured("IS_AUTHENTICATED_ANONYMOUSLY")
@@ -342,7 +342,7 @@ public interface BankService {
 Sometimes you may need to perform operations that are more complicated than are possible with the @EnableGlobalMethodSecurity annotation allow. For these instances, you can extend the GlobalMethodSecurityConfiguration ensuring that the @EnableGlobalMethodSecurity annotation is present on your subclass.
 
 For example, if wanted to provide a custom MethodSecurityExpressionHandler,  could use the following configuration:
-```Java
+```java
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class MethodSecurityConfig extends GlobalMethodSecurityConfiguration {
 	@Override
@@ -359,7 +359,7 @@ public class MethodSecurityConfig extends GlobalMethodSecurityConfiguration {
 ---
 #### Post Processing Configured Objects
 Spring Security’s Java Configuration does not expose every property of every object that it configures. This simplifies the configuration for a majority of users. Afterall, if every property was exposed, users could use standard bean configuration.
-```Java
+```java
 @Override
 protected void configure(HttpSecurity http) throws Exception {
 	http
@@ -378,7 +378,7 @@ protected void configure(HttpSecurity http) throws Exception {
 ---
 #### Custom DSLs
 You can provide your own custom DSLs in Spring Security. For example, you might have something that looks like this:
-```Java
+```java
 public class MyCustomDsl extends AbstractHttpConfigurer<MyCustomDsl, HttpSecurity> {
 	private boolean flag;
 
@@ -442,7 +442,7 @@ Inside the SecurityContextHolder we store details of the principal currently int
  You won’t normally need to create an Authentication object yourself, but it is fairly common for users to query the Authentication object.
 
  You can use the following code block - from anywhere in your application - to obtain the name of the currently authenticated user, for example:
- ```Java
+ ```java
  Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
  if (principal instanceof UserDetails) {
@@ -466,7 +466,7 @@ The principal is just an Object. Most of the time this can be cast into a UserDe
 
 
 a special interface called UserDetailsService. The only method on this interface accepts a String-based username argument and returns a UserDetails:
-```Java
+```java
 UserDetails loadUserByUsername(String username) throws UsernameNotFoundException;
 ```
 > loadUserByUsername() used throughout the framework whenever information on a user is required.
@@ -508,7 +508,7 @@ The first three items constitute the authentication process so we’ll take a lo
 4. The security context is established by calling SecurityContextHolder.getContext().setAuthentication(…​), passing in the returned authentication object.
 
 example code:
-```Java
+```java
 public class test {
     private static AuthenticationManager am = new SampleAuthenticationManager();
 
@@ -689,7 +689,7 @@ The PasswordEncoder is optional. A PasswordEncoder provides encoding and decodin
 
 ### UserDetailsService Implementations
 most authentication providers take advantage of the UserDetails and UserDetailsService interfaces. Recall that the contract for UserDetailsService is a single method:
-```Java
+```java
 UserDetails loadUserByUsername(String username) throws UsernameNotFoundException;
 ```
 The returned UserDetails is an interface that provides getters that guarantee non-null provision of authentication information.
@@ -868,7 +868,7 @@ this filter has two main tasks. It is responsible for storage of the SecurityCon
 
 ##### 1.3.1 SecurityContextRepository
 
-```Java
+```java
 public interface SecurityContextRepository {
 
 SecurityContext loadContext(HttpRequestResponseHolder requestResponseHolder);
@@ -923,7 +923,7 @@ The **HttpServletRequest.getUserPrincipal()** will return the result of Security
 his means it is an Authentication which is typically an instance of UsernamePasswordAuthenticationToken when using username and password based authentication.
 
 The **HttpServletRequest.isUserInRole(String)** will determine if SecurityContextHolder.getContext().getAuthentication().getAuthorities() contains a GrantedAuthority with the role passed into isUserInRole(String).
-```Java
+```java
 boolean isAdmin = httpServletRequest.isUserInRole("ADMIN");
 ```
 
@@ -1024,7 +1024,7 @@ Note that both implementations require a UserDetailsService. If you are using an
 ### Cross Site Request Forgery (CSRF)
 
 CSRF protection is enabled by default with Java Configuration. If you would like to disable CSRF, the corresponding Java configuration can be seen below. Refer to the Javadoc of csrf() for additional customizations in how CSRF protection is configured.
-```Java
+```java
 @EnableWebSecurity
 public class WebSecurityConfig extends
 WebSecurityConfigurerAdapter {
@@ -1042,7 +1042,7 @@ WebSecurityConfigurerAdapter {
 CORS must be processed before Spring Security because the pre-flight request will not contain any cookies (i.e. the JSESSIONID). If the request does not contain any cookies and Spring Security is first, the request will determine the user is not authenticated (since there are no cookies in the request) and reject it.
 
 The easiest way to ensure that CORS is handled first is to use the CorsFilter. Users can integrate the CorsFilter with Spring Security by providing a CorsConfigurationSource using the following:
-```Java
+```java
 @EnableWebSecurity
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
@@ -1097,7 +1097,7 @@ The SessionManagementFilter checks the contents of the SecurityContextRepository
 
 #### 8.1 WebSocket Configuration
 Spring Security 4.0 has introduced authorization support for WebSockets through the Spring Messaging abstraction. To configure authorization using Java Configuration, simply extend the AbstractSecurityWebSocketMessageBrokerConfigurer and configure the MessageSecurityMetadataSourceRegistry.
-```Java
+```java
 @Configuration
 public class WebSocketSecurityConfig
       extends AbstractSecurityWebSocketMessageBrokerConfigurer {                          1 2
@@ -1122,7 +1122,7 @@ This means that the Principal on the HttpServletRequest will be handed off to We
 
 Spring Security 4.0 has introduced authorization support for WebSockets through the Spring Messaging abstraction. To configure authorization using Java Configuration, simply extend the AbstractSecurityWebSocketMessageBrokerConfigurer and configure the MessageSecurityMetadataSourceRegistry.
 
-```Java
+```java
 @Configuration
 public class WebSocketSecurityConfig extends AbstractSecurityWebSocketMessageBrokerConfigurer {
 

@@ -64,7 +64,7 @@
 
 `Cookie`的`maxAge`决定着`Cookie`的有效期，单位为秒`Second`。`Cookie`中通过`getMaxAge()`方法与`setMaxAge(int maxAge)`方法来读写`maxAge`属性。 如果`maxAge`属性为正数，则表示该`Cookie`会在`maxAge`秒之后自动失效。浏览器会将`maxAge`为正数的`Cookie`持久化，即写到对应的`Cookie`文件中。无论客户关闭了浏览器还是电脑，只要还在`maxAge`秒之前，登录网站时该`Cookie`仍然有效。下面代码中的`Cookie`信息将永远有效。
 
-```Java
+```java
 Cookie cookie = new Cookie("username","helloweenvsfei"); // 新建Cookie
 cookie.setMaxAge(Integer.MAX_VALUE); // 设置生命周期为MAX_VALUE
 response.addCookie(cookie); // 输出到客户端
@@ -73,7 +73,7 @@ response.addCookie(cookie); // 输出到客户端
 
 如果`maxAge`为`0`，则表示删除该`Cookie`。`Cookie`机制没有提供删除`Cookie`的方法，因此通过设置该`Cookie`即时失效实现删除`Cookie`的效果。失效的`Cookie`会被浏览器从`Cookie`文件或者内存中删除：
 
-```Java
+```java
 Cookie cookie = new Cookie("username","helloweenvsfei"); // 新建Cookie
 cookie.setMaxAge(0); // 设置生命周期为0，不能为负数
 response.addCookie(cookie); // 必须执行这一句
@@ -94,7 +94,7 @@ response.addCookie(cookie); // 必须执行这一句
 
 正常情况下，同一个一级域名下的两个二级域名如`www.helloweenvsfei.com`和`images.helloweenvsfei.com`也不能交互使用`Cookie`，因为二者的域名并不严格相同。如果想所有`helloweenvsfei.com`名下的二级域名都可以使用该`Cookie`，需要设置`Cookie`的`domain`参数。
 
-```Java
+```java
 Cookie cookie = new Cookie("time","20080808"); // 新建Cookie
 cookie.setDomain(".helloweenvsfei.com"); // 设置域名
 cookie.setPath("/"); // 设置路径
@@ -107,7 +107,7 @@ response.addCookie(cookie); // 输出到客户端
 
 如果只允许`/sessionWeb/`下的程序使用`Cookie`:
 
-```Java
+```java
 Cookie cookie = new Cookie("time","20080808"); // 新建Cookie
 cookie.setPath("/session/"); // 设置路径
 response.addCookie(cookie); // 输出到客户端
@@ -127,7 +127,7 @@ response.addCookie(cookie); // 输出到客户端
 
 `HTTP`协议不仅是无状态的，而且是不安全的。使用`HTTP`协议的数据不经过任何加密就直接在网络上传播，有被截获的可能。使用`HTTP`协议传输很机密的内容是一种隐患。如果不希望`Cookie`在`HTTP`等非安全协议中传输，可以设置`Cookie`的`secure`属性为`true`。浏览器只会在`HTTPS`和`SSL`等安全协议中传输此类`Cookie`。
 
-```Java
+```java
 Cookie cookie = new Cookie("time", "20080808"); // 新建Cookie
 cookie.setSecure(true); // 设置安全属性
 response.addCookie(cookie); // 输出到客户端

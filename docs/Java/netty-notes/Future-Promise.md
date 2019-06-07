@@ -5,7 +5,7 @@ uture顾名思义，是一个未来完成的异步操作，可以获得未来返
 
 ### Java Future
 Java 中的Future 是一个接口， 内部有这些方法:
-```Java
+```java
 boolean	cancel(boolean mayInterruptIfRunning) 试图取消对此任务的执行。
 V	get() 如有必要，等待计算完成，然后获取其结果。
 V	get(long timeout, TimeUnit unit) 如有必要，最多等待为使计算完成所给定的时间之后，获取其结果（如果结果可用）。
@@ -16,7 +16,7 @@ boolean	isDone() 如果任务已完成，则返回 true。
 ### Netty Future
 Netty 的Future在concurrent Future的基础上，增加了更多的功能，在Java的Future中，主要是任务的运行/取消，而Netty的Future增加了更多的功能。
 
-```Java
+```java
 public interface Future<V> extends java.util.concurrent.Future<V>{
   boolean isSuccess(); 只有IO操作完成时才返回true
   boolean isCancellable(); 只有当cancel(boolean)成功取消时才返回true
@@ -40,7 +40,7 @@ Netty为Future加入的功能主要是添加/删除监听事件，其他的方�
 ## Pormise
 Netty的Future与Java自带到Future略有不同，其引入了Promise机制。在Java的Future中，业务逻辑为一个Callable或Runnable实现类，该类的call()或run()执行完毕意味着业务逻辑的完结；而在Promise机制中，可以在业务逻辑中人工设置业务逻辑的成功与失败。
 
-```Java
+```java
 public interface Promise<V> extends Future<V> {
 	// 设置future执行结果为成功
     Promise<V> setSuccess(V result);
@@ -57,7 +57,7 @@ public interface Promise<V> extends Future<V> {
 
 下面以一个例子来说明Promise的使用方法:
 
-```Java
+```java
 // main 方法
 NettyFuture4Promise test = new NettyFuture4Promise();
 Promise<String> promise = test.search("Netty In Action");
@@ -89,7 +89,7 @@ private Promise<String> search(String prod) {
 
 可以看到，Promise能够在业务逻辑线程中通知Future成功或失败，由于Promise继承了Netty的Future，因此可以加入监听事件。
 
-```Java
+```java
 // main方法中，查询结束后获取promise，加入两个监听事件，分别给小Hong发通知和Email
 Promise<String> promise = test.search("Netty In Action");
 promise.addListener(new GenericFutureListener<Future<? super String>>() {

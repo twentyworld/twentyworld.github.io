@@ -8,7 +8,7 @@ Servlet标准定义了init方法是其生命周期的初始化方法。
 
 HttpServletBean.init:
 
-```Java
+```java
 @Override
 public final void init() throws ServletException {
     // Set bean properties from init parameters.
@@ -32,7 +32,7 @@ public final void init() throws ServletException {
 
 FrameworkServlet.initServletBean简略版源码:
 
-```Java
+```java
 @Override
 protected final void initServletBean() {
     this.webApplicationContext = initWebApplicationContext();
@@ -43,7 +43,7 @@ protected final void initServletBean() {
 
 FrameworkServlet.initWebApplicationContext:
 
-```Java
+```java
 protected WebApplicationContext initWebApplicationContext() {
     //根容器查找
     WebApplicationContext rootContext =
@@ -100,7 +100,7 @@ listener -> filter -> servlet
 
 WebApplicationContextUtils.getWebApplicationContext:
 
-```Java
+```java
 String ROOT_WEB_APPLICATION_CONTEXT_ATTRIBUTE = WebApplicationContext.class.getName() + ".ROOT";
 public static WebApplicationContext getWebApplicationContext(ServletContext sc) {
     return getWebApplicationContext(sc, WebApplicationContext.ROOT_WEB_APPLICATION_CONTEXT_ATTRIBUTE);
@@ -109,7 +109,7 @@ public static WebApplicationContext getWebApplicationContext(ServletContext sc) 
 
 两参数方法:
 
-```Java
+```java
 public static WebApplicationContext getWebApplicationContext(ServletContext sc, String attrName) {
     Object attr = sc.getAttribute(attrName);
     if (attr == null) {
@@ -127,7 +127,7 @@ public static WebApplicationContext getWebApplicationContext(ServletContext sc, 
 
 FrameworkServlet.createWebApplicationContext:
 
-```Java
+```java
 protected WebApplicationContext createWebApplicationContext(ApplicationContext parent) {
     Class<?> contextClass = getContextClass();
     if (!ConfigurableWebApplicationContext.class.isAssignableFrom(contextClass)) {
@@ -164,7 +164,7 @@ protected WebApplicationContext createWebApplicationContext(ApplicationContext p
 
 configureAndRefreshWebApplicationContext核心源码:
 
-```Java
+```java
 protected void configureAndRefreshWebApplicationContext(ConfigurableWebApplicationContext wac) {
     applyInitializers(wac);
     wac.refresh();
@@ -216,7 +216,7 @@ spring-servlet.xml中不同于spring-core的地方便在于引入了mvc命名空
 
 mvc命名空间的解析器为MvcNamespaceHandler，部分源码:
 
-```Java
+```java
 @Override
 public void init() {
     registerBeanDefinitionParser("annotation-driven", new AnnotationDrivenBeanDefinitionParser());
@@ -284,7 +284,7 @@ ViewResolversBeanDefinitionParser.parse方法的作用便是将每一个视图�
 
 AbstractRefreshableWebApplicationContext.postProcessBeanFactory:
 
-```Java
+```java
 @Override
 protected void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory) {
     beanFactory.addBeanPostProcessor(
@@ -307,7 +307,7 @@ registerEnvironmentBeans用以将servletContext、servletConfig以及各种启�
 
 入口位于DispatcherServlet的initStrategies方法(经由onRefresh调用):
 
-```Java
+```java
 protected void initStrategies(ApplicationContext context) {
     initMultipartResolver(context);
     initLocaleResolver(context);
@@ -327,7 +327,7 @@ protected void initStrategies(ApplicationContext context) {
 
 initMultipartResolver核心源码:
 
-```Java
+```java
 private void initMultipartResolver(ApplicationContext context) {
     try {
         this.multipartResolver = context.getBean(MULTIPART_RESOLVER_BEAN_NAME, MultipartResolver.class);
@@ -364,7 +364,7 @@ initHandlerMappings方法用于确保容器中**至少含有一个HandlerMapping
 
 如果没有开启注解驱动，那么将会使用默认的HandlerMapping，相关源码:
 
-```Java
+```java
 if (this.handlerMappings == null) {
     this.handlerMappings = getDefaultStrategies(context, HandlerMapping.class);
     if (logger.isDebugEnabled()) {
@@ -419,7 +419,7 @@ initFlashMapManager方法会向容器注册SessionFlashMapManager对象，类图
 
 初始化的入口位于AbstractHandlerMethodMapping的afterPropertiesSet方法和AbstractHandlerMapping的initApplicationContext方法，afterPropertiesSet调用了initHandlerMethods:
 
-```Java
+```java
 protected void initHandlerMethods() {
     //获取容器中所有的bean
     String[] beanNames = (this.detectHandlerMethodsInAncestorContexts ?
@@ -452,7 +452,7 @@ detectHandlerMethods方法将反射遍历类中所有的public方法，如果方
 
 其register方法简略版源码:
 
-```Java
+```java
 public void register(T mapping, Object handler, Method method) {
     //包装bean和方法
     HandlerMethod handlerMethod = createHandlerMethod(handler, method);
@@ -476,7 +476,7 @@ public void register(T mapping, Object handler, Method method) {
 
 mapping其实是一个RequestMappingInfo对象，可以将其看做是**@RequestMapping注解各种属性的一个封装**。最终由RequestMappingInfo.createRequestMappingInfo方法创建，源码:
 
-```Java
+```java
 protected RequestMappingInfo createRequestMappingInfo(
         RequestMapping requestMapping, RequestCondition<?> customCondition) {
     return RequestMappingInfo
@@ -527,7 +527,7 @@ Cors的原理可以参考:
 
 AbstractHandlerMapping.initApplicationContext:
 
-```Java
+```java
 @Override
 protected void initApplicationContext() throws BeansException {
     detectMappedInterceptors(this.adaptedInterceptors);
@@ -546,7 +546,7 @@ protected void initApplicationContext() throws BeansException {
 
 显然，入口在afterPropertiesSet方法:
 
-```Java
+```java
 @Override
 public void afterPropertiesSet() {
     // Do this first, it may add ResponseBody advice beans
@@ -603,7 +603,7 @@ getDefaultReturnValueHandlers方法便返回了一坨这东西。
 
 FrameworkServlet覆盖了service方法:
 
-```Java
+```java
 @Override
 protected void service(HttpServletRequest request, HttpServletResponse response) {
     HttpMethod httpMethod = HttpMethod.resolve(request.getMethod());
@@ -632,7 +632,7 @@ Spring MVC会在请求分发之前进行上下文的准备工作，含两部分:
 
 DispatcherServlet.doDispatch简略版源码:
 
-```Java
+```java
 protected void doDispatch(HttpServletRequest request, HttpServletResponse response) {
     HandlerExecutionChain mappedHandler = getHandler(processedRequest);
     HandlerAdapter ha = getHandlerAdapter(mappedHandler.getHandler());
@@ -647,7 +647,7 @@ protected void doDispatch(HttpServletRequest request, HttpServletResponse respon
 
 即为请求寻找合适的Controller的过程。DispatcherServlet.getHandler:
 
-```Java
+```java
 protected HandlerExecutionChain getHandler(HttpServletRequest request) {
     for (HandlerMapping hm : this.handlerMappings) {
         HandlerExecutionChain handler = hm.getHandler(request);
@@ -663,7 +663,7 @@ protected HandlerExecutionChain getHandler(HttpServletRequest request) {
 
 AbstractHandlerMapping.getHandler:
 
-```Java
+```java
 @Override
 public final HandlerExecutionChain getHandler(HttpServletRequest request) throws Exception {
     Object handler = getHandlerInternal(request);
@@ -690,7 +690,7 @@ getHandlerExecutionChain方法的原理就是从adaptedInterceptors中获得所�
 
 DispatcherServlet.getHandlerAdapter:
 
-```Java
+```java
 protected HandlerAdapter getHandlerAdapter(Object handler) {
     for (HandlerAdapter ha : this.handlerAdapters) {
         if (ha.supports(handler)) {
@@ -706,7 +706,7 @@ protected HandlerAdapter getHandlerAdapter(Object handler) {
 
 RequestMappingHandlerAdapter.handleInternal:
 
-```Java
+```java
 @Override
 protected ModelAndView handleInternal(HttpServletRequest request,
         HttpServletResponse response, HandlerMethod handlerMethod){
@@ -755,7 +755,7 @@ protected ModelAndView handleInternal(HttpServletRequest request,
 
 supportsParameter方法决定了一个解析器可以解析的参数类型，该解析器支持@RequestParam标准的参数或是**简单类型**的参数，具体参见其注释。为什么此解析器可以同时解析@RequestParam注解和普通参数呢?玄机在于RequestMappingHandlerAdapter方法在初始化参数解析器时其实初始化了**两个RequestMappingHandlerAdapter对象**，getDefaultArgumentResolvers方法相关源码:
 
-```Java
+```java
 private List<HandlerMethodArgumentResolver> getDefaultArgumentResolvers() {
     resolvers.add(new RequestPartMethodArgumentResolver(getMessageConverters(), this.requestResponseBodyAdvice));
     // Catch-all
@@ -767,7 +767,7 @@ useDefaultResolution参数用于启动对常规类型参数的解析，这里的
 
 实际上由BeanUtils.isSimpleProperty方法决定:
 
-```Java
+```java
 public static boolean isSimpleProperty(Class<?> clazz) {
     Assert.notNull(clazz, "Class must not be null");
     return isSimpleValueType(clazz) || (clazz.isArray() && isSimpleValueType(clazz.getComponentType()));
@@ -785,7 +785,7 @@ public static boolean isSimpleValueType(Class<?> clazz) {
 
 忽略复杂的调用关系，最核心的实现位于resolveName方法，部分源码:
 
-```Java
+```java
 @Override
 protected Object resolveName(String name, MethodParameter parameter, NativeWebRequest request) {
     if (arg == null) {
@@ -804,7 +804,7 @@ name就是方法的参数名，可以看出，参数解析**就是根据参数�
 
 方法名获取的入口位于RequestParamMethodArgumentResolver的resolveArgument方法:
 
-```Java
+```java
 @Override
 public final Object resolveArgument(MethodParameter parameter, ModelAndViewContainer mavContainer,
     NativeWebRequest webRequest, WebDataBinderFactory binderFactory) throws Exception {
@@ -814,7 +814,7 @@ public final Object resolveArgument(MethodParameter parameter, ModelAndViewConta
 
 getNamedValueInfo方法最终完成对MethodParameter的getParameterName方法的调用:
 
-```Java
+```java
 public String getParameterName() {
     ParameterNameDiscoverer discoverer = this.parameterNameDiscoverer;
     if (discoverer != null) {
@@ -837,7 +837,7 @@ public String getParameterName() {
 
 StandardReflectionParameterNameDiscoverer.getParameterNames:
 
-```Java
+```java
 @Override
 public String[] getParameterNames(Method method) {
     Parameter[] parameters = method.getParameters();
@@ -873,7 +873,7 @@ LocalVariableTableParameterNameDiscoverer利用了ASM直接访问class文件中�
 
 supportsParameter方法很简单:
 
-```Java
+```java
 @Override
 public boolean supportsParameter(MethodParameter parameter) {
     return Model.class.isAssignableFrom(parameter.getParameterType());
@@ -884,7 +884,7 @@ public boolean supportsParameter(MethodParameter parameter) {
 
 resolveArgument：
 
-```Java
+```java
 @Override
 public Object resolveArgument(MethodParameter parameter, ModelAndViewContainer mavContainer,
     NativeWebRequest webRequest, WebDataBinderFactory binderFactory) throws Exception {
@@ -907,7 +907,7 @@ public Object resolveArgument(MethodParameter parameter, ModelAndViewContainer m
 
 supportsReturnType方法:
 
-```Java
+```java
 @Override
 public boolean supportsReturnType(MethodParameter returnType) {
     Class<?> paramType = returnType.getParameterType();
@@ -917,7 +917,7 @@ public boolean supportsReturnType(MethodParameter returnType) {
 
 handleReturnValue:
 
-```Java
+```java
 @Override
 public void handleReturnValue(Object returnValue, MethodParameter returnType,
         ModelAndViewContainer mavContainer, NativeWebRequest webRequest) {
@@ -938,7 +938,7 @@ public void handleReturnValue(Object returnValue, MethodParameter returnType,
 
 由DispatcherServlet的processDispatchResult方法完成，源码:
 
-```Java
+```java
 private void processDispatchResult(HttpServletRequest request, HttpServletResponse response,
         HandlerExecutionChain mappedHandler, ModelAndView mv, Exception exception) {
     boolean errorView = false;
@@ -986,7 +986,7 @@ private void processDispatchResult(HttpServletRequest request, HttpServletRespon
 
 怎么生成的。RequestMappingHandlerAdapter.getModelAndView相关源码:
 
-```Java
+```java
 ModelMap model = mavContainer.getModel();
 ModelAndView mav = new ModelAndView(mavContainer.getViewName(), model, mavContainer.getStatus());
 ```
@@ -995,7 +995,7 @@ ModelAndView mav = new ModelAndView(mavContainer.getViewName(), model, mavContai
 
 DispatcherServlet.render简略版源码:
 
-```Java
+```java
 protected void render(ModelAndView mv, HttpServletRequest request, HttpServletResponse response) {
     Locale locale = this.localeResolver.resolveLocale(request);
     response.setLocale(locale);
@@ -1033,7 +1033,7 @@ resolveViewName方法的源码不再贴出，其实只做了一件事: 用反射
 
 渲染的核心逻辑位于InternalResourceView.renderMergedOutputModel，简略版源码:
 
-```Java
+```java
 @Override
 protected void renderMergedOutputModel(
         Map<String, Object> model, HttpServletRequest request, HttpServletResponse response) {
@@ -1090,7 +1090,7 @@ Spring允许我们通过XML配置文件的message-converters元素来进行自�
 
 当**检测到没有配置message-converters元素或者register-defaults="true"时Spring便会注册默认转换器**。这其中便包括MappingJacksonHttpMessageConverter，相关源码:
 
-```Java
+```java
 else if (jacksonPresent) {
     messageConverters.add(createConverterDefinition(
         org.springframework.http.converter.json.MappingJacksonHttpMessageConverter.class, source));
@@ -1099,7 +1099,7 @@ else if (jacksonPresent) {
 
 jacksonPresent声明:
 
-```Java
+```java
 private static final boolean jacksonPresent =
     ClassUtils.isPresent("org.codehaus.jackson.map.ObjectMapper", AnnotationDrivenBeanDefinitionParser.class.getClassLoader()) &&
     ClassUtils.isPresent("org.codehaus.jackson.JsonGenerator", AnnotationDrivenBeanDefinitionParser.class.getClassLoader());
@@ -1109,19 +1109,19 @@ private static final boolean jacksonPresent =
 
 入口位于ServletInvocableHandlerMethod的invokeAndHandle方法对于响应的处理:
 
-```Java
+```java
 this.returnValueHandlers.handleReturnValue(returnValue, getReturnValueType(returnValue), mavContainer, webRequest);
 ```
 
 returnValueHandlers其实就是RequestMappingHandlerAdapter内部的returnValueHandlers，后者由RequestMappingHandlerAdapter的afterPropertiesSet方法初始化，关键在于:
 
-```Java
+```java
 handlers.add(new RequestResponseBodyMethodProcessor(getMessageConverters(), this.contentNegotiationManager));
 ```
 
 对象到JSON的转换正是由RequestResponseBodyMethodProcessor完成，ServletInvocableHandlerMethod通过supportsReturnType方法决定HandlerMethodReturnValueHandler是否可以处理当前返回类型或返回方法，RequestResponseBodyMethodProcessor的实现:
 
-```Java
+```java
 @Override
 public boolean supportsReturnType(MethodParameter returnType) {
     return ((AnnotationUtils.findAnnotation(returnType.getContainingClass(), ResponseBody.class) != null) ||
@@ -1131,7 +1131,7 @@ public boolean supportsReturnType(MethodParameter returnType) {
 
 核心的handleReturnValue方法:
 
-```Java
+```java
 @Override
 public void handleReturnValue(Object returnValue, MethodParameter returnType,
     ModelAndViewContainer mavContainer, NativeWebRequest webRequest) {
@@ -1144,7 +1144,7 @@ public void handleReturnValue(Object returnValue, MethodParameter returnType,
 
 这里其实是通过HttpMessageConverter的canRead或canWrite方法来判断给定的转换器是否合适，canWrite方法实现:
 
-```Java
+```java
 @Override
 public boolean canWrite(Class<?> clazz, MediaType mediaType) {
     return (this.objectMapper.canSerialize(clazz) && canWrite(mediaType));
@@ -1193,7 +1193,7 @@ HandlerMethodReturnValueHandler接口以及主要实现类如下:
 
 假设有如下这样的Controller:
 
-```Java
+```java
 @RequestMapping("/echoAgain")
 public String echo(SimpleModel simpleModel, Model model) {
     model.addAttribute("echo", "hello " + simpleModel.getName() + ", your age is " + simpleModel.getAge() + ".");
@@ -1207,7 +1207,7 @@ public String echo(SimpleModel simpleModel, Model model) {
 
 核心的supportsParameter方法由父类ModelAttributeMethodProcessor实现:
 
-```Java
+```java
 @Override
 public boolean supportsParameter(MethodParameter parameter) {
     return (parameter.hasParameterAnnotation(ModelAttribute.class) ||
@@ -1218,13 +1218,13 @@ public boolean supportsParameter(MethodParameter parameter) {
 可以看出，这里支持带有ModelAttribute注解或者是非基本类型的参数解析，同时annotationNotRequired必须设为false，即ModelAttribute注解不必存在，这里是在ServletModelAttributeMethodProcessor的构造器中进行控制的，
 RequestMappingHandlerAdapter.getDefaultArgumentResolvers部分源码:
 
-```Java
+```java
 resolvers.add(new ServletModelAttributeMethodProcessor(false));
 ```
 
 此类的作用是对@ModelAttribute注解标注的参数进行解析，假设我们将Controller方法改写成:
 
-```Java
+```java
 @RequestMapping("/echoAgain")
 public String echo(@ModelAttribute SimpleModel simpleModel, Model model) {
     model.addAttribute("echo", "hello " + simpleModel.getName() + ", your age is " + simpleModel.getAge() + ".");
@@ -1240,7 +1240,7 @@ public String echo(@ModelAttribute SimpleModel simpleModel, Model model) {
 
 因为SimpleModel是一个对象类型，所以要想将参数注入到其中，第一步必然是先创建一个对象，创建的入口位于ModelAttributeMethodProcessor的resolveArgument方法，相关源码:
 
-```Java
+```java
 //name在这里便是simpleModel
 String name = ModelFactory.getNameForParameter(parameter);
 Object attribute = (mavContainer.containsAttribute(name) ? mavContainer.getModel().get(name) :
@@ -1261,7 +1261,7 @@ WebDataBinderFactory接口用以创建WebDataBinder对象，其继承体系如�
 
 默认使用的是ServletRequestDataBinderFactory，创建了一个ExtendedServletRequestDataBinder对象:
 
-```Java
+```java
 @Override
 protected ServletRequestDataBinder createBinderInstance(Object target, String objectName, NativeWebRequest request) {
     return new ExtendedServletRequestDataBinder(target, objectName);
@@ -1270,7 +1270,7 @@ protected ServletRequestDataBinder createBinderInstance(Object target, String ob
 
 参数绑定的入口位于ModelAttributeMethodProcessor.resolveArgument方法，相关源码:
 
-```Java
+```java
 if (!mavContainer.isBindingDisabled(name)) {
     bindRequestParameters(binder, webRequest);
 }
@@ -1278,7 +1278,7 @@ if (!mavContainer.isBindingDisabled(name)) {
 
 接下来由ServletRequestDataBinder的bind方法完成，核心源码:
 
-```Java
+```java
 public void bind(ServletRequest request) {
     MutablePropertyValues mpvs = new ServletRequestParameterPropertyValues(request);
     doBind(mpvs);
@@ -1291,7 +1291,7 @@ public void bind(ServletRequest request) {
 
 将我们的Controller方法改写为下面这种形式便可以启动Spring MVC的参数校验:
 
-```Java
+```java
 @RequestMapping("/echoAgain")
 public String echo(@Validated SimpleModel simpleModel, Model model) {
     model.addAttribute("echo", "hello " + simpleModel.getName() + ", your age is " + simpleModel.getAge() + ".");
@@ -1305,7 +1305,7 @@ public String echo(@Validated SimpleModel simpleModel, Model model) {
 
 当参数校验绑定之后，Spring MVC会尝试对参数进行校验，如果我们设置了校验注解。ModelAttributeMethodProcessor.resolveArgument方法相关源码:
 
-```Java
+```java
 validateIfApplicable(binder, parameter);
 
 protected void validateIfApplicable(WebDataBinder binder, MethodParameter methodParam) {
@@ -1324,7 +1324,7 @@ protected void validateIfApplicable(WebDataBinder binder, MethodParameter method
 
 DataBinder.validate:
 
-```Java
+```java
 public void validate(Object... validationHints) {
     for (Validator validator : getValidators()) {
         if (!ObjectUtils.isEmpty(validationHints) && validator instanceof SmartValidator) {
@@ -1342,7 +1342,7 @@ public void validate(Object... validationHints) {
 
 getValidators方法获取的实际上是DataBinder内部的validators字段:
 
-```Java
+```java
 private final List<Validator> validators = new ArrayList<Validator>();
 ```
 
@@ -1358,7 +1358,7 @@ private final List<Validator> validators = new ArrayList<Validator>();
 
 会利用AnnotationDrivenBeanDefinitionParser进行相关的解析、初始化工作，正是在其parse方法完成了对JSR校验的支持。相关源码:
 
-```Java
+```java
 @Override
 public BeanDefinition parse(Element element, ParserContext parserContext) {
     RuntimeBeanReference validator = getValidator(element, source, parserContext);
@@ -1384,7 +1384,7 @@ private RuntimeBeanReference getValidator(Element element, Object source, Parser
 
 javaxValidationPresent的定义:
 
-```Java
+```java
 private static final boolean javaxValidationPresent =
     ClassUtils.isPresent("javax.validation.Validator", AnnotationDrivenBeanDefinitionParser.class.getClassLoader());
 ```
@@ -1397,7 +1397,7 @@ private static final boolean javaxValidationPresent =
 
 我们可以实现Spring提供的Validator接口，然后在Controller里边这样设置我们要是用的校验器:
 
-```Java
+```java
 @InitBinder
 public void initBinder(DataBinder dataBinder) {
     dataBinder.setValidator(new SimpleModelValidator());
@@ -1407,7 +1407,7 @@ public void initBinder(DataBinder dataBinder) {
 
 我们的Controller方法依然可以如此定义:
 
-```Java
+```java
 @RequestMapping("/echoAgain")
 public String echo(@Validated SimpleModel simpleModel, Model model) {
     return "echo";
@@ -1420,7 +1420,7 @@ public String echo(@Validated SimpleModel simpleModel, Model model) {
 
 如果我们把Controller方法这样定义会怎样?
 
-```Java
+```java
 @RequestMapping(value = "/echoAgain", method = RequestMethod.POST)
 public String echo(@Validated @RequestBody SimpleModel simpleModel, Model model) {}
 ```
@@ -1428,14 +1428,14 @@ public String echo(@Validated @RequestBody SimpleModel simpleModel, Model model)
 答案是@RequestBody注解先于@Validated注解起作用，这样既可以利用@RequestBody注解向Controller传递json串，同时又能够达到校验的目的。从源码的角度来说，这在很大程度上是一个顺序的问题:
 RequestMappingHandlerAdapter.getDefaultArgumentResolvers相关源码:
 
-```Java
+```java
 resolvers.add(new ServletModelAttributeMethodProcessor(false));
 resolvers.add(new RequestResponseBodyMethodProcessor(getMessageConverters(), this.requestResponseBodyAdvice));
 ```
 
 虽然ServletModelAttributeMethodProcessor位于RequestResponseBodyMethodProcessor之前，但构造器参数为false说明了此解析器必须要求参数被@ModelAttribute注解标注，其实在最后还有一个不需要注解的解析器被添加:
 
-```Java
+```java
 // Catch-all
 resolvers.add(new ServletModelAttributeMethodProcessor(true));
 ```

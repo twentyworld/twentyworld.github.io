@@ -2,7 +2,7 @@
 
 aop部分的解析器由AopNamespaceHandler注册，其init方法:
 
-```Java
+```java
 @Override
 public void init() {
     registerBeanDefinitionParser("config", new ConfigBeanDefinitionParser());
@@ -25,7 +25,7 @@ public void init() {
 
 ConfigBeanDefinitionParser.parse:
 
-```Java
+```java
 @Override
 public BeanDefinition parse(Element element, ParserContext parserContext) {
     CompositeComponentDefinition compositeDef =
@@ -188,7 +188,7 @@ AspectComponentDefinition
 
 正如上面结构图里所描述的，其构造参数为一个BeanDefintion，此对象的beanClass是不确定的，由aop:before/after中的before和after决定，代码:
 
-```Java
+```java
 private Class<?> getAdviceClass(Element adviceElement, ParserContext parserContext) {
     String elementName = parserContext.getDelegate().getLocalName(adviceElement);
     if (BEFORE.equals(elementName)) {
@@ -215,7 +215,7 @@ private Class<?> getAdviceClass(Element adviceElement, ParserContext parserConte
 
 这个东西是干什么用的呢?其实是用于在指定的advice(aop:aspect的ref属性)中得到Method对象。入口在setBeanFactory方法:
 
-```Java
+```java
 @Override
 public void setBeanFactory(BeanFactory beanFactory) {
     Class<?> beanClass = beanFactory.getType(this.targetBeanName);
@@ -237,7 +237,7 @@ public void setBeanFactory(BeanFactory beanFactory) {
 
 就是它!查找很简单:
 
-```Java
+```java
 @Override
 public Object getAspectInstance() {
     return this.beanFactory.getBean(this.aspectBeanName);
@@ -268,7 +268,7 @@ public Object getAspectInstance() {
 
 AbstractAutowireCapableBeanFactory.createBean部分源码:
 
-```Java
+```java
 //// Give BeanPostProcessors a chance to return a proxy instead of the target bean instance.
 Object bean = resolveBeforeInstantiation(beanName, mbdToUse);
 if (bean != null) {
@@ -283,7 +283,7 @@ Object beanInstance = doCreateBean(beanName, mbdToUse, args);
 
 AbstractAutoProxyCreator.postProcessBeforeInstantiation:
 
-```Java
+```java
 @Override
 public Object postProcessBeforeInstantiation(Class<?> beanClass, String beanName) {
     Object cacheKey = getCacheKey(beanClass, beanName);
@@ -326,7 +326,7 @@ Spring首先会对当前的beanClass进行检查(是否应该/可以对其进行
 
 AbstractAutoProxyCreator.isInfrastructureClass:
 
-```Java
+```java
 protected boolean isInfrastructureClass(Class<?> beanClass) {
     boolean retVal = Advice.class.isAssignableFrom(beanClass) ||
             Pointcut.class.isAssignableFrom(beanClass) ||
@@ -342,7 +342,7 @@ protected boolean isInfrastructureClass(Class<?> beanClass) {
 
 即shouldSkip方法。前面提到了，AbstractAutoProxyCreator的默认实现直接返回fasle，这一特性被子类AspectJAwareAdvisorAutoProxyCreator重写:
 
-```Java
+```java
 @Override
 protected boolean shouldSkip(Class<?> beanClass, String beanName) {
     List<Advisor> candidateAdvisors = findCandidateAdvisors();
@@ -385,7 +385,7 @@ protected boolean shouldSkip(Class<?> beanClass, String beanName) {
 
 关键便是findCandidateAdvisors方法，此方法将逻辑委托给BeanFactoryAdvisorRetrievalHelper.findAdvisorBeans:
 
-```Java
+```java
 public List<Advisor> findAdvisorBeans() {
     String[] advisorNames = null;
     synchronized (this) {
@@ -419,7 +419,7 @@ public List<Advisor> findAdvisorBeans() {
 
 指的便是isEligibleBean方法。最终调用的是AbstractAdvisorAutoProxyCreator的同名方法:
 
-```Java
+```java
 protected boolean isEligibleAdvisorBean(String beanName) {
     return true;
 }
@@ -443,7 +443,7 @@ protected boolean isEligibleAdvisorBean(String beanName) {
 
 AbstractAutoProxyCreator.postProcessAfterInitialization:
 
-```Java
+```java
 @Override
 public Object postProcessAfterInitialization(Object bean, String beanName) {
     if (bean != null) {
@@ -458,7 +458,7 @@ public Object postProcessAfterInitialization(Object bean, String beanName) {
 
 关键便在于wrapIfNecessary方法:
 
-```Java
+```java
 protected Object wrapIfNecessary(Object bean, String beanName, Object cacheKey) {
     //自定义TargetSource，已经进行过代理子类生成
     if (beanName != null && this.targetSourcedBeans.contains(beanName)) {
@@ -494,7 +494,7 @@ protected Object wrapIfNecessary(Object bean, String beanName, Object cacheKey) 
 
 AbstractAdvisorAutoProxyCreator.findEligibleAdvisors:
 
-```Java
+```java
 protected List<Advisor> findEligibleAdvisors(Class<?> beanClass, String beanName) {
     List<Advisor> candidateAdvisors = findCandidateAdvisors();
     List<Advisor> eligibleAdvisors = findAdvisorsThatCanApply(candidateAdvisors, beanClass, beanName);
@@ -512,7 +512,7 @@ findCandidateAdvisors前面已经说过了。
 
 findAdvisorsThatCanApply最终调用AopUtils.findAdvisorsThatCanApply:
 
-```Java
+```java
 public static List<Advisor> findAdvisorsThatCanApply(List<Advisor> candidateAdvisors, Class<?> clazz) {
     if (candidateAdvisors.isEmpty()) {
         return candidateAdvisors;
@@ -543,7 +543,7 @@ public static List<Advisor> findAdvisorsThatCanApply(List<Advisor> candidateAdvi
 
 canApply(candidate, clazz)其实等价于canApply(candidate, clazz, false):
 
-```Java
+```java
 public static boolean canApply(Advisor advisor, Class<?> targetClass, boolean hasIntroductions) {
     if (advisor instanceof IntroductionAdvisor) {
         return ((IntroductionAdvisor) advisor).getClassFilter().matches(targetClass);
@@ -569,7 +569,7 @@ public static boolean canApply(Advisor advisor, Class<?> targetClass, boolean ha
 
 AopUtils.canApply:
 
-```Java
+```java
 public static boolean canApply(Pointcut pc, Class<?> targetClass, boolean hasIntroductions) {
     //是否Pointcut可以匹配当前类
     if (!pc.getClassFilter().matches(targetClass)) {
@@ -623,7 +623,7 @@ AbstractAdvisorAutoProxyCreator.extendAdvisors允许子类向Advisor链表中添
 
 AbstractAutoProxyCreator.createProxy(略去非关键代码):
 
-```Java
+```java
 protected Object createProxy(
         Class<?> beanClass, String beanName, Object[] specificInterceptors, TargetSource targetSource) {
     ProxyFactory proxyFactory = new ProxyFactory();
@@ -641,7 +641,7 @@ protected Object createProxy(
 
 由DefaultAopProxyFactory.createAopProxy方法决定使用何种方式创建代理子类。
 
-```Java
+```java
 @Override
 public AopProxy createAopProxy(AdvisedSupport config) throws AopConfigException {
     if (config.isOptimize() || config.isProxyTargetClass() ||
@@ -663,7 +663,7 @@ public AopProxy createAopProxy(AdvisedSupport config) throws AopConfigException 
 
 JdkDynamicAopProxy.getProxy:
 
-```Java
+```java
 @Override
 public Object getProxy(ClassLoader classLoader) {
     //找到可以用来进行代理的接口
@@ -685,7 +685,7 @@ public Object getProxy(ClassLoader classLoader) {
 
 invoke方法部分源码:
 
-```Java
+```java
 if (!this.equalsDefined && AopUtils.isEqualsMethod(method)) {
     // The target does not implement the equals(Object) method itself.
     return equals(args[0]);
@@ -702,7 +702,7 @@ if (!this.equalsDefined && AopUtils.isEqualsMethod(method)) {
 
 Spring会创建一个MethodInvocation对象对所有相关的Advisor进行链式调用。invoke相关源码:
 
-```Java
+```java
 List<Object> chain = this.advised.getInterceptorsAndDynamicInterceptionAdvice(method, targetClass);
 invocation = new ReflectiveMethodInvocation(proxy, target, method, args, targetClass, chain);
 Object retVal = invocation.proceed();
@@ -741,7 +741,7 @@ Object retVal = invocation.proceed();
 
 DefaultBeanDefinitionDocumentReader.processBeanDefinition:
 
-```Java
+```java
 protected void processBeanDefinition(Element ele, BeanDefinitionParserDelegate delegate) {
     BeanDefinitionHolder bdHolder = delegate.parseBeanDefinitionElement(ele);
     if (bdHolder != null) {
@@ -753,7 +753,7 @@ protected void processBeanDefinition(Element ele, BeanDefinitionParserDelegate d
 
 BeanDefinitionParserDelegate.decorateIfRequired:
 
-```Java
+```java
 public BeanDefinitionHolder decorateIfRequired(
         Node node, BeanDefinitionHolder originalDef, BeanDefinition containingBd) {
     String namespaceUri = getNamespaceURI(node);
@@ -775,7 +775,7 @@ public BeanDefinitionHolder decorateIfRequired(
 
 ### 装饰
 
-```Java
+```java
 @Override
 public BeanDefinitionHolder decorate(Node node, BeanDefinitionHolder definition, ParserContext parserContext) {
     boolean proxyTargetClass = true;
@@ -806,7 +806,7 @@ public BeanDefinitionHolder decorate(Node node, BeanDefinitionHolder definition,
 
 入口便是setBeanFactory方法:
 
-```Java
+```java
 @Override
 public void setBeanFactory(BeanFactory beanFactory) {
     ConfigurableBeanFactory cbf = (ConfigurableBeanFactory) beanFactory;
@@ -842,7 +842,7 @@ public void setBeanFactory(BeanFactory beanFactory) {
 
 AdvisedSupport.addAdvice方法将其转化为Advisor:
 
-```Java
+```java
 @Override
 public void addAdvice(int pos, Advice advice) throws AopConfigException {
     if (advice instanceof IntroductionInfo) {
@@ -873,7 +873,7 @@ DelegatingIntroductionInterceptor到底是个什么东西呢?这其实就引出�
 
 为了便于测试，我们定义一个生存周期仅仅在于一次调用的Scope，源码:
 
-```Java
+```java
 public class OneScope implements Scope {
 
     private int index = 0;
@@ -891,7 +891,7 @@ public class OneScope implements Scope {
 
 - 在代码中:
 
-  ```Java
+  ```java
   context.getBeanFactory().registerScope("one", new OneScope());
   ```
 
@@ -927,7 +927,7 @@ public class OneScope implements Scope {
 
 执行以下代码:
 
-```Java
+```java
 SimpleBean simpleBean = context.getBean(SimpleBean.class);
 System.out.println(simpleBean.getStudent().getName());
 System.out.println(simpleBean.getStudent().getName());
@@ -950,7 +950,7 @@ skywalker-1
 
 从根本上来说在于AbstractBeanFactory.doGetBean，部分源码:
 
-```Java
+```java
 //scope非prototype和Singleton
 else {
     String scopeName = mbd.getScope();
@@ -1009,7 +1009,7 @@ Cglib的Enhancer可以指定一个Callback数组，而accept方法的返回值�
 
 一般的方法使用的是DynamicAdvisedInterceptor作为回调逻辑，其intercept关键源码:
 
-```Java
+```java
 @Override
 public Object intercept(Object proxy, Method method, Object[] args, MethodProxy methodProxy) {
     Object target = getTarget();
@@ -1020,7 +1020,7 @@ target就是被代理对象。
 
 getTarget:
 
-```Java
+```java
 protected Object getTarget() throws Exception {
     return this.advised.getTargetSource().getTarget();
 }
@@ -1028,7 +1028,7 @@ protected Object getTarget() throws Exception {
 
 TargetSource前面说过了，默认是SimpleBeanTargetSource:
 
-```Java
+```java
 @Override
 public Object getTarget() throws Exception {
     return getBeanFactory().getBean(getTargetBeanName());
@@ -1055,7 +1055,7 @@ public Object getTarget() throws Exception {
 
 ### 切面
 
-```Java
+```java
 @Aspect
 public class AspectDemo {
     @Pointcut("execution(void base.aop.AopDemo.send(..))")
@@ -1069,7 +1069,7 @@ public class AspectDemo {
 
 ### 被代理类
 
-```Java
+```java
 public class AopDemo implements AopDemoInter {
     public void send() {
         System.out.println("send from aopdemo");
@@ -1100,7 +1100,7 @@ public class AopDemo implements AopDemoInter {
 
 AspectJAutoProxyBeanDefinitionParser.parse:
 
-```Java
+```java
 @Override
 public BeanDefinition parse(Element element, ParserContext parserContext) {
     AopNamespaceUtils.
@@ -1120,7 +1120,7 @@ public BeanDefinition parse(Element element, ParserContext parserContext) {
 
 AnnotationAwareAspectJAutoProxyCreator.findCandidateAdvisors:
 
-```Java
+```java
 @Override
 protected List<Advisor> findCandidateAdvisors() {
     List<Advisor> advisors = super.findCandidateAdvisors();
@@ -1134,7 +1134,7 @@ buildAspectJAdvisors方法所做的便是**从容器中得到所有的bean，逐
 
 AbstractAspectJAdvisorFactory.isAspect:
 
-```Java
+```java
 @Override
 public boolean isAspect(Class<?> clazz) {
     return (hasAspectAnnotation(clazz) && !compiledByAjc(clazz));
@@ -1160,7 +1160,7 @@ Spring对于AspectJ风格AOP的支持停留在外表(注解)上面，内部的�
 
 核心便是对目标方法的调用上，这里由CglibMethodInvocation的invokeJoinpoint实现:
 
-```Java
+```java
 @Override
 protected Object invokeJoinpoint() throws Throwable {
     if (this.publicMethod) {
@@ -1185,7 +1185,7 @@ protected Object invokeJoinpoint() throws Throwable {
 
 当我们需要在一个被代理方法中调用同类的方法时(此方法也需要经过切面)，可以这样调用:
 
-```Java
+```java
 public void testB() {
     System.out.println("testB执行");
     ((SimpleAopBean) AopContext.currentProxy()).testC();
@@ -1194,7 +1194,7 @@ public void testB() {
 
 这里其实是一个ThreadLocal，当Cglib代理子类创建调用链之间便会将代理类设置到其中，DynamicAdvisedInterceptor.intercept相关源码:
 
-```Java
+```java
 if (this.advised.exposeProxy) {
     // Make invocation available if necessary.
     oldProxy = AopContext.setCurrentProxy(proxy);

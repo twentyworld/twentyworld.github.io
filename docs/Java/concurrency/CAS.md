@@ -28,7 +28,7 @@ CAS 操作包含三个操作数 —— 内存位置（V）、预期原值（A）
 ### CAS原理
 
 下面是sun.misc.Unsafe类的compareAndSwapInt()方法的源代码：
-```Java
+```java
 public final native boolean compareAndSwapInt(Object o, long offset,
                                               int expected,
                                               int x);
@@ -127,7 +127,7 @@ Java的CAS会使用现代处理器上提供的高效机器级别原子指令，�
 
 ### 成员变量
 
-```Java
+```java
 // 通过它来实现CAS操作的。因为是int类型，所以调用它的compareAndSwapInt方法
 private static final Unsafe unsafe = Unsafe.getUnsafe();
 
@@ -156,7 +156,7 @@ private volatile int value;
 ### 重要方法
 
 #### 1. get与set方法
-```Java
+```java
 // 直接读取。因为是volatile关键子修饰的，总是能看到(任意线程)对这个volatile变量最新的写入
 public final int get() {
     return value;
@@ -172,7 +172,7 @@ public final void set(int newValue) {
 因为value变量是volatile关键字修饰的，它总是能读取(任意线程)对这个volatile变量最新的写入。它修改value变量也会立即被别的线程读取到。
 
 #### 2. compareAndSet方法
-```Java
+```java
 // 如果value变量的当前值(内存值)等于期望值(expect)，那么就把update赋值给value变量，返回true。
 // 如果value变量的当前值(内存值)不等于期望值(expect)，就什么都不做，返回false。
 // 这个就是CAS操作，使用unsafe.compareAndSwapInt方法，保证整个操作过程的原子性
@@ -190,7 +190,7 @@ public final boolean compareAndSet(int expect, int update) {
 将value+1的值赋值给value: 使用CAS函数，如果返回false，说明在当前线程读取value值到调用CAS函数方法前，共享变量被其他线程修改了，那么value+1的结果值就不是我们想要的了，因为要重新计算。
 
 #### 3. getAndAddInt方法
-```Java
+```java
  public final int getAndAddInt(Object obj, long valueOffset, int var) {
     int expect;
     // 利用循环，直到更新成功才跳出循环。
@@ -208,7 +208,7 @@ public final boolean compareAndSet(int expect, int update) {
 
 这个方法在Unsafe类中，利用do_while循环，先利用当前值，计算更新值，然后通过compareAndSwapInt方法设置value变量，如果compareAndSwapInt方法返回失败，表示value变量的值被别的线程更改了，所以循环获取value变量最新值，再通过compareAndSwapInt方法设置value变量。直到设置成功。跳出循环，返回更新前的值。
 
-```Java
+```java
 // 将value的值当前值的基础上加1，并返回当前值
 public final int getAndIncrement() {
     return unsafe.getAndAddInt(this, valueOffset, 1);
@@ -245,7 +245,7 @@ public final int addAndGet(int delta) {
 
 #### 实例：
 
-```Java
+```java
 class Data {
     AtomicInteger num;
 

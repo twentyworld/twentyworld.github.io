@@ -11,7 +11,7 @@
 
 启动代码:
 
-```Java
+```java
 public static void main(String[] args) {
     ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext("config.xml");
     SimpleBean bean = context.getBean(SimpleBean.class);
@@ -22,7 +22,7 @@ public static void main(String[] args) {
 
 SimpleBean:
 
-```Java
+```java
 public class SimpleBean {
     public void send() {
         System.out.println("I am send method from SimpleBean!");
@@ -40,7 +40,7 @@ ResourceLoader代表了**加载资源的一种方式，正是策略模式的实�
 
 构造器源码:
 
-```Java
+```java
 public ClassPathXmlApplicationContext(String[] configLocations, boolean refresh, ApplicationContext 	         parent) {
     //null
     super(parent);
@@ -56,7 +56,7 @@ public ClassPathXmlApplicationContext(String[] configLocations, boolean refresh,
 
 首先看父类构造器，沿着继承体系一直向上调用，直到AbstractApplicationContext:
 
-```Java
+```java
 public AbstractApplicationContext(ApplicationContext parent) {
     this();
     setParent(parent);
@@ -68,7 +68,7 @@ public AbstractApplicationContext() {
 
 getResourcePatternResolver:
 
-```Java
+```java
 protected ResourcePatternResolver getResourcePatternResolver() {
     return new PathMatchingResourcePatternResolver(this);
 }
@@ -80,7 +80,7 @@ PathMatchingResourcePatternResolver支持Ant风格的路径解析。
 
 即AbstractRefreshableConfigApplicationContext.setConfigLocations:
 
-```Java
+```java
 public void setConfigLocations(String... locations) {
     if (locations != null) {
         Assert.noNullElements(locations, "Config locations must not be null");
@@ -96,7 +96,7 @@ public void setConfigLocations(String... locations) {
 
 resolvePath:
 
-```Java
+```java
 protected String resolvePath(String path) {
     return getEnvironment().resolveRequiredPlaceholders(path);
 }
@@ -106,7 +106,7 @@ protected String resolvePath(String path) {
 
 getEnvironment方法来自于ConfigurableApplicationContext接口，源码很简单，如果为空就调用createEnvironment创建一个。AbstractApplicationContext.createEnvironment:
 
-```Java
+```java
 protected ConfigurableEnvironment createEnvironment() {
     return new StandardEnvironment();
 }
@@ -138,7 +138,7 @@ Spring Profile特性是从3.1开始的，其主要是为了解决这样一种问
 
 在启动代码中可以用如下代码设置活跃(当前使用的)Profile:
 
-```Java
+```java
 context.getEnvironment().setActiveProfiles("dev");
 ```
 
@@ -156,7 +156,7 @@ context.getEnvironment().setActiveProfiles("dev");
 
 #### Environment构造器
 
-```Java
+```java
 private final MutablePropertySources propertySources = new MutablePropertySources(this.logger);
 public AbstractEnvironment() {
     customizePropertySources(this.propertySources);
@@ -173,7 +173,7 @@ public AbstractEnvironment() {
 
 StandardEnvironment.customizePropertySources:
 
-```Java
+```java
 /** System environment property source name: {@value} */
 public static final String SYSTEM_ENVIRONMENT_PROPERTY_SOURCE_NAME = "systemEnvironment";
 /** JVM system properties property source name: {@value} */
@@ -195,7 +195,7 @@ PropertySource接口代表了键值对的Property来源。继承体系：
 
 AbstractEnvironment.getSystemProperties:
 
-```Java
+```java
 @Override
 public Map<String, Object> getSystemProperties() {
     try {
@@ -230,7 +230,7 @@ getSystemEnvironment方法也是一个套路，不过最终调用的是System.ge
 
 AbstractEnvironment.resolveRequiredPlaceholders:
 
-```Java
+```java
 @Override
 public String resolveRequiredPlaceholders(String text) throws IllegalArgumentException {
     //text即配置文件路径，比如classpath:config.xml
@@ -240,7 +240,7 @@ public String resolveRequiredPlaceholders(String text) throws IllegalArgumentExc
 
 propertyResolver是一个PropertySourcesPropertyResolver对象:
 
-```Java
+```java
 private final ConfigurablePropertyResolver propertyResolver =
             new PropertySourcesPropertyResolver(this.propertySources);
 ```
@@ -257,7 +257,7 @@ PropertyResolver继承体系(排除Environment分支):
 
 AbstractPropertyResolver.resolveRequiredPlaceholders:
 
-```Java
+```java
 @Override
 public String resolveRequiredPlaceholders(String text) throws IllegalArgumentException {
     if (this.strictHelper == null) {
@@ -267,7 +267,7 @@ public String resolveRequiredPlaceholders(String text) throws IllegalArgumentExc
 }
 ```
 
-```Java
+```java
 private PropertyPlaceholderHelper createPlaceholderHelper(boolean ignoreUnresolvablePlaceholders) {
     //三个参数分别是${, }, :
     return new PropertyPlaceholderHelper(this.placeholderPrefix, this.placeholderSuffix,
@@ -277,7 +277,7 @@ private PropertyPlaceholderHelper createPlaceholderHelper(boolean ignoreUnresolv
 
 doResolvePlaceholders：
 
-```Java
+```java
 private String doResolvePlaceholders(String text, PropertyPlaceholderHelper helper) {
     //PlaceholderResolver接口依然是策略模式的体现
     return helper.replacePlaceholders(text, new PropertyPlaceholderHelper.PlaceholderResolver() {
@@ -291,7 +291,7 @@ private String doResolvePlaceholders(String text, PropertyPlaceholderHelper help
 
 其实代码执行到这里的时候还没有进行xml配置文件的解析，那么这里的解析placeHolder是什么意思呢，原因在于可以这么写:
 
-```Java
+```java
 System.setProperty("spring", "classpath");
 ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext("${spring}:config.xml");
 SimpleBean bean = context.getBean(SimpleBean.class);
@@ -299,7 +299,7 @@ SimpleBean bean = context.getBean(SimpleBean.class);
 
 这样就可以正确解析。placeholder的替换其实就是字符串操作，这里只说一下正确的属性是怎么来的。实现的关键在于PropertySourcesPropertyResolver.getProperty:
 
-```Java
+```java
 @Override
 protected String getPropertyAsRawString(String key) {
     return getProperty(key, String.class, false);
@@ -325,7 +325,7 @@ Spring bean解析就在此方法，所以单独提出来。
 
 AbstractApplicationContext.refresh:
 
-```Java
+```java
 @Override
 public void refresh() throws BeansException, IllegalStateException {
     synchronized (this.startupShutdownMonitor) {
@@ -372,7 +372,7 @@ public void refresh() throws BeansException, IllegalStateException {
 
 ### prepareRefresh
 
-```Java
+```java
 protected void prepareRefresh() {
     this.startupDate = System.currentTimeMillis();
     this.closed.set(false);
@@ -393,7 +393,7 @@ protected void prepareRefresh() {
 
 AbstractEnvironment.validateRequiredProperties:
 
-```Java
+```java
 @Override
 public void validateRequiredProperties() throws MissingRequiredPropertiesException {
     this.propertyResolver.validateRequiredProperties();
@@ -402,7 +402,7 @@ public void validateRequiredProperties() throws MissingRequiredPropertiesExcepti
 
 AbstractPropertyResolver.validateRequiredProperties:
 
-```Java
+```java
 @Override
 public void validateRequiredProperties() {
     MissingRequiredPropertiesException ex = new MissingRequiredPropertiesException();
@@ -423,7 +423,7 @@ requiredProperties是通过setRequiredProperties方法设置的，保存在一�
 
 由obtainFreshBeanFactory调用AbstractRefreshableApplicationContext.refreshBeanFactory:
 
-```Java
+```java
 @Override
 protected final void refreshBeanFactory() throws BeansException {
     //如果已经存在，那么销毁之前的
@@ -452,7 +452,7 @@ protected final void refreshBeanFactory() throws BeansException {
 
 AbstractRefreshableApplicationContext.customizeBeanFactory方法用于给子类提供一个自由配置的机会，默认实现:
 
-```Java
+```java
 protected void customizeBeanFactory(DefaultListableBeanFactory beanFactory) {
     if (this.allowBeanDefinitionOverriding != null) {
         //默认false，不允许覆盖
@@ -469,7 +469,7 @@ protected void customizeBeanFactory(DefaultListableBeanFactory beanFactory) {
 
 AbstractXmlApplicationContext.loadBeanDefinitions，这个便是核心的bean加载了:
 
-```Java
+```java
 @Override
 protected void loadBeanDefinitions(DefaultListableBeanFactory beanFactory) {
     // Create a new XmlBeanDefinitionReader for the given BeanFactory.
@@ -505,7 +505,7 @@ EntityResolver接口在org.xml.sax中定义。DelegatingEntityResolver用于sche
 
 ##### 路径解析(Ant)
 
-```Java
+```java
 protected void loadBeanDefinitions(XmlBeanDefinitionReader reader) {
     Resource[] configResources = getConfigResources();
     if (configResources != null) {
@@ -521,7 +521,7 @@ protected void loadBeanDefinitions(XmlBeanDefinitionReader reader) {
 
 AbstractBeanDefinitionReader.loadBeanDefinitions:
 
-```Java
+```java
 @Override
 public int loadBeanDefinitions(String... locations) throws BeanDefinitionStoreException {
     Assert.notNull(locations, "Location array must not be null");
@@ -535,7 +535,7 @@ public int loadBeanDefinitions(String... locations) throws BeanDefinitionStoreEx
 
 之后调用:
 
-```Java
+```java
 //第二个参数为空
 public int loadBeanDefinitions(String location, Set<Resource> actualResources) {
     ResourceLoader resourceLoader = getResourceLoader();
@@ -571,7 +571,7 @@ public int loadBeanDefinitions(String location, Set<Resource> actualResources) {
 
 getResource的实现在AbstractApplicationContext：
 
-```Java
+```java
 @Override
 public Resource[] getResources(String locationPattern) throws IOException {
     //构造器中初始化，PathMatchingResourcePatternResolver对象
@@ -581,7 +581,7 @@ public Resource[] getResources(String locationPattern) throws IOException {
 
 PathMatchingResourcePatternResolver是ResourceLoader继承体系的一部分。
 
-```Java
+```java
 @Override
 public Resource[] getResources(String locationPattern) throws IOException {
     Assert.notNull(locationPattern, "Location pattern must not be null");
@@ -616,7 +616,7 @@ public Resource[] getResources(String locationPattern) throws IOException {
 
 isPattern:
 
-```Java
+```java
 @Override
 public boolean isPattern(String path) {
     return (path.indexOf('*') != -1 || path.indexOf('?') != -1);
@@ -625,7 +625,7 @@ public boolean isPattern(String path) {
 
 可以看出配置文件路径是支持ant风格的，也就是可以这么写:
 
-```Java
+```java
 new ClassPathXmlApplicationContext("con*.xml");
 ```
 
@@ -635,7 +635,7 @@ new ClassPathXmlApplicationContext("con*.xml");
 
 入口方法在AbstractBeanDefinitionReader的217行:
 
-```Java
+```java
 //加载
 Resource[] resources = ((ResourcePatternResolver) resourceLoader).getResources(location);
 //解析
@@ -644,7 +644,7 @@ int loadCount = loadBeanDefinitions(resources);
 
 最终逐个调用XmlBeanDefinitionReader的loadBeanDefinitions方法:
 
-```Java
+```java
 @Override
 public int loadBeanDefinitions(Resource resource) {
     return loadBeanDefinitions(new EncodedResource(resource));
@@ -659,7 +659,7 @@ EncodedResource扮演的其实是一个装饰器的模式，为InputStreamSource
 
 之后关键的源码只有两行:
 
-```Java
+```java
 public int loadBeanDefinitions(EncodedResource encodedResource) throws BeanDefinitionStoreException {
     InputStream inputStream = encodedResource.getResource().getInputStream();
     InputSource inputSource = new InputSource(inputStream);
@@ -671,7 +671,7 @@ InputSource是org.xml.sax的类。
 
 doLoadBeanDefinitions：
 
-```Java
+```java
 protected int doLoadBeanDefinitions(InputSource inputSource, Resource resource) {
     Document doc = doLoadDocument(inputSource, resource);
     return registerBeanDefinitions(doc, resource);
@@ -680,7 +680,7 @@ protected int doLoadBeanDefinitions(InputSource inputSource, Resource resource) 
 
 doLoadDocument:
 
-```Java
+```java
 protected Document doLoadDocument(InputSource inputSource, Resource resource) {
     return this.documentLoader.loadDocument(inputSource, getEntityResolver(), this.errorHandler,
         getValidationModeForResource(resource), isNamespaceAware());
@@ -695,7 +695,7 @@ NamespaceAware默认false，因为默认配置了校验为true。
 
 DefaultDocumentLoader.loadDocument:
 
-```Java
+```java
 @Override
 public Document loadDocument(InputSource inputSource, EntityResolver entityResolver,
     ErrorHandler errorHandler, int validationMode, boolean namespaceAware) {
@@ -708,7 +708,7 @@ public Document loadDocument(InputSource inputSource, EntityResolver entityResol
 
 createDocumentBuilderFactory比较有意思:
 
-```Java
+```java
 protected DocumentBuilderFactory createDocumentBuilderFactory(int validationMode, boolean namespaceAware{
     DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
     factory.setNamespaceAware(namespaceAware);
@@ -731,7 +731,7 @@ protected DocumentBuilderFactory createDocumentBuilderFactory(int validationMode
 
 XmlBeanDefinitionReader.registerBeanDefinitions:
 
-```Java
+```java
 public int registerBeanDefinitions(Document doc, Resource resource) {
     BeanDefinitionDocumentReader documentReader = createBeanDefinitionDocumentReader();
     int countBefore = getRegistry().getBeanDefinitionCount();
@@ -742,7 +742,7 @@ public int registerBeanDefinitions(Document doc, Resource resource) {
 
 createBeanDefinitionDocumentReader:
 
-```Java
+```java
 protected BeanDefinitionDocumentReader createBeanDefinitionDocumentReader() {
     return BeanDefinitionDocumentReader.class.cast
       //反射
@@ -756,7 +756,7 @@ documentReaderClass默认是DefaultBeanDefinitionDocumentReader，这其实也�
 
 createReaderContext：
 
-```Java
+```java
 public XmlReaderContext createReaderContext(Resource resource) {
     return new XmlReaderContext(resource, this.problemReporter, this.eventListener,
         this.sourceExtractor, this, getNamespaceHandlerResolver());
@@ -775,7 +775,7 @@ XmlReaderContext的作用感觉就是这一堆参数的容器，糅合到一起�
 
 DefaultBeanDefinitionDocumentReader.registerBeanDefinitions:
 
-```Java
+```java
 @Override
 public void registerBeanDefinitions(Document doc, XmlReaderContext readerContext) {
     this.readerContext = readerContext;
@@ -786,7 +786,7 @@ public void registerBeanDefinitions(Document doc, XmlReaderContext readerContext
 
 doRegisterBeanDefinitions:
 
-```Java
+```java
 protected void doRegisterBeanDefinitions(Element root) {
     BeanDefinitionParserDelegate parent = this.delegate;
     this.delegate = createDelegate(getReaderContext(), root, parent);
@@ -834,7 +834,7 @@ xmlns属性就是xml规范定义的用来设置命名空间的。这样设置了
 
 注意一下profile的检查, AbstractEnvironment.acceptsProfiles:
 
-```Java
+```java
 @Override
 public boolean acceptsProfiles(String... profiles) {
     Assert.notEmpty(profiles, "Must specify at least one profile");
@@ -857,7 +857,7 @@ preProcessXml方法是个空实现，供子类去覆盖，**目的在于给子�
 
 DefaultBeanDefinitionDocumentReader.parseBeanDefinitions：
 
-```Java
+```java
 protected void parseBeanDefinitions(Element root, BeanDefinitionParserDelegate delegate) {
     if (delegate.isDefaultNamespace(root)) {
         NodeList nl = root.getChildNodes();
@@ -884,7 +884,7 @@ protected void parseBeanDefinitions(Element root, BeanDefinitionParserDelegate d
 
 即import, alias, bean, 嵌套的beans四种元素。parseDefaultElement:
 
-```Java
+```java
 private void parseDefaultElement(Element ele, BeanDefinitionParserDelegate delegate) {
     //"import"
     if (delegate.nodeNameEquals(ele, IMPORT_ELEMENT)) {
@@ -924,7 +924,7 @@ importBeanDefinitionResource套路和之前的配置文件加载完全一样，�
 
 processAliasRegistration核心源码:
 
-```Java
+```java
 protected void processAliasRegistration(Element ele) {
     String name = ele.getAttribute(NAME_ATTRIBUTE);
     String alias = ele.getAttribute(ALIAS_ATTRIBUTE);
@@ -935,7 +935,7 @@ protected void processAliasRegistration(Element ele) {
 
 从前面的源码可以发现，registry其实就是DefaultListableBeanFactory，它实现了BeanDefinitionRegistry接口。registerAlias方法的实现在SimpleAliasRegistry:
 
-```Java
+```java
 @Override
 public void registerAlias(String name, String alias) {
     Assert.hasText(name, "'name' must not be empty");
@@ -971,7 +971,7 @@ bean节点是Spring最最常见的节点了。
 
 DefaultBeanDefinitionDocumentReader.processBeanDefinition:
 
-```Java
+```java
 protected void processBeanDefinition(Element ele, BeanDefinitionParserDelegate delegate) {
     BeanDefinitionHolder bdHolder = delegate.parseBeanDefinitionElement(ele);
     if (bdHolder != null) {
@@ -997,7 +997,7 @@ protected void processBeanDefinition(Element ele, BeanDefinitionParserDelegate d
 
 首先获取到id和name属性，**name属性支持配置多个，以逗号分隔，如果没有指定id，那么将以第一个name属性值代替。id必须是唯一的，name属性其实是alias的角色，可以和其它的bean重复，如果name也没有配置，那么其实什么也没做**。
 
-```Java
+```java
 String id = ele.getAttribute(ID_ATTRIBUTE);
 String nameAttr = ele.getAttribute(NAME_ATTRIBUTE);
 List<String> aliases = new ArrayList<String>();
@@ -1024,7 +1024,7 @@ if (containingBean == null) {
 
 如果name和id属性都没有指定，那么Spring会自己生成一个, BeanDefinitionParserDelegate.parseBeanDefinitionElement:
 
-```Java
+```java
 beanName = this.readerContext.generateBeanName(beanDefinition);
 String beanClassName = beanDefinition.getBeanClassName();
 aliases.add(beanClassName);
@@ -1034,7 +1034,7 @@ aliases.add(beanClassName);
 
 最终调用的是BeanDefinitionReaderUtils.generateBeanName:
 
-```Java
+```java
 public static String generateBeanName(
         BeanDefinition definition, BeanDefinitionRegistry registry, boolean isInnerBean) {
     String generatedBeanName = definition.getBeanClassName();
@@ -1071,7 +1071,7 @@ public static String generateBeanName(
 
 首先获取到bean的class属性和parent属性，配置了parent之后，当前bean会继承父bean的属性。之后根据class和parent创建BeanDefinition对象。
 
-```Java
+```java
 String className = null;
 if (ele.hasAttribute(CLASS_ATTRIBUTE)) {
     className = ele.getAttribute(CLASS_ATTRIBUTE).trim();
@@ -1085,7 +1085,7 @@ AbstractBeanDefinition bd = createBeanDefinition(className, parent);
 
 BeanDefinition的创建在BeanDefinitionReaderUtils.createBeanDefinition:
 
-```Java
+```java
 public static AbstractBeanDefinition createBeanDefinition(
         String parentName, String className, ClassLoader classLoader) {
     GenericBeanDefinition bd = new GenericBeanDefinition();
@@ -1104,7 +1104,7 @@ public static AbstractBeanDefinition createBeanDefinition(
 
 之后是解析bean的其它属性，其实就是读取其配置，调用相应的setter方法保存在BeanDefinition中:
 
-```Java
+```java
 parseBeanDefinitionAttributes(ele, beanName, containingBean, bd);
 ```
 
@@ -1128,7 +1128,7 @@ parseBeanDefinitionAttributes(ele, beanName, containingBean, bd);
 
 注释上说，这样可以将任意的元数据附到对应的bean definition上。解析过程源码:
 
-```Java
+```java
 public void parseMetaElements(Element ele, BeanMetadataAttributeAccessor attributeAccessor) {
     NodeList nl = ele.getChildNodes();
     for (int i = 0; i < nl.getLength(); i++) {
@@ -1230,7 +1230,7 @@ qualifier解析:
 
 SimpleBean部分源码:
 
-```Java
+```java
 @Autowired
 @Qualifier("student")
 private Student student;
@@ -1262,7 +1262,7 @@ private Student student;
 
 BeanDefinitionReaderUtils.registerBeanDefinition:
 
-```Java
+```java
 public static void registerBeanDefinition(
     BeanDefinitionHolder definitionHolder, BeanDefinitionRegistry registry) {
     // Register bean definition under primary name.
@@ -1280,7 +1280,7 @@ public static void registerBeanDefinition(
 
 registry其实就是DefaultListableBeanFactory对象，registerBeanDefinition方法主要就干了这么两件事:
 
-```Java
+```java
 @Override
 public void registerBeanDefinition(String beanName, BeanDefinition beanDefinition) {
     this.beanDefinitionMap.put(beanName, beanDefinition);
@@ -1308,7 +1308,7 @@ beans元素的嵌套直接递归调用DefaultBeanDefinitionDocumentReader.parseB
 
 入口在DefaultBeanDefinitionDocumentReader.parseBeanDefinitions->BeanDefinitionParserDelegate.parseCustomElement(第二个参数为空):
 
-```Java
+```java
 public BeanDefinition parseCustomElement(Element ele, BeanDefinition containingBd) {
     String namespaceUri = getNamespaceURI(ele);
     NamespaceHandler handler = this.readerContext.getNamespaceHandlerResolver().resolve(namespaceUri);
@@ -1320,7 +1320,7 @@ NamespaceHandlerResolver由XmlBeanDefinitionReader初始化，是一个DefaultNa
 
 其resolve方法:
 
-```Java
+```java
 @Override
 public NamespaceHandler resolve(String namespaceUri) {
     Map<String, Object> handlerMappings = getHandlerMappings();
@@ -1378,13 +1378,13 @@ BeanDefinition在BeanFactory中的主要数据结构如下图:
 
 此接口只有一个实现: StandardBeanExpressionResolver。接口只含有一个方法:
 
-```Java
+```java
 Object evaluate(String value, BeanExpressionContext evalContext)
 ```
 
 prepareBeanFactory将一个此对象放入BeanFactory:
 
-```Java
+```java
 beanFactory.setBeanExpressionResolver(new 						 			StandardBeanExpressionResolver(beanFactory.getBeanClassLoader()));
 ```
 
@@ -1398,7 +1398,7 @@ StandardBeanExpressionResolver对象内部有一个关键的成员: SpelExpressi
 
 此接口用于向Spring注册java.beans.PropertyEditor，只有一个方法:
 
-```Java
+```java
 registerCustomEditors(PropertyEditorRegistry registry)
 ```
 
@@ -1408,7 +1408,7 @@ registerCustomEditors(PropertyEditorRegistry registry)
 
 prepareBeanFactory:
 
-```Java
+```java
 beanFactory.addPropertyEditorRegistrar(new ResourceEditorRegistrar(this, getEnvironment()));
 ```
 
@@ -1436,13 +1436,13 @@ BeanFactory也暴露了registerCustomEditors方法用以添加自定义的转换
 
 在Spring中我们自己的bean可以通过实现EnvironmentAware等一系列Aware接口获取到Spring内部的一些对象。prepareBeanFactory:
 
-```Java
+```java
 beanFactory.addBeanPostProcessor(new ApplicationContextAwareProcessor(this));
 ```
 
 ApplicationContextAwareProcessor核心的invokeAwareInterfaces方法:
 
-```Java
+```java
 private void invokeAwareInterfaces(Object bean) {
     if (bean instanceof Aware) {
         if (bean instanceof EnvironmentAware) {
@@ -1460,7 +1460,7 @@ private void invokeAwareInterfaces(Object bean) {
 
 此部分设置哪些接口在进行依赖注入的时候应该被忽略:
 
-```Java
+```java
 beanFactory.ignoreDependencyInterface(ResourceLoaderAware.class);
 beanFactory.ignoreDependencyInterface(ApplicationEventPublisherAware.class);
 beanFactory.ignoreDependencyInterface(MessageSourceAware.class);
@@ -1472,7 +1472,7 @@ beanFactory.ignoreDependencyInterface(EnvironmentAware.class);
 
 有些对象并不在BeanFactory中，但是我们依然想让它们可以被装配，这就需要伪装一下:
 
-```Java
+```java
 beanFactory.registerResolvableDependency(BeanFactory.class, beanFactory);
 beanFactory.registerResolvableDependency(ResourceLoader.class, this);
 beanFactory.registerResolvableDependency(ApplicationEventPublisher.class, this);
@@ -1485,7 +1485,7 @@ beanFactory.registerResolvableDependency(ApplicationContext.class, this);
 
 如果配置了此bean，那么：
 
-```Java
+```java
 if (beanFactory.containsBean(LOAD_TIME_WEAVER_BEAN_NAME)) {
     beanFactory.addBeanPostProcessor(new LoadTimeWeaverAwareProcessor(beanFactory));
     // Set a temporary ClassLoader for type matching.
@@ -1499,7 +1499,7 @@ if (beanFactory.containsBean(LOAD_TIME_WEAVER_BEAN_NAME)) {
 
 源码:
 
-```Java
+```java
 if (!beanFactory.containsLocalBean(ENVIRONMENT_BEAN_NAME)) {
     beanFactory.registerSingleton(ENVIRONMENT_BEAN_NAME, getEnvironment());
 }
@@ -1522,7 +1522,7 @@ containsLocalBean特殊之处在于不会去父BeanFactory寻找。
 
 BeanFactoryPostProcessor接口允许我们在bean正是初始化之前改变其值。此接口只有一个方法:
 
-```Java
+```java
 void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory);
 ```
 
@@ -1530,7 +1530,7 @@ void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory);
 
 - 通过代码的方式:
 
-  ```Java
+  ```java
   context.addBeanFactoryPostProcessor
   ```
 
@@ -1544,7 +1544,7 @@ void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory);
 
 此方法的关键源码:
 
-```Java
+```java
 protected void invokeBeanFactoryPostProcessors(ConfigurableListableBeanFactory beanFactory) {
     PostProcessorRegistrationDelegate.invokeBeanFactoryPostProcessors(beanFactory,
         getBeanFactoryPostProcessors());
@@ -1607,7 +1607,7 @@ ApplicationEventPublisher实际上正是将请求委托给ApplicationEventMultic
 
 前面说过ApplicationEventPublisher是通过委托给ApplicationEventMulticaster实现的，所以refresh方法中完成的是对ApplicationEventMulticaster的初始化:
 
-```Java
+```java
 // Initialize event multicaster for this context.
 initApplicationEventMulticaster();
 ```
@@ -1618,7 +1618,7 @@ initApplicationEventMulticaster则首先在BeanFactory中寻找ApplicationEventM
 
 AbstractApplicationContext.publishEvent核心代码:
 
-```Java
+```java
 protected void publishEvent(Object event, ResolvableType eventType) {
     getApplicationEventMulticaster().multicastEvent(applicationEvent, eventType);
 }
@@ -1626,7 +1626,7 @@ protected void publishEvent(Object event, ResolvableType eventType) {
 
 SimpleApplicationEventMulticaster.multicastEvent:
 
-```Java
+```java
 @Override
 public void multicastEvent(final ApplicationEvent event, ResolvableType eventType) {
     ResolvableType type = (eventType != null ? eventType : resolveDefaultEventType(event));
@@ -1689,7 +1689,7 @@ xsi:schemaLocation="http://www.springframework.org/schema/task http://www.spring
 
 在代码中使用示例:
 
-```Java
+```java
 @Component  
 public class EmailRegisterListener implements ApplicationListener<RegisterEvent> {  
     @Async  
@@ -1714,7 +1714,7 @@ registerListeners方法干的，没什么好说的。
 
 finishBeanFactoryInitialization：
 
-```Java
+```java
 protected void finishBeanFactoryInitialization(ConfigurableListableBeanFactory beanFactory) {
     if (beanFactory.containsBean(CONVERSION_SERVICE_BEAN_NAME) &&
             beanFactory.isTypeMatch(CONVERSION_SERVICE_BEAN_NAME, ConversionService.class)) {
@@ -1755,7 +1755,7 @@ protected void finishBeanFactoryInitialization(ConfigurableListableBeanFactory b
 
 用于解析注解的值。接口只定义了一个方法:
 
-```Java
+```java
 String resolveStringValue(String strVal);
 ```
 
@@ -1767,7 +1767,7 @@ String resolveStringValue(String strVal);
 
 DefaultListableBeanFactory.preInstantiateSingletons:
 
-```Java
+```java
 @Override
 public void preInstantiateSingletons() throws BeansException {
     List<String> beanNames = new ArrayList<String>(this.beanDefinitionNames);
@@ -1829,7 +1829,7 @@ public void preInstantiateSingletons() throws BeansException {
 
 这里便是bean初始化的核心逻辑。源码比较复杂，分开说。以getBean(String name)为例。AbstractBeanFactory.getBean:
 
-```Java
+```java
 @Override
 public Object getBean(String name) throws BeansException {
     return doGetBean(name, null, null, false);
@@ -1840,7 +1840,7 @@ public Object getBean(String name) throws BeansException {
 
 ## beanName转化
 
-```Java
+```java
 final String beanName = transformedBeanName(name);
 ```
 
@@ -1850,7 +1850,7 @@ final String beanName = transformedBeanName(name);
 
 前面注册环境一节说过，Spring其实手动注册了一些单例bean。这一步就是检测是不是这些bean。如果是，那么再检测是不是工厂bean，如果是返回其工厂方法返回的实例，如果不是返回bean本身。
 
-```Java
+```java
 Object sharedInstance = getSingleton(beanName);
 if (sharedInstance != null && args == null) {
     bean = getObjectForBeanInstance(sharedInstance, name, beanName, null);
@@ -1861,7 +1861,7 @@ if (sharedInstance != null && args == null) {
 
 如果父容器存在并且存在此bean定义，那么交由其父容器初始化:
 
-```Java
+```java
 BeanFactory parentBeanFactory = getParentBeanFactory();
 if (parentBeanFactory != null && !containsBeanDefinition(beanName)) {
     // Not found -> check parent.
@@ -1881,7 +1881,7 @@ if (parentBeanFactory != null && !containsBeanDefinition(beanName)) {
 
 bean可以由depends-on属性配置依赖的bean。Spring会首先初始化依赖的bean。
 
-```Java
+```java
 String[] dependsOn = mbd.getDependsOn();
 if (dependsOn != null) {
     for (String dependsOnBean : dependsOn) {
@@ -1902,7 +1902,7 @@ registerDependentBean进行了依赖关系的注册，这么做的原因是Sprin
 
 虽然这里大纲是Singleton初始化，但是getBean方法本身是包括所有scope的初始化，在这里一次说明了。
 
-```Java
+```java
 if (mbd.isSingleton()) {
     sharedInstance = getSingleton(beanName, new ObjectFactory<Object>() {
         @Override
@@ -1920,7 +1920,7 @@ if (mbd.isSingleton()) {
 
 首先会检测是否已经存在，如果存在，直接返回:
 
-```Java
+```java
 synchronized (this.singletonObjects) {
     Object singletonObject = this.singletonObjects.get(beanName);
 }
@@ -1936,14 +1936,14 @@ synchronized (this.singletonObjects) {
 
 此部分用于检测lookup-method标签配置的方法是否存在:
 
-```Java
+```java
 RootBeanDefinition mbdToUse = mbd;
 mbdToUse.prepareMethodOverrides();
 ```
 
 prepareMethodOverrides:
 
-```Java
+```java
 public void prepareMethodOverrides() throws BeanDefinitionValidationException {
     // Check that lookup methods exists.
     MethodOverrides methodOverrides = getMethodOverrides();
@@ -1960,7 +1960,7 @@ public void prepareMethodOverrides() throws BeanDefinitionValidationException {
 
 prepareMethodOverride:
 
-```Java
+```java
 protected void prepareMethodOverride(MethodOverride mo)  {
     int count = ClassUtils.getMethodCountForName(getBeanClass(), mo.getMethodName());
     if (count == 0) {
@@ -1978,7 +1978,7 @@ protected void prepareMethodOverride(MethodOverride mo)  {
 
 在这里触发的是其postProcessBeforeInitialization和postProcessAfterInstantiation方法。
 
-```Java
+```java
 Object bean = resolveBeforeInstantiation(beanName, mbdToUse);
 if (bean != null) {
     return bean;
@@ -1989,7 +1989,7 @@ return beanInstance;
 
 继续:
 
-```Java
+```java
 protected Object resolveBeforeInstantiation(String beanName, RootBeanDefinition mbd) {
     Object bean = null;
     if (!Boolean.FALSE.equals(mbd.beforeInstantiationResolved)) {
@@ -2019,7 +2019,7 @@ protected Object resolveBeforeInstantiation(String beanName, RootBeanDefinition 
 
 关键代码:
 
-```Java
+```java
 BeanWrapper instanceWrapper = null;
 if (instanceWrapper == null) {
     instanceWrapper = createBeanInstance(beanName, mbd, args);
@@ -2032,7 +2032,7 @@ createBeanInstance的创建过程又分为以下几种情况:
 
   调用instantiateUsingFactoryMethod方法:
 
-  ```Java
+  ```java
   protected BeanWrapper instantiateUsingFactoryMethod(
     String beanName, RootBeanDefinition mbd, Object[] explicitArgs) {
     return new ConstructorResolver(this).instantiateUsingFactoryMethod(beanName, mbd, explicitArgs);
@@ -2053,7 +2053,7 @@ createBeanInstance的创建过程又分为以下几种情况:
 
     instantiateUsingFactoryMethod部分源码:
 
-    ```Java
+    ```java
     beanInstance = this.beanFactory.getInstantiationStrategy().instantiate(
         mbd, beanName, this.beanFactory, factoryBean, factoryMethodToUse, argsToUse);
     ```
@@ -2062,7 +2062,7 @@ createBeanInstance的创建过程又分为以下几种情况:
 
     instantiate核心源码:
 
-    ```Java
+    ```java
     @Override
     public Object instantiate(RootBeanDefinition bd, String beanName, BeanFactory owner,
         Object factoryBean, final Method factoryMethod, Object... args) {
@@ -2074,7 +2074,7 @@ createBeanInstance的创建过程又分为以下几种情况:
 
   createBeanInstance部分源码:
 
-  ```Java
+  ```java
   // Need to determine the constructor...
   Constructor<?>[] ctors = determineConstructorsFromBeanPostProcessors(beanClass, beanName);
   if (ctors != null ||
@@ -2087,7 +2087,7 @@ createBeanInstance的创建过程又分为以下几种情况:
 
   determineConstructorsFromBeanPostProcessors源码:
 
-  ```Java
+  ```java
   protected Constructor<?>[] determineConstructorsFromBeanPostProcessors(Class<?> beanClass, String beanName) {
     if (beanClass != null && hasInstantiationAwareBeanPostProcessors()) {
         for (BeanPostProcessor bp : getBeanPostProcessors()) {
@@ -2131,7 +2131,7 @@ createBeanInstance的创建过程又分为以下几种情况:
 
     入口方法在ConstructorResolver.resolveAutowiredArgument:
 
-    ```Java
+    ```java
     protected Object resolveAutowiredArgument(
             MethodParameter param, String beanName, Set<String> autowiredBeanNames,
             TypeConverter typeConverter) {
@@ -2143,7 +2143,7 @@ createBeanInstance的创建过程又分为以下几种情况:
 
   最终调用的还是CglibSubclassingInstantiationStrategy.instantiate方法，关键源码:
 
-  ```Java
+  ```java
   @Override
   public Object instantiate(RootBeanDefinition bd, String beanName, BeanFactory owner,
         final Constructor<?> ctor, Object... args) {
@@ -2160,7 +2160,7 @@ createBeanInstance的创建过程又分为以下几种情况:
 
   CglibSubclassingInstantiationStrategy.instantiateWithMethodInjection:
 
-  ```Java
+  ```java
   @Override
   protected Object instantiateWithMethodInjection(RootBeanDefinition bd, String beanName, BeanFactory 	owner,Constructor<?> ctor, Object... args) {
     // Must generate CGLIB subclass...
@@ -2172,7 +2172,7 @@ createBeanInstance的创建过程又分为以下几种情况:
 
   一行代码，很简单:
 
-  ```Java
+  ```java
   // No special handling: simply use no-arg constructor.
   return instantiateBean(beanName, mbd);
   ```
@@ -2181,7 +2181,7 @@ createBeanInstance的创建过程又分为以下几种情况:
 
 触发源码:
 
-```Java
+```java
 synchronized (mbd.postProcessingLock) {
     if (!mbd.postProcessed) {
         applyMergedBeanDefinitionPostProcessors(mbd, beanType, beanName);
@@ -2196,7 +2196,7 @@ synchronized (mbd.postProcessingLock) {
 
 入口方法: AbstractAutowireCapableBeanFactory.populateBean，它的作用是: 根据autowire类型进行autowire by name，by type 或者是直接进行设置，简略后的源码:
 
-```Java
+```java
 protected void populateBean(String beanName, RootBeanDefinition mbd, BeanWrapper bw) {
     //所有<property>的值
     PropertyValues pvs = mbd.getPropertyValues();
@@ -2224,7 +2224,7 @@ protected void populateBean(String beanName, RootBeanDefinition mbd, BeanWrapper
 
 autowireByName源码:
 
-```Java
+```java
 protected void autowireByName(
         String beanName, AbstractBeanDefinition mbd, BeanWrapper bw, MutablePropertyValues pvs) {
     //返回所有引用(ref="XXX")的bean名称
@@ -2250,7 +2250,7 @@ Spring判断一个属性可不可以被设置(存不存在)是通过java bean的
 
 此处的初始化指的是bean已经构造完成，执行诸如调用其init方法的操作。相关源码:
 
-```Java
+```java
 // Initialize the bean instance.
 Object exposedObject = bean;
 try {
@@ -2263,7 +2263,7 @@ try {
 
 initializeBean:
 
-```Java
+```java
 protected Object initializeBean(final String beanName, final Object bean, RootBeanDefinition mbd) {
     if (System.getSecurityManager() != null) {
         AccessController.doPrivileged(new PrivilegedAction<Object>() {
@@ -2298,7 +2298,7 @@ protected Object initializeBean(final String beanName, final Object bean, RootBe
 
   我们的bean有可能实现了一些XXXAware接口，此处就是负责调用它们:
 
-  ```Java
+  ```java
   private void invokeAwareMethods(final String beanName, final Object bean) {
     if (bean instanceof Aware) {
         if (bean instanceof BeanNameAware) {
@@ -2322,7 +2322,7 @@ protected Object initializeBean(final String beanName, final Object bean, RootBe
 
   此接口只有一个方法：
 
-  ```Java
+  ```java
   void afterPropertiesSet() throws Exception;
   ```
 
@@ -2336,7 +2336,7 @@ protected Object initializeBean(final String beanName, final Object bean, RootBe
 
 AbstractBeanFactory.doGetBean相关源码:
 
-```Java
+```java
 else if (mbd.isPrototype()) {
     // It's a prototype -> create a new instance.
     Object prototypeInstance = null;
@@ -2371,7 +2371,7 @@ else if (mbd.isPrototype()) {
 
 其它就指的是request、session。此部分源码:
 
-```Java
+```java
 else {
     String scopeName = mbd.getScope();
     final Scope scope = this.scopes.get(scopeName);
