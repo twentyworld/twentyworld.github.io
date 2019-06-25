@@ -80,6 +80,9 @@ public interface BeanFactoryPostProcessor {
 
 他们是三种不同的方式去配置初始化Bean的方式。
 也就是通过annotation，xml，config的方式。
+
+- 使用 `@Bean(initMethod = "init")`方式来定义回调。
+这种方式是xml的一种annotation的过渡配置。
 ---
 
 ### @Required
