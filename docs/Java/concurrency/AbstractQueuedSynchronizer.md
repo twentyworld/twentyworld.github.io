@@ -705,7 +705,6 @@ private void setHeadAndPropagate(Node node, int propagate) {
 我们先来看看 Condition 的使用场景，Condition 经常可以用在生产者-消费者的场景中:
 
 ```java
-
 public class ArrayBuffer {
     private String[] buffer;
 
@@ -726,61 +725,41 @@ public class ArrayBuffer {
     public void put(String number) {
         lock.lock();
         try {
-            while (isFull()) {
-                write.await();
-            }
+            while (isFull()) { write.await(); }
 
             buffer[writePoint] = number;
             addWritePoint();
             read.signal();
-
         }catch (InterruptedException e) {
             e.printStackTrace();
         }finally {
             lock.unlock();
         }
-
     }
 
     public String get() {
         lock.lock();
-
         try{
-            while (isEmpty()) {
-                read.await();
-            }
+            while (isEmpty()) { read.await(); }
 
             String result = buffer[readPoint];
             addReadPoint();
             write.signal();
 
             return result;
-
         }catch (InterruptedException e) {
-            e.printStackTrace();
             throw new RuntimeException(e);
         }finally {
             lock.unlock();
         }
     }
 
-    private boolean isFull() {
-        return ((writePoint - readPoint) - (buffer.length - 1)) % buffer.length == 0;
-    }
-
-    private boolean isEmpty() {
-        return writePoint == readPoint ;
-    }
-
-
-    private void addWritePoint() {
-        writePoint = (writePoint +1)%buffer.length;
-    }
-
-    private void addReadPoint() {
-        readPoint = (readPoint +1) % buffer.length;
-    }
+    private boolean isFull() { return ((writePoint - readPoint) - (buffer.length - 1)) % buffer.length == 0; }
+    private boolean isEmpty() { return writePoint == readPoint ; }
+    private void addWritePoint() { writePoint = (writePoint +1)%buffer.length; }
+    private void addReadPoint() { readPoint = (readPoint +1) % buffer.length; }
 }
+
 ```
 
 上文在介绍AQS的时候，有一个 **阻塞队列** ，用于保存等待获取锁的线程的队列。这里我们引入另一个概念，叫 **条件队列**(condition queue)，这里使用一个简单的图来描述。
